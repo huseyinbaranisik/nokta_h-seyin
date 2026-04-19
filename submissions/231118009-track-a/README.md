@@ -32,15 +32,9 @@ Proje klasöründe bulunan **`app-release.apk`** dosyasını doğrudan Android c
 ### 2. Bulut Üzerinden İndirme
 
 Uygulamanın derlenmiş en güncel APK sürümünü telefonunuza indirmek için aşağıdaki bağlantıya tıklayabilirsiniz:
-**[📦 Avox AI - Expo Build İndirme Sayfası](https://expo.dev/accounts/huseyinyagmur/projects/app/builds/bfcffae2-928f-45fd-a8df-e3e2c4541603)**
+**[📦 Avox AI - Expo Build İndirme Sayfası](https://expo.dev/accounts/huseyinyagmur/projects/app/builds/48701982-a09f-48e4-b629-07213ea8a8c6)**
 
 _(Not: Sayfadaki "Download" butonunu kullanarak APK dosyasını indirebilirsiniz.)_
-
-### 3. QR Kod ile İndirme
-
-Aşağıdaki QR kodu okutarak uygulamanın indirme sayfasına mobil cihazınızdan hızlıca erişebilirsiniz:
-
-![APK İndirme QR Kodu](./Qr.png)
 
 ---
 

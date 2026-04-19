@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, SafeAreaView, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 
-const API_KEY = "AIzaSyBtG1Ze2YBAZ8iD0YUv2zip6iQXftg6CMs";
+const API_KEY = "BURAYA_API_KEY_GELECEK";
 
 interface Scores {
   Feasibility: number;
