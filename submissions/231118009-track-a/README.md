@@ -12,7 +12,7 @@ Avox AI, ham proje fikirlerinizi kapsamlı teknik dökümanlara dönüştüren, 
 ## 🛠️ Teknik Yığın (Tech Stack)
 
 - **Frontend:** React Native (Expo/CLI)
-- **AI Engine:** Google Gemini 1.5 (Pro/Flash) API
+- **AI Engine:** Google Gemini 2.5 flash) API
 - **State Management:** React Hooks
 - **Tasarım:** Custom StyleSheet & Animated API
 
