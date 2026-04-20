@@ -22,8 +22,8 @@ Environment setup for AI calls:
 - Set `EXPO_PUBLIC_OPENROUTER_API_KEY`
 
 ## Demo Video (60s)
-- Add your demo link here after recording:
-- `https://<your-demo-video-link>`
+- Demo video link:
+- `https://youtube.com/shorts/kLPz2hu1Neg?feature=share`
 
 ## Decision Log
 1. Chose Track A because it is the clearest and lowest-risk path to show an end-to-end working AI flow in limited time.
@@ -38,6 +38,6 @@ Environment setup for AI calls:
 
 ## APK
 - APK file path (required): `submissions/211118068-nokta-dotcapture/app-release.apk`
-- EAS artifact link: https://expo.dev/artifacts/eas/23zCKj8Ba5jnW3evPzEsHm.apk
+- EAS artifact link: https://expo.dev/artifacts/eas/eaJYiUtzF4FKoRa56nALfk.apk
 - Build command suggestion:
   - `npx eas build -p android --profile preview`
