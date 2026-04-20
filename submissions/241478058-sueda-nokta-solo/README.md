@@ -14,9 +14,9 @@ Bu yarışmada doğrudan yalınlığı, yüksek sadakatli (high-fidelity) UX pra
 
 ## Gereksinimler
 Projenin jüri ve katılımcılar tarafından detaylıca incelenebilmesi için gerekli çıktılar aşağıda sunulmuştur:
-- **Expo QR Linki:** `[BURAYA EKLENECEKTİR]`
-- **Demo Video Linki:** `[BURAYA EKLENECEKTİR]`
-- **APK Dosyası:** `[BURAYA EKLENECEKTİR]`
+- **Expo QR Linki:** "https://expo.dev/accounts/suedaknl/projects/sueda-nokta-solo/builds/84ddf828-0f86-4254-b597-1ea061191129"
+- **Demo Video Linki:** (https://youtube.com/shorts/6MmNQCD3aOI)
+- **APK Dosyası:** [Uygulamayı İndir (APK)](./app-release.apk)
 
 ## Kurulum
 Nokta Analyzer'ı kendi lokal ortamınızda ayağa kaldırmak ve "Y-Combinator" modunun acımasızlığını bizzat test etmek için aşağıdaki talimatları izleyebilirsiniz:
