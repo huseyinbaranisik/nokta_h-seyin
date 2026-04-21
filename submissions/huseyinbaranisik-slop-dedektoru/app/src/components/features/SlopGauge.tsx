@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
-import { colors } from '../theme/colors';
+import { colors } from '../../theme/colors';
 
 interface Props {
   score: number; // 0-100
@@ -35,11 +35,6 @@ export const SlopGauge: React.FC<Props> = ({ score }) => {
     }).start();
   }, [score]);
 
-  const strokeDashoffset = animVal.interpolate({
-    inputRange: [0, 100],
-    outputRange: [CIRCUMFERENCE, CIRCUMFERENCE * (1 - score / 100)],
-  });
-
   const color = scoreColor(score);
   const label = scoreLabel(score);
 
@@ -61,7 +56,7 @@ export const SlopGauge: React.FC<Props> = ({ score }) => {
           strokeWidth={STROKE}
           fill="none"
         />
-        {/* Progress — using Animated workaround via JS */}
+        {/* Progress — using JS-based offset for simplicity in this bridge */}
         <Circle
           cx={SIZE / 2}
           cy={SIZE / 2}
@@ -78,7 +73,7 @@ export const SlopGauge: React.FC<Props> = ({ score }) => {
 
       {/* Center text */}
       <View style={styles.centerText}>
-        <Text style={[styles.scoreNumber, { color }]}>{score}</Text>
+        <Animated.Text style={[styles.scoreNumber, { color }]}>{score}</Animated.Text>
         <Text style={styles.scorePercent}>/100</Text>
         <Text style={[styles.scoreLabel, { color }]}>{label}</Text>
       </View>

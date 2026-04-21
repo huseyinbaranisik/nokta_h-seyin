@@ -3,69 +3,59 @@
 // Decision log: Gemini Flash tercih edildi — hız/maliyet/kalite optimumu.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { AnalysisResult } from '../types';
 
-// 🔑  Kendi API anahtarınızı buraya ya da .env'e koyun
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY ?? 'YOUR_API_KEY_HERE';
-
-export interface Claim {
-  text: string;
-  verdict: 'GÜÇLÜ' | 'ABARTILI' | 'DOĞRULANAMAZ';
-  reasoning: string;
-}
-
-export interface AnalysisResult {
-  slopScore: number;       // 0–100  (100 = tamamen slop)
-  summary: string;         // 1 cümlelik genel değerlendirme
-  claims: Claim[];         // tespit edilen iddialar
-  recommendation: string;  // yatırımcıya öneri
-}
+// 🔑 Groq API anahtarınızı buraya ya da .env'e koyun
+const GROQ_API_KEY = process.env.EXPO_PUBLIC_GROQ_API_KEY ?? 'YOUR_API_KEY_HERE';
 
 const SYSTEM_PROMPT = `
 Sen Nokta platformunun Due Diligence motorusun. Görevin verilen bir startup pitch paragrafını analiz etmek.
 
 Şunları yap:
-1. Pitch içindeki somut iddiaları (pazar büyüklüğü, büyüme oranı, kullanıcı sayısı, rekabet avantajı, gelir iddiası vb.) tespit et.
-2. Her iddiayı üç kategoriden birine koy:
-   - GÜÇLÜ: Makul, temellendirilebilir, sektör gerçeğiyle uyumlu
-   - ABARTILI: Gerçek ama fazla şişirilmiş veya bağlamdan kopuk
-   - DOĞRULANAMAZ: Kanıtsız, uçuk, halüsinasyon riski taşıyan
-3. 0–100 arası "Slop Skoru" hesapla (100 = tamamen slop, 0 = neredeyse sıfır slop).
+1. Pitch içindeki somut iddiaları tespit et.
+2. Her iddiayı kategorize et: GÜÇLÜ, ABARTILI veya DOĞRULANAMAZ.
+3. 0–100 arası "Slop Skoru" hesapla (100 = tamamen slop).
 4. Genel özet ve yatırımcıya öneri yaz.
 
-SADECE aşağıdaki JSON formatında yanıt ver, markdown ya da açıklama ekleme:
+SADECE aşağıdaki JSON formatında yanıt ver:
 {
-  "slopScore": <sayı 0-100>,
-  "summary": "<tek cümle>",
-  "claims": [
-    {
-      "text": "<iddianın kısa özeti>",
-      "verdict": "GÜÇLÜ" | "ABARTILI" | "DOĞRULANAMAZ",
-      "reasoning": "<1-2 cümle gerekçe>"
-    }
-  ],
-  "recommendation": "<yatırımcıya öneri>"
+  "slopScore": <sayı>,
+  "summary": "<cümle>",
+  "claims": [{"text": "...", "verdict": "...", "reasoning": "..."}],
+  "recommendation": "..."
 }
 `;
 
 export async function analyzePitch(pitch: string): Promise<AnalysisResult> {
   // ── Mock mod: API key yoksa örnek veri döndür ──────────────────────────────
-  if (GEMINI_API_KEY === 'YOUR_API_KEY_HERE' || !GEMINI_API_KEY) {
+  if (GROQ_API_KEY === 'YOUR_API_KEY_HERE' || !GROQ_API_KEY) {
     return getMockResult(pitch);
   }
 
-  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${GROQ_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: pitch }
+      ],
+      model: 'llama-3.3-70b-versatile',
+      response_format: { type: 'json_object' }
+    })
+  });
 
-  const prompt = `${SYSTEM_PROMPT}\n\nPitch:\n${pitch}`;
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error?.message || `API Hatası: ${response.status}`);
+  }
 
-  const result = await model.generateContent(prompt);
-  const text = result.response.text().trim();
-
-  // JSON bloğunu temizle (model bazen ```json ``` koyabilir)
-  const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-
-  return JSON.parse(jsonStr) as AnalysisResult;
+  const data = await response.json();
+  const content = data.choices[0]?.message?.content || '{}';
+  return JSON.parse(content) as AnalysisResult;
 }
 
 // ── Offline/Demo mock ────────────────────────────────────────────────────────

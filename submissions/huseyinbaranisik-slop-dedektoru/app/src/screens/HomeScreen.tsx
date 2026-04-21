@@ -1,26 +1,20 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-  Animated,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { colors } from '../theme/colors';
-import { analyzePitch } from '../services/analyzer';
-import type { RootStackParamList } from '../../App';
-
-type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+import { usePitchAnalysis } from '../hooks/usePitchAnalysis';
+import { Button } from '../components/common/Button';
+import { InputField } from '../components/common/InputField';
+import { ResultModal } from '../components/features/ResultModal';
 
 const EXAMPLES = [
   'Uygulamamız yapay zeka ile 2 yılda 10 milyon kullanıcıya ulaşacak ve 500 milyon dolarlık piyasayı domine edecek. Rakip yok, pazar hazır, sadece fon lazım.',
@@ -29,31 +23,15 @@ const EXAMPLES = [
 ];
 
 export default function HomeScreen() {
-  const navigation = useNavigation<Nav>();
-  const [pitch, setPitch] = useState('');
-  const [loading, setLoading] = useState(false);
-  const btnScale = useRef(new Animated.Value(1)).current;
-
-  const handleAnalyze = async () => {
-    if (pitch.trim().length < 20) {
-      Alert.alert('Kısa pitch!', 'Lütfen en az 20 karakterlik bir pitch metni gir.');
-      return;
-    }
-    setLoading(true);
-    try {
-      const result = await analyzePitch(pitch.trim());
-      navigation.navigate('Result', { result, pitch: pitch.trim() });
-    } catch (e) {
-      Alert.alert('Hata', `Analiz sırasında bir sorun oluştu: ${(e as Error).message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const pressIn = () =>
-    Animated.spring(btnScale, { toValue: 0.96, useNativeDriver: true }).start();
-  const pressOut = () =>
-    Animated.spring(btnScale, { toValue: 1, useNativeDriver: true }).start();
+  const { 
+    pitch, 
+    setPitch, 
+    loading, 
+    handleAnalyze,
+    result,
+    showResult,
+    setShowResult 
+  } = usePitchAnalysis();
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -68,7 +46,7 @@ export default function HomeScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* ── Logo + Header ── */}
+          {/* Logo + Header */}
           <View style={styles.header}>
             <LinearGradient
               colors={['#7C3AED', '#EC4899']}
@@ -82,7 +60,7 @@ export default function HomeScreen() {
             <Text style={styles.tagline}>Due Diligence Engine</Text>
           </View>
 
-          {/* ── Title ── */}
+          {/* Title */}
           <View style={styles.titleBlock}>
             <Text style={styles.title}>Slop Dedektörü</Text>
             <Text style={styles.subtitle}>
@@ -90,22 +68,18 @@ export default function HomeScreen() {
             </Text>
           </View>
 
-          {/* ── Input Card ── */}
-          <View style={styles.inputCard}>
-            <TextInput
-              style={styles.textInput}
-              multiline
-              placeholder="Pitch'ini buraya yapıştır..."
-              placeholderTextColor={colors.textDim}
-              value={pitch}
-              onChangeText={setPitch}
-              textAlignVertical="top"
-              maxLength={2000}
-            />
-            <Text style={styles.charCount}>{pitch.length}/2000</Text>
-          </View>
+          {/* Input Area */}
+          <InputField
+            placeholder="Pitch'ini buraya yapıştır..."
+            value={pitch}
+            onChangeText={setPitch}
+            multiline
+            maxLength={2000}
+            charCount={pitch.length}
+            maxCharCount={2000}
+          />
 
-          {/* ── Example Pills ── */}
+          {/* Example Pills */}
           <Text style={styles.exampleLabel}>Örnek pitch'ler →</Text>
           <ScrollView
             horizontal
@@ -127,36 +101,27 @@ export default function HomeScreen() {
             ))}
           </ScrollView>
 
-          {/* ── Analyze Button ── */}
-          <Animated.View style={{ transform: [{ scale: btnScale }] }}>
-            <TouchableOpacity
-              onPressIn={pressIn}
-              onPressOut={pressOut}
-              onPress={handleAnalyze}
-              disabled={loading}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#7C3AED', '#EC4899']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.analyzeBtn}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#fff" size="small" />
-                ) : (
-                  <Text style={styles.analyzeBtnText}>⚡  Analiz Et</Text>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
-          </Animated.View>
+          {/* Analyze Button */}
+          <Button
+            text="⚡  Analiz Et"
+            onPress={handleAnalyze}
+            loading={loading}
+          />
 
-          {/* ── Info Footer ── */}
+          {/* Info Footer */}
           <Text style={styles.footer}>
-            Gemini 1.5 Flash · Engineering-guided · Anti-Slop 🛡️
+            AI Powered by Groq (Llama 3.1) · Anti-Slop 🛡️
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Result Popup */}
+      <ResultModal
+        visible={showResult}
+        result={result}
+        pitch={pitch}
+        onClose={() => setShowResult(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -196,27 +161,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 
-  inputCard: {
-    backgroundColor: colors.bgCard,
-    borderWidth: 1,
-    borderColor: colors.bgCardBorder,
-    borderRadius: 20,
-    padding: 16,
-    marginBottom: 16,
-  },
-  textInput: {
-    color: colors.textPrimary,
-    fontSize: 15,
-    minHeight: 140,
-    lineHeight: 22,
-  },
-  charCount: {
-    textAlign: 'right',
-    fontSize: 11,
-    color: colors.textDim,
-    marginTop: 8,
-  },
-
   exampleLabel: {
     fontSize: 12,
     color: colors.textMuted,
@@ -234,18 +178,6 @@ const styles = StyleSheet.create({
     width: 200,
   },
   pillText: { color: colors.textMuted, fontSize: 12, lineHeight: 16 },
-
-  analyzeBtn: {
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-    shadowColor: '#7C3AED',
-    shadowRadius: 16,
-    shadowOpacity: 0.5,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 8,
-  },
-  analyzeBtnText: { color: '#fff', fontSize: 17, fontWeight: '700', letterSpacing: 0.5 },
 
   footer: {
     textAlign: 'center',

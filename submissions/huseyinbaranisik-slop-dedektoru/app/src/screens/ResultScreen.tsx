@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -12,26 +12,20 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { colors } from '../theme/colors';
-import { SlopGauge } from '../components/SlopGauge';
-import { ClaimCard } from '../components/ClaimCard';
-import type { RootStackParamList } from '../../App';
+import { SlopGauge } from '../components/features/SlopGauge';
+import { ClaimCard } from '../components/features/ClaimCard';
+import { Button } from '../components/common/Button';
+import { Card } from '../components/common/Card';
+import { useResultAnimation } from '../hooks/useResultAnimation';
+import type { RootStackParamList, NavigationProp } from '../types';
 
 type ResultRoute = RouteProp<RootStackParamList, 'Result'>;
 
 export default function ResultScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ResultRoute>();
   const { result, pitch } = route.params;
-
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
-      Animated.spring(slideAnim, { toValue: 0, useNativeDriver: true }),
-    ]).start();
-  }, []);
+  const { fadeAnim, slideAnim } = useResultAnimation();
 
   const handleShare = async () => {
     const msg =
@@ -69,8 +63,8 @@ export default function ResultScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
 
-          {/* ── Score Card ── */}
-          <View style={[styles.scoreCard, { borderColor: `${scoreColor}44` }]}>
+          {/* Score Card */}
+          <Card style={[styles.scoreCard, { borderColor: `${scoreColor}44` }]}>
             <SlopGauge score={result.slopScore} />
 
             {/* Score interpretation band */}
@@ -81,17 +75,17 @@ export default function ResultScreen() {
                  '✗ Yüksek Slop Riski — Fon ciddi riski taşır'}
               </Text>
             </View>
-          </View>
+          </Card>
 
-          {/* ── Summary ── */}
+          {/* AI Summary */}
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>AI ÖZETİ</Text>
-            <View style={styles.summaryCard}>
+            <Card>
               <Text style={styles.summaryText}>{result.summary}</Text>
-            </View>
+            </Card>
           </View>
 
-          {/* ── Claims ── */}
+          {/* Claims Analysis */}
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>İDDİA ANALİZİ · {result.claims.length} BULGU</Text>
             {result.claims.map((claim, i) => (
@@ -99,9 +93,9 @@ export default function ResultScreen() {
             ))}
           </View>
 
-          {/* ── Recommendation ── */}
+          {/* Investor Recommendation */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>YATIRIMC IÖNERİSİ</Text>
+            <Text style={styles.sectionLabel}>YATIRIMCI ÖNERİSİ</Text>
             <LinearGradient
               colors={['rgba(124,58,237,0.15)', 'rgba(236,72,153,0.10)']}
               style={styles.recommendCard}
@@ -110,38 +104,27 @@ export default function ResultScreen() {
             </LinearGradient>
           </View>
 
-          {/* ── Pitch Snippet ── */}
+          {/* Analyzed Pitch Snippet */}
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>ANALİZ EDİLEN PİTCH</Text>
-            <View style={styles.pitchSnippet}>
+            <Card style={styles.pitchSnippet}>
               <Text style={styles.pitchText} numberOfLines={5}>{pitch}</Text>
-            </View>
+            </Card>
           </View>
 
-          {/* ── Action Buttons ── */}
+          {/* Action Buttons */}
           <View style={styles.actions}>
-            <TouchableOpacity
-              style={styles.secondaryBtn}
+            <Button
+              variant="secondary"
+              text="↩  Yeni Pitch"
               onPress={() => navigation.goBack()}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.secondaryBtnText}>↩  Yeni Pitch</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
               style={{ flex: 1 }}
+            />
+            <Button
+              text="↑  Raporu Paylaş"
               onPress={handleShare}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#7C3AED', '#EC4899']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.primaryBtn}
-              >
-                <Text style={styles.primaryBtnText}>↑  Raporu Paylaş</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+              style={{ flex: 1 }}
+            />
           </View>
 
         </Animated.View>
@@ -179,9 +162,6 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: 20, paddingBottom: 40 },
 
   scoreCard: {
-    backgroundColor: colors.bgCard,
-    borderWidth: 1,
-    borderRadius: 24,
     alignItems: 'center',
     padding: 24,
     marginBottom: 20,
@@ -206,13 +186,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  summaryCard: {
-    backgroundColor: colors.bgCard,
-    borderWidth: 1,
-    borderColor: colors.bgCardBorder,
-    borderRadius: 16,
-    padding: 16,
-  },
   summaryText: { color: colors.textPrimary, fontSize: 14, lineHeight: 21 },
 
   recommendCard: {
@@ -224,34 +197,9 @@ const styles = StyleSheet.create({
   recommendText: { color: colors.textPrimary, fontSize: 14, lineHeight: 21, fontStyle: 'italic' },
 
   pitchSnippet: {
-    backgroundColor: colors.bgCard,
-    borderWidth: 1,
-    borderColor: colors.bgCardBorder,
-    borderRadius: 16,
     padding: 14,
   },
   pitchText: { color: colors.textMuted, fontSize: 13, lineHeight: 19 },
 
   actions: { flexDirection: 'row', gap: 10, marginTop: 4 },
-  secondaryBtn: {
-    flex: 1,
-    backgroundColor: colors.bgCard,
-    borderWidth: 1,
-    borderColor: colors.bgCardBorder,
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  secondaryBtnText: { color: colors.textPrimary, fontSize: 14, fontWeight: '600' },
-  primaryBtn: {
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-    shadowColor: '#7C3AED',
-    shadowRadius: 10,
-    shadowOpacity: 0.4,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
-  },
-  primaryBtnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
 });

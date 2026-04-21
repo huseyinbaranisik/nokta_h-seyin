@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../theme/colors';
-import type { Claim } from '../services/analyzer';
+import { colors } from '../../theme/colors';
+import { Card } from '../common/Card';
+import type { Claim } from '../../types';
 
 const VERDICT_CONFIG = {
   GÜÇLÜ: { bg: 'rgba(34,197,94,0.15)', border: colors.green, text: colors.green, icon: '✓' },
@@ -18,7 +19,7 @@ export const ClaimCard: React.FC<Props> = ({ claim, index }) => {
   const cfg = VERDICT_CONFIG[claim.verdict];
 
   return (
-    <View style={[styles.card, { borderColor: colors.bgCardBorder }]}>
+    <Card style={[styles.card, { borderColor: colors.bgCardBorder }]}>
       {/* Header row */}
       <View style={styles.header}>
         <View style={[styles.indexBadge, { backgroundColor: cfg.bg }]}>
@@ -34,15 +35,12 @@ export const ClaimCard: React.FC<Props> = ({ claim, index }) => {
 
       {/* Reasoning */}
       <Text style={styles.reasoning}>{claim.reasoning}</Text>
-    </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.bgCard,
-    borderWidth: 1,
-    borderRadius: 16,
     padding: 16,
     marginBottom: 10,
   },

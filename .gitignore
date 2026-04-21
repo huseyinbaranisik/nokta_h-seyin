@@ -1,0 +1,13 @@
+# Common
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+
+# Project specific
+submissions/huseyinbaranisik-slop-dedektoru/app/.env
+submissions/huseyinbaranisik-slop-dedektoru/app/.expo/
+submissions/huseyinbaranisik-slop-dedektoru/app/expo_output.txt
+submissions/huseyinbaranisik-slop-dedektoru/app/dist/
+submissions/huseyinbaranisik-slop-dedektoru/app/web-build/
+submissions/huseyinbaranisik-slop-dedektoru/app/node_modules/
