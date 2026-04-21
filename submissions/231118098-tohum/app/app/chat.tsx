@@ -15,7 +15,7 @@ import { GenerateBanner } from '@/components/chat/generate-banner';
 import { InputBar } from '@/components/chat/input-bar';
 import { MessageBubble } from '@/components/chat/message-bubble';
 import { RubricProgress } from '@/components/chat/rubric-progress';
-import { SuggestionChips } from '@/components/chat/suggestion-chips';
+import { SuggestionPanel } from '@/components/chat/suggestion-panel';
 import { TypingIndicator } from '@/components/chat/typing-indicator';
 import {
   EMPTY_RUBRIC,
@@ -178,9 +178,10 @@ export default function Chat() {
         {showGenerateBanner && <GenerateBanner onGenerate={handleGenerate} />}
 
         {suggestions.length > 0 && (
-          <SuggestionChips
+          <SuggestionPanel
             suggestions={suggestions}
             onPick={handlePickSuggestion}
+            onDismiss={() => setSuggestions([])}
           />
         )}
 
