@@ -15,6 +15,10 @@ Nokta ekosistemi için tasarlanmış, sisteme girilen "slop" (düşük eforlu, a
 Expo Go uygulamanız üzerinden veya Expo sunucusuyla projeyi anında test edebilirsiniz.
 
 [👉 Expo Proje Sayfası](https://expo.dev/accounts/mustafa1299/projects/231118012-slop-detector)
+
+**Expo Proje URL QR Kodu:**
+![Expo QR](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://expo.dev/accounts/mustafa1299/projects/231118012-slop-detector)
+
 *(Uygulama APK formatında oluşturulmuştur, detayları build panelinden inceleyebilirsiniz.)*
 
 **Lokalde Çalıştırmak İçin:**

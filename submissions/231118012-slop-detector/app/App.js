@@ -5,9 +5,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   Animated,
-  KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
   Keyboard
@@ -18,6 +16,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 const COLORS = {
   background: '#0c0e12',
   surface: '#0c0e12',
+  surfaceContainerLowest: '#0f1115',
   surfaceContainerLow: '#111318',
   surfaceContainer: '#171a1f',
   surfaceContainerHigh: '#1d2025',
