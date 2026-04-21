@@ -17,22 +17,34 @@ export default function App() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [trustScore, setTrustScore] = useState(0);
 
-  useEffect(() => {
-    AsyncStorage.getItem('@nokta_history').then(data => {
-      if (data) setHistory(JSON.parse(data));
-    });
-  }, []);
+  const [probes, setProbes] = useState<Array<{id: string, label: string, hint: string}>>([]);
 
-  const probes = [
-    { id: 'problem', label: 'PROBLEM DEFINITION', hint: 'What specific friction does this solve? Do not say "makes life easier".' },
-    { id: 'user', label: 'TARGET PERSONA', hint: 'Who explicitly pays for or uses this today? Be precise.' },
-    { id: 'scope', label: 'MVP BOUNDARIES', hint: 'List 3 things you will explicitly NOT build in v1.' },
-    { id: 'constraint', label: 'HARD CONSTRAINTS', hint: 'Compliance, API limits, or budget ceilings?' }
-  ];
+  useEffect(() => {
+    try {
+      AsyncStorage.getItem('@nokta_history').then(data => {
+        if (data) setHistory(JSON.parse(data));
+      }).catch(() => console.log('AsyncStorage native module absent, using RAM'));
+    } catch (e) {
+      console.log('AsyncStorage block failed', e);
+    }
+  }, []);
 
   const handleDotSubmit = () => {
     if (ideaDot.trim().length < 10) return;
     setPhase('SLOP_CHECK');
+    
+    // Simulating Groq Extraction logic: Picking keywords to formulate specific questions
+    const lowercaseIdea = ideaDot.toLowerCase();
+    const isApp = lowercaseIdea.includes('app') || lowercaseIdea.includes('mobile');
+    const typeLabel = isApp ? 'this mobile ecosystem' : 'this exact platform';
+    
+    const dynamicProbes = [
+      { id: 'problem', label: 'CORE FRICTION (AI GENERATED)', hint: `You proposed a solution, but what is the explicit disease? Why do users hate their current alternative to ${typeLabel}?` },
+      { id: 'user', label: 'PAYING PERSONA (AI GENERATED)', hint: `If someone had to pay $10/mo for this today, who is the literal first person to swipe their card?` },
+      { id: 'scope', label: 'MVP EXCLUSION ZONE', hint: `To build this in 2 weeks, list exactly 3 features you MUST cut from the v1 release.` },
+      { id: 'constraint', label: 'FATAL CONSTRAINTS', hint: `What is the single biggest technical or legal bottleneck (APIs, Server Cost, DB Structure)?` }
+    ];
+    setProbes(dynamicProbes);
     
     // Simulate AI Slop Check
     setTimeout(() => setSlopMetric(25), 600);
@@ -62,7 +74,10 @@ export default function App() {
       const newItem = { id: Date.now().toString(), idea: ideaDot, score: computedScore, date: new Date().toLocaleDateString() };
       const updatedHistory = [newItem, ...history].slice(0, 50);
       setHistory(updatedHistory);
-      AsyncStorage.setItem('@nokta_history', JSON.stringify(updatedHistory));
+      
+      try {
+        AsyncStorage.setItem('@nokta_history', JSON.stringify(updatedHistory)).catch(() => {});
+      } catch (e) {}
       
       setPhase('ARTIFACT');
     }
@@ -195,10 +210,14 @@ export default function App() {
 
           <View style={styles.artifactSection}>
             <Text style={styles.artifactSecLabel}>[2] HOW TO CREATE (EXECUTION PLAN)</Text>
-            <Text style={styles.artifactValue}>
-              PHASE 1: Stick strictly to the MVP boundaries. Do NOT build: {answers.scope || 'unnecessary features'}.{'\n\n'}
-              PHASE 2: Adopt infrastructure that respects the hard constraints: {answers.constraint || 'system limits'}. Ensure compliance from day zero.
-            </Text>
+            <View style={{ backgroundColor: '#1A1A2A', padding: 15, borderRadius: 8, borderLeftWidth: 3, borderLeftColor: '#00E5FF', marginBottom: 10 }}>
+              <Text style={{ color: '#00E5FF', fontSize: 11, fontWeight: 'bold', marginBottom: 4 }}>► PHASE 1: CORE MVP SURVIVAL</Text>
+              <Text style={{ color: '#E0E0E5', fontSize: 14 }}>Aggressively eliminate features. You specified the following exclusion zone: "{answers.scope || 'Unnecessary features'}". Building anything beyond this in the first 14 days will result in product-market failure.</Text>
+            </View>
+            <View style={{ backgroundColor: '#1A1A2A', padding: 15, borderRadius: 8, borderLeftWidth: 3, borderLeftColor: '#FF5722' }}>
+              <Text style={{ color: '#FF5722', fontSize: 11, fontWeight: 'bold', marginBottom: 4 }}>► PHASE 2: SCALING OVER BOTTLENECKS</Text>
+              <Text style={{ color: '#E0E0E5', fontSize: 14 }}>Prepare infrastructure for the Fatal Constraint: "{answers.constraint || 'System limits'}". Your tech stack MUST natively bypass this barrier from Day Zero. Do not acquire users until this risk is neutralized.</Text>
+            </View>
           </View>
 
           <View style={styles.artifactSection}>
