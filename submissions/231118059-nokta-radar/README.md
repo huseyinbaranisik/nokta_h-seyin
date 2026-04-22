@@ -7,6 +7,7 @@ Bu proje, Nokta ekosisteminin bir parçası olarak, fikirlerin teknik derinliği
 Fikirlerin "slop" (çöp) seviyesini ölçer, acımasız mühendislik sorguları yapar ve 100 üzerinden bir Slop Score üretir.
 
 ## 📱 Uygulama Erişimi
+- **Expo Proje Sayfası (QR Kod & APK):** [https://expo.dev/accounts/m_sahin_sft/projects/temp_app/builds/d6cb5686-09aa-4ce3-b668-a3e9140bf3ec]
 - **Demo Videosu:** [https://youtube.com/shorts/GZ3K1-j7Bco]
 - **APK:** `app-release.apk` dosyası bu klasörde mevcuttur.
 
