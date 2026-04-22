@@ -57,7 +57,7 @@ Uygulamanın özelliklerini ve kullanımını gösteren kısa tanıtım videomuz
 
 - **2026-04-18 10:30 — Mimari Kararlar**
   - **Framework:** React Native + Expo seçildi (cross-platform, hızlı build, Expo QR ile kolay paylaşım).
-  - **AI Engine:** Groq API (Llama 3.3) seçildi. (Gemini 404 hataları ve hız kısıtları nedeniyle projenin final aşamasında Groq'un ultra-düşük gecikmeli Llama 3.3 modeline geçiş yapıldı).
+  - **AI Engine:** xAI API (Grok-beta) seçildi. (Gemini 404 hataları ve Groq limitleri nedeniyle projenin final aşamasında xAI'nin Grok modeline geçiş yapıldı).
   - **Tasarım Dili:** Glassmorphism dark theme — premium hissi yaratmak için tercih edildi.
 
 - **2026-04-18 10:50 — Wizard Akışı Tasarımı**
@@ -79,13 +79,13 @@ Uygulamanın özelliklerini ve kullanımını gösteren kısa tanıtım videomuz
   - Expo EAS Build çalıştırıldı, APK dosyası oluşturuldu.
   - Final doğrulama: tüm akış uçtan uca test edildi.
 
-- **2026-04-20 Güncelleme:** Uygulama içi AI motoru Groq (Llama 3.3) ile değiştirilerek performans ve yanıt kalitesi artırıldı.
+- **2026-04-20 Güncelleme:** Uygulama içi AI motoru xAI (Grok-beta) ile değiştirilerek performans ve yanıt kalitesi artırıldı.
 
 ## 🛠️ AI Tool Log
 | Tool | Kullanım Amacı |
 |---|---|
 | **Gemini (Antigravity)** | Kod geliştirme yardımcısı |
-| **Groq API (Llama 3.3)** | Uygulama içi AI motoru (soru üretimi + spec generation) |
+| **xAI API (Grok-beta)** | Uygulama içi AI motoru (soru üretimi + spec generation) |
 
 ## 🏆 Bonus & Çılgınlık Özellikleri (+10 Puan)
 `challenge.md`'de yer alan ve projenin orijinalliğini kanıtlayan ekstra özellikler:
