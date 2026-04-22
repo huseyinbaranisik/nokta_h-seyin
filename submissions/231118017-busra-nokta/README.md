@@ -9,7 +9,7 @@ Bu uygulama, ham iş fikirlerini alıp Gemini AI desteğiyle yapılandırılmı�
 
 ## 🚀 Uygulama Erişimi
 * **Expo Go Link / QR:** [https://expo.dev/accounts/busra9900/projects/app/builds/88145b21-d1bb-4328-a2a9-9b893db2a3d9](https://expo.dev/accounts/busra9900/projects/app/builds/88145b21-d1bb-4328-a2a9-9b893db2a3d9)
-* **APK Dosyası:** [app-release.apk](./app-release.apk) (Klasör içerisinde yer almaktadır)
+* **APK Dosyası:** [app-release.apk](./app-release.apk)
 
 ## 🎥 Demo Videosu
 * **Video Linki:** [https://www.youtube.com/watch?v=o-1zmbZUubk]
