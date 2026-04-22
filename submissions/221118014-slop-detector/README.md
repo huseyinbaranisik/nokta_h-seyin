@@ -18,7 +18,7 @@ Bu proje, Nokta projesi kapsamında Track B (Slop Detector / Due Diligence) gör
 ## Kurulum ve Çalıştırma
 Projeyi yerel ortamda çalıştırmak için:
 ```bash
-cd app
+cd submissions/221118014-slop-detector/app
 npm install
 npx expo start
 ```
