@@ -80,7 +80,7 @@ export default function CaptureScreen() {
         spec: null,
         mode,
       });
-      router.push('/questions');
+      router.push('/question-flow');
     } catch (e) {
       if (e instanceof AllProvidersFailedError) {
         setError(`Tüm provider'lar başarısız. Detay: ${JSON.stringify(e.errors)}`);

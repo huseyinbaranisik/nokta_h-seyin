@@ -11,6 +11,8 @@ interface SessionState {
   attempts: number;
   duplicateOf: string | null;
   mode: AppMode;
+  selectedKeywords?: string[];
+  userGeneratedContent?: string;
 }
 
 const initial: SessionState = {

@@ -16,6 +16,9 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="questions" options={{ title: '' }} />
+        <Stack.Screen name="question-flow" options={{ title: '' }} />
+        <Stack.Screen name="word-cloud" options={{ title: '' }} />
+        <Stack.Screen name="content-builder" options={{ title: '' }} />
         <Stack.Screen name="spec" options={{ title: '' }} />
       </Stack>
     </SafeAreaProvider>
