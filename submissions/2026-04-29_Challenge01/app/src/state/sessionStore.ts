@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import type { Question, Spec, ProviderName } from '@/types';
+import type { AppMode } from './modeStore';
 
 interface SessionState {
   idea: string;
@@ -9,6 +10,7 @@ interface SessionState {
   provider: ProviderName | null;
   attempts: number;
   duplicateOf: string | null;
+  mode: AppMode;
 }
 
 const initial: SessionState = {
@@ -19,6 +21,7 @@ const initial: SessionState = {
   provider: null,
   attempts: 0,
   duplicateOf: null,
+  mode: 'entrepreneur',
 };
 
 let state: SessionState = initial;
