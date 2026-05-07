@@ -2,8 +2,6 @@
 
 CanvasSheet, Google Sheets verilerinizi saniyeler içinde büyüleyici, modern ve interaktif dashboard'lara dönüştüren, AI destekli bir görselleştirme motorudur. Hiçbir backend ihtiyacı duymadan, doğrudan tarayıcı üzerinden Gemini AI ve Google Cloud API'lerini kullanarak çalışır.
 
-![Dashboard Preview](https://via.placeholder.com/1200x600/0F172A/FFFFFF?text=CanvasSheet+Premium+AI+Dashboard)
-
 ## ✨ Öne Çıkan Özellikler
 
 - 🤖 **AI-Orchestrated UI**: Gemini 1.5/2.0 modelleri tarafından anlık olarak üretilen, veriye özel Tailwind CSS bileşenleri.
