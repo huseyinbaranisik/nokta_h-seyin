@@ -1,6 +1,6 @@
 # 💎 Nokta Canvas: AI-Orchestrated Dashboard Engine
 
-[![Watch the Video](https://img.shields.io/badge/YouTube-Video%20Tan%C4%B1t%C4%B1m%C4%B1-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=NSeE4xDOXiM)
+[![Watch the Video](https://img.shields.io/badge/YouTube-Video%20Tan%C4%B1t%C4%B1m%C4%B1-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/shorts/-wjLVqu6ZQs)
 
 ---
 
@@ -25,6 +25,7 @@ Nokta Canvas, veriyi görselleştirmek için şu 4 aşamalı akıllı süreci iz
 2.  **Derin Analiz (Metadata Analysis)**: Sistem, tablodaki tüm sütun başlıklarını, veri tiplerini (sayı, tarih, metin) ve satır sayılarını otomatik olarak tarar.
 3.  **Yapay Zeka Eşleştirmesi**: Gemini AI, analiz edilen bu verileri alır ve her veri tipine en uygun görsel bileşeni (KPI kartı, grafik, ilerleme çubuğu vb.) seçerek bir **Dashboard Şeması** oluşturur.
 4.  **Anlık Üretim ve Revize**: Şema, Tailwind CSS bileşenlerine dönüştürülerek ekrana basılır. Kullanıcı, asistan Nova'ya "Bu tabloyu kırmızı yap" veya "Satışları en üste al" dediğinde, sistem tüm süreci saniyeler içinde baştan koşturarak tasarımı günceller.
+5.  **Uzman Desteği (Human-in-the-loop)**: Yapay zekanın yetersiz kaldığı veya profesyonel bir görüşe ihtiyaç duyulan durumlarda, sistem tüm verileri ve mevcut tasarımı bir uzman havuzuna aktararak gerçek bir tasarımcıdan destek alınmasını sağlar.
 
 ---
 
