@@ -44,7 +44,7 @@ Ham fikri (text) alır → AI ile 5 engineering sorusu sorar (problem, user, sco
 
 > 60 saniye içinde: fikir gir → 5 soruyu cevapla → spec kartını göster
 
-Demo Link: [[YouTube/Drive linki buraya](https://youtube.com/shorts/TEkptZhPuC0?si=Zz_PoZMn3wVxmscc)]
+Demo Link: [[YouTube/Drive linki buraya](https://youtube.com/shorts/u_Er1H-gDEU?si=zlH1nLAtOhbnTC3y)]
 
 ---
 
