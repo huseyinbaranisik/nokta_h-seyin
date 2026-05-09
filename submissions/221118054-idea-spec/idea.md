@@ -1,62 +1,45 @@
-# idea.md — Track A: Idea Spec Generator
+﻿# idea.md - Track 1: Idea Spec + Uzman Destegi (v2)
 
-## Track Seçimi
-
-**Track A** — Ham fikri (text) alır, AI ile 3-5 engineering sorusu sorar (problem, user, scope, constraint), tek sayfa spec üretir.
-
----
-
-## Fikir
-
-**"StudyMate"** — Üniversite öğrencilerinin ders notlarını ve çalışma hedeflerini yapılandırılmış bir çalışma planına dönüştüren mobil uygulama.
+## Track Secimi
+**Track 1** - Ham fikri AI ile 5 sorulu sohbete sokar, tek sayfa spec uretir.
+**v2 Eklentisi:** Olusturulan spec'e insan uzman desteği katmani.
 
 ---
 
-## AI Soru-Cevap Akışı (Engineering Questions)
+## v2 Akisi
 
-Kullanıcı ham fikrini girer: *"öğrenciler için çalışma takip uygulaması"*
+```
+Spec ekrani -> "Spec'e Uzman Destegi Al" butonu
+   -> 4 uzman karti
+   -> Uzman secilir, soru opsiyonel
+   -> 3sn loading
+   -> Recommendation badge (DEVAM/REVIZE/PIVOT) + detayli yanit
+   -> Gecmise kaydedilir
+```
 
-**Soru 1 — Problem:**
-> "Bu fikir hangi gerçek problemi çözüyor? Öğrenciler şu an ne yapıyor ve neden bu yeterli değil?"
+## 4 Uzman Profili
 
-**Cevap:** Öğrenciler sınav öncesi ne çalıştıklarını takip edemiyorlar, hangi konuların eksik kaldığını göremiyorlar.
+| Uzman | Uzmanlik | Odak |
+|-------|----------|------|
+| 👩‍💼 Ayse - UX Stratejisti | Problem Framing, User Research | problem & user |
+| 👨‍💼 Mehmet - PM | MVP Scope, Roadmap | scope |
+| 👩‍🔬 Zeynep - Domain Expert | Customer Discovery, PMF | severity & metrics |
+| 👨‍💻 Burak - Tech Advisor | Tech Feasibility | constraints |
 
-**Soru 2 — User:**
-> "Bu problemi en çok kim yaşıyor? Hedef kullanıcını mümkün olduğunca dar tanımla."
+## Spec Quality Detection
 
-**Cevap:** 18-25 yaş arası üniversite öğrencileri, özellikle çoklu ders takibi yapan 2. ve 3. sınıf öğrenciler.
+Yanit motoru spec'in dolu olma seviyesine gore farkli ton tutar:
 
-**Soru 3 — Scope:**
-> "v0.1'de ne yapacak, ne yapmayacak? Tek cümleyle en küçük çalışan versiyonu tanımla."
+- **excellent** (4-5 alan dolu, ortalama uzunluk > 40 char) -> DEVAM ET
+- **good** (3+ alan dolu, ortalama uzunluk > 20 char) -> REVIZE ET
+- **weak** (cogu alan bos veya kisa) -> PIVOT YAP
 
-**Cevap:** Kullanıcı ders ve konu girer, uygulama günlük çalışma hedefi önerir ve tamamlananları işaretler.
+## Decision Log (v2)
 
-**Soru 4 — Constraint:**
-> "Hangi teknik veya zaman kısıtların var? Neler kesinlikle dışarıda kalmalı?"
-
-**Cevap:** Backend yok, tüm veri local. Sosyal özellikler, bildirimler ve takvim entegrasyonu v0.1 dışında.
-
-**Soru 5 — Success Metric:**
-> "Bu fikrin çalıştığını nasıl ölçersin? 30 gün sonra başarılı olduğunu ne kanıtlar?"
-
-**Cevap:** Kullanıcı 3 gün üst üste günlük hedefini tamamlarsa uygulama işe yarıyor demektir.
-
----
-
-## Tek Sayfa Spec (Üretilen Çıktı)
-
-| Alan | İçerik |
-|------|--------|
-| **Problem** | Üniversite öğrencileri çalışma süreçlerini yapılandıramıyor; hangi konuyu ne kadar çalıştıklarını takip edemiyorlar |
-| **Hedef Kullanıcı** | 18-25 yaş, üniversite 2-3. sınıf öğrencileri, çoklu ders yükü olanlar |
-| **Çözüm** | Ders + konu girişi → AI günlük çalışma hedefi önerir → kullanıcı tamamlananları işaretler |
-| **Kapsam Dışı** | Backend, bildirim, sosyal paylaşım, takvim sync |
-| **Başarı Metriği** | 3 gün üst üste günlük hedef tamamlama |
-| **Efor Tahmini** | S (Small) — 1 haftalık sprint |
-| **Farklılaştırıcı** | Notlar değil *hedef* odaklı; AI soru sorarak spec üretir, kullanıcı pasif değil aktif |
-
----
-
-## Maturity Stage
-
-`DOT → LINE → PARAGRAPH → PAGE` ✅ (Tüm alanlar dolu — PAGE seviyesine ulaşıldı)
+| Karar | Neden |
+|-------|-------|
+| 4 uzman (mock) | Backend yok, demo icin yeterli cesitlilik |
+| Spec quality detection | Yanit kalitesinin spec'e gore adapt olmasi |
+| 3 recommendation type | KILL agir, PROCEED/ITERATE/PIVOT yeterli |
+| Tek dosyali state machine | 4 ekran yerine basit, tutarli |
+| AsyncStorage @nokta/expert_responses | Mevcut storage pattern uyumlu |
