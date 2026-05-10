@@ -21,5 +21,10 @@ Uygulamanın çalışır haldeki 60 saniyelik demo videosunu aşağıdan izleyeb
 - **Yapay Zeka:** Groq API (Llama-3.3-70b-versatile), Expo Speech Recognition
 - **Geliştirme Desteği:** Bu projenin kodlanması, hata ayıklaması (debugging), Native APK derleme süreçleri ve LLM Test mekanizmalarının kurulmasında **Google Gemini (Antigravity AI Agent)** kullanılmıştır.
 
-### 📌 Ekler
-- Derlenmiş APK Dosyası: `app-release.apk`
+### 📝 Decision Log (Tasarım Kararları)
+1. **Verimlilik:** Expo altyapısı seçilerek hızlı prototipleme sağlandı.
+2. **Yapay Zeka:** Hız ve kalite dengesi için Groq API (Llama 3.3) tercih edildi.
+3. **Güvenlik:** Rol dışına çıkılmasını engellemek için LLM Test Harness geliştirildi.
+
+### 🎯 Seçilen Track
+- **Track A: Spec-Gen**
