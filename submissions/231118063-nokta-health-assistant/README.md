@@ -21,6 +21,10 @@ Uygulamanın çalışır haldeki 60 saniyelik demo videosunu aşağıdan izleyeb
 - **Yapay Zeka:** Groq API (Llama-3.3-70b-versatile), Expo Speech Recognition
 - **Geliştirme Desteği:** Bu projenin kodlanması, hata ayıklaması (debugging), Native APK derleme süreçleri ve LLM Test mekanizmalarının kurulmasında **Google Gemini (Antigravity AI Agent)** kullanılmıştır.
 
+### 📦 Uygulama APK Dosyası
+Projenin Android için derlenmiş çalışabilir APK dosyasına aşağıdaki bağlantıdan ulaşabilirsiniz (GitHub boyut sınırları nedeniyle harici link verilmiştir):
+🔗 **[Nokta Uygulamasını İndir (Google Drive)](https://drive.google.com/file/d/1Lgh_tJwHrfNH3DbEjfCOez3vCdThNjxr/view?usp=sharing)**
+
 ### 📝 Decision Log (Tasarım Kararları)
 1. **Verimlilik:** Expo altyapısı seçilerek hızlı prototipleme sağlandı.
 2. **Yapay Zeka:** Hız ve kalite dengesi için Groq API (Llama 3.3) tercih edildi.
