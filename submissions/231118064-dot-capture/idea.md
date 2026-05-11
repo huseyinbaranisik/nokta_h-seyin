@@ -1,7 +1,7 @@
 # idea.md — Track A: Dot Capture & Enrich
 
 ## Öğrenci
-- **Ad Soyad:** İpek Balkız
+- **Ad Soyad:** Kardelen Bal
 - **No:** 231118064
 - **Track:** A — Dot Capture & Enrich
 
