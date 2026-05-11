@@ -1,4 +1,4 @@
-const GROQ_API_KEY = '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';
+const GROQ_API_KEY = '';
 // 1. Sorunun hangi alana ait olduğunu tespit eden fonksiyon
 export const detectDomain = async (userMessage) => {
     try {
