@@ -24,6 +24,7 @@ npx expo start
 - [x] `idea.md` (Özelleşmiş fikir dosyası)
 - [x] `app/` (Expo projesi)
 - [x] `app-release.apk` (Derlenmiş APK eklendi)
+- [x] **Expo Proje Linki (QR Kod için):** [Expo.dev Proje Sayfası](https://expo.dev/projects/eb092d1c-19c0-4d88-9e06-2995eda808fd)
 - [x] **Demo Video:** [YouTube üzerinden izle](https://youtube.com/shorts/jCe-x0BJ4jg?feature=share)
 - [x] **APK İndirme Linki:** [EAS Build üzerinden indir](https://expo.dev/artifacts/eas/57tFcsAAUcF5unT4cPZfJa.apk)
 
