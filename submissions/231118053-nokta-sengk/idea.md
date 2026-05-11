@@ -22,6 +22,9 @@ Uygulama, metindeki "Revolutionary", "AI-driven", "Disruptive" gibi içi boşalt
 ### 🛰️ C. Sosyal Sensör ve Rakip Radarı (Bonus Modül)
 SlopSense, Gemini 1.5 Flash'ın devasa bilgi birikimini kullanarak, girişimcinin bahsetmediği veya gizlediği rakipleri otonom olarak bulur. "Rakibimiz yok" diyen bir startup'ın karşısına dev rakipleri saniyeler içinde diker.
 
+### 🤝 D. Hibrit Uzman Desteği (AI + Human Synergy)
+SlopSense sadece AI ile sınırlı kalmaz; AI'nın ürettiği "slop raporunu" gerçek bir insan uzmana (VC, Danışman) doğrulatmaya imkan tanır. AI hızla ön incelemeyi yapar, insan uzman ise kritik noktalarda müdahale ederek derinlik katar.
+
 ---
 
 ## 🏗️ 3. Teknik Mimari ve Uygulama

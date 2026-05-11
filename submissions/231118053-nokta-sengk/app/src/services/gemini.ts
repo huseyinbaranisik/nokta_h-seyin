@@ -24,7 +24,12 @@ export const analyzePitch = async (pitch: string): Promise<AnalysisResult> => {
               {
                 "score": number,
                 "reasoning": string[],
-                "socialSensor": { "competitors": string[], "warnings": string[] }
+                "socialSensor": { "competitors": string[], "warnings": string[] },
+                "expertInsights": {
+                  "cto": "1 sentence technical critique",
+                  "cfo": "1 sentence financial critique",
+                  "strategist": "1 sentence strategy critique"
+                }
               }
             `
           }]
@@ -43,7 +48,11 @@ export const analyzePitch = async (pitch: string): Promise<AnalysisResult> => {
     // Temizleme işlemi
     text = text.replace(/```json/g, '').replace(/```/g, '').trim();
     
-    return JSON.parse(text) as AnalysisResult;
+    const result = JSON.parse(text) as AnalysisResult;
+    return {
+      ...result,
+      status: 'AI_ONLY'
+    };
   } catch (error: any) {
     console.error('Gemini Fetch Error:', error);
     return {

@@ -5,6 +5,7 @@ import { RootStackParamList } from './types';
 import PitchInputScreen from '../screens/PitchInputScreen';
 import LoadingScreen from '../screens/LoadingScreen';
 import AnalysisDashboard from '../screens/AnalysisDashboard';
+import ExpertHubScreen from '../screens/ExpertHubScreen';
 import { COLORS } from '../theme/colors';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -23,6 +24,7 @@ const AppNavigator = () => {
         <Stack.Screen name="PitchInput" component={PitchInputScreen} />
         <Stack.Screen name="Loading" component={LoadingScreen} />
         <Stack.Screen name="Dashboard" component={AnalysisDashboard} />
+        <Stack.Screen name="ExpertHub" component={ExpertHubScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -12,7 +12,7 @@ import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import SlopGauge from '../components/SlopGauge';
-import { AlertTriangle, TrendingDown, Target, ArrowLeft, Radio } from 'lucide-react-native';
+import { AlertTriangle, TrendingDown, Target, ArrowLeft, Radio, ShieldCheck, Users, ArrowRight } from 'lucide-react-native';
 
 type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Dashboard'>;
@@ -21,6 +21,22 @@ const AnalysisDashboard = () => {
   const route = useRoute<DashboardRouteProp>();
   const navigation = useNavigation<NavigationProp>();
   const { result } = route.params;
+
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'HUMAN_VERIFIED': return COLORS.success;
+      case 'PENDING_HUMAN': return COLORS.warning;
+      default: return COLORS.secondary;
+    }
+  };
+
+  const getStatusText = (status?: string) => {
+    switch (status) {
+      case 'HUMAN_VERIFIED': return 'İnsan Doğrulamalı';
+      case 'PENDING_HUMAN': return 'Uzman İncelemede';
+      default: return 'AI Analizi';
+    }
+  };
 
   const renderReasoningCard = (text: string, index: number) => (
     <View key={index} style={styles.card}>
@@ -38,11 +54,32 @@ const AnalysisDashboard = () => {
           <ArrowLeft color={COLORS.text} size={24} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Slop Dashboard</Text>
-        <View style={{ width: 24 }} />
+        <View style={[styles.statusBadge, { borderColor: getStatusColor(result.status) }]}>
+          <Text style={[styles.statusText, { color: getStatusColor(result.status) }]}>
+            {getStatusText(result.status)}
+          </Text>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <SlopGauge score={result.score} />
+
+        {/* Expert Intervention Section */}
+        <View style={styles.expertInterventionCard}>
+          <View style={styles.expertIconContainer}>
+            <Users color={COLORS.primary} size={24} />
+          </View>
+          <View style={styles.expertInfo}>
+            <Text style={styles.expertTitle}>Hibrit Uzman Desteği</Text>
+            <Text style={styles.expertSub}>AI Analizini bir uzmana doğrulatın</Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.expertAction}
+            onPress={() => navigation.navigate('ExpertHub', { result, pitch: '' })} // Pitch will be passed from previous state if needed, but here we can just use result
+          >
+            <ArrowRight color={COLORS.text} size={20} />
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.sectionHeader}>
           <Target color={COLORS.text} size={20} />
@@ -103,8 +140,53 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: COLORS.text,
   },
+  statusBadge: {
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+    borderRadius: BORDER_RADIUS.full,
+    borderWidth: 1,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
   scrollContent: {
     padding: SPACING.lg,
+  },
+  expertInterventionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    padding: SPACING.md,
+    borderRadius: BORDER_RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLORS.primary + '40',
+    marginTop: SPACING.md,
+  },
+  expertIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.primary + '20',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SPACING.md,
+  },
+  expertInfo: {
+    flex: 1,
+  },
+  expertTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  expertSub: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+  },
+  expertAction: {
+    padding: SPACING.sm,
   },
   sectionHeader: {
     flexDirection: 'row',

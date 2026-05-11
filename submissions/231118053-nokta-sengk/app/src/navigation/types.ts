@@ -2,6 +2,7 @@ export type RootStackParamList = {
   PitchInput: undefined;
   Loading: { pitch: string };
   Dashboard: { result: AnalysisResult };
+  ExpertHub: { result: AnalysisResult; pitch: string };
 };
 
 export type AnalysisResult = {
@@ -10,6 +11,13 @@ export type AnalysisResult = {
   socialSensor: {
     competitors: string[];
     warnings: string[];
+  };
+  status?: 'AI_ONLY' | 'PENDING_HUMAN' | 'HUMAN_VERIFIED';
+  humanNotes?: string[];
+  expertInsights?: {
+    cto: string;
+    cfo: string;
+    strategist: string;
   };
 };
 
