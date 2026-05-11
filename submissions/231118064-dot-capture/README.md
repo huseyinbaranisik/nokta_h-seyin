@@ -1,96 +1,97 @@
-# Nokta — Dot Capture & Enrich
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-**Öğrenci:** İpek Balkız · 231118064
-**Track:** A — Dot Capture & Enrich
+# Getting Started
 
----
+> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
-## Demo
+## Step 1: Start Metro
 
-> 📱 **APK:** `app-release.apk` (bu klasörde)
+First, you will need to run **Metro**, the JavaScript build tool for React Native.
 
----
+To start the Metro dev server, run the following command from the root of your React Native project:
 
-## Track Seçimi
+```sh
+# Using npm
+npm start
 
-**Track A — Dot Capture & Enrich** seçildi.
-
-**Gerekçe:** NOKTA'nın ana tezini en doğrudan implemente eden track bu.
-Ham fikir (nokta) girer → engineering sorularıyla zenginleşir → spec (sayfa) çıkar.
-Diğer track'lere kıyasla daha net bir kullanıcı akışı ve daha az belirsiz scope.
-
----
-
-## Uygulama Nasıl Çalışır
-
-1. Kullanıcı ham fikrini yazar
-2. Claude AI 4 engineering sorusu sorar (problem, user, scope, constraint)
-3. Kullanıcı cevaplar
-4. Claude tek sayfalık ürün spesifikasyonu üretir
-
----
-
-## Kurulum & Çalıştırma
-
-```bash
-cd app
-npm install
-npx react-native run-android
+# OR using Yarn
+yarn start
 ```
 
-**Gereksinimler:**
-- Node.js 18+
-- React Native CLI
-- Android SDK / emülatör veya fiziksel cihaz
+## Step 2: Build and run your app
 
-**Not:** Bu proje React Native CLI ile geliştirilmiştir (Expo değil).
+With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
 
----
+### Android
 
-## APK Build
+```sh
+# Using npm
+npm run android
 
-```bash
-cd app/android
-./gradlew assembleRelease
-# APK: android/app/build/outputs/apk/release/app-release.apk
+# OR using Yarn
+yarn android
 ```
 
----
+### iOS
 
-## Kullanılan AI Araçlar
+For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
 
-| Araç | Kullanım |
-|------|----------|
-| Claude (claude.ai) | Uygulama kodu üretimi, spec yazımı |
-| Anthropic API | Runtime — soru üretme + spec oluşturma |
+The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
 
----
-
-## Decision Log
-
-| Karar | Gerekçe |
-|-------|---------|
-| Track A seçimi | En net akış, NOKTA tezini doğrudan implemente ediyor |
-| React Native CLI (Expo değil) | Daha önce CLI deneyimi var, APK build daha kolay |
-| 4 soru (3-5 arası) | 3 az geldi, 5 uzun hissettiriyor — 4 ideal |
-| Dark tema | NOKTA branding ile uyumlu |
-| Claude claude-sonnet-4-20250514 | En güncel, kaliteli soru ve spec üretiyor |
-
----
-
-## Dosya Yapısı
-
-```
-231118064-dot-capture/
-├── README.md          ← bu dosya
-├── idea.md            ← Track A fikir dosyası
-├── app/               ← React Native CLI projesi
-│   ├── App.tsx        ← ana uygulama
-│   ├── package.json
-│   └── ...
-└── app-release.apk    ← Android APK
+```sh
+bundle install
 ```
 
----
+Then, and every time you update your native dependencies, run:
 
-*NOKTA · NAIM Ecosystem · Track A · 231118064*
+```sh
+bundle exec pod install
+```
+
+For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+
+```sh
+# Using npm
+npm run ios
+
+# OR using Yarn
+yarn ios
+```
+
+If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+
+This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+
+## Step 3: Modify your app
+
+Now that you have successfully run the app, let's make changes!
+
+Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+
+When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+
+- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
+- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+
+## Congratulations! :tada:
+
+You've successfully run and modified your React Native App. :partying_face:
+
+### Now what?
+
+- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
+- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+
+# Troubleshooting
+
+If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+
+# Learn More
+
+To learn more about React Native, take a look at the following resources:
+
+- [React Native Website](https://reactnative.dev) - learn more about React Native.
+- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
+- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
+- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
+- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.

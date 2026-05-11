@@ -13,6 +13,10 @@ import {
   Alert,
 } from 'react-native';
 
+// --- Human Support Imports ---
+import { HumanSupportRequest, MascotState } from './src/types/support';
+import { SupportMascot, SupportPanel, SupportForm } from './src/components/SupportComponents';
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 type Phase = 'input' | 'questioning' | 'spec';
 
@@ -63,6 +67,12 @@ export default function DotCapture() {
   const [loading, setLoading] = useState(false);
   const [questionIndex, setQuestionIndex] = useState(0);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  // --- Human Support State ---
+  const [supportRequests, setSupportRequests] = useState<HumanSupportRequest[]>([]);
+  const [isSupportPanelVisible, setIsSupportPanelVisible] = useState(false);
+  const [isSupportFormVisible, setIsSupportFormVisible] = useState(false);
+  const [mascotState, setMascotState] = useState<MascotState>('idle');
 
   const MAX_QUESTIONS = 4;
 
@@ -146,6 +156,31 @@ export default function DotCapture() {
       setSpec('');
       setQuestionIndex(0);
     });
+  };
+
+  // --- Human Support Handlers ---
+  const handleCreateSupportRequest = (data: Partial<HumanSupportRequest>) => {
+    const newRequest: HumanSupportRequest = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: data.title || '',
+      description: data.description || '',
+      supportType: data.supportType || 'mentor_review',
+      priority: data.priority || 'medium',
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ideaId: rawIdea,
+    };
+
+    setSupportRequests([newRequest, ...supportRequests]);
+    setMascotState('happy');
+    setTimeout(() => setMascotState('idle'), 3000);
+    Alert.alert('Başarılı', 'Destek talebiniz oluşturuldu. Bir mentor en kısa sürede inceleyecektir.');
+  };
+
+  const openSupport = () => {
+    setMascotState('speaking');
+    setIsSupportPanelVisible(true);
   };
 
   return (
@@ -249,9 +284,16 @@ export default function DotCapture() {
                   {loading
                     ? <ActivityIndicator color="#0a0a0f" size="small" />
                     : <Text style={styles.btnText}>
-                        {questionIndex >= MAX_QUESTIONS ? 'SPEC OLUŞTUR →' : 'İLERİ →'}
-                      </Text>
+                      {questionIndex >= MAX_QUESTIONS ? 'SPEC OLUŞTUR →' : 'İLERİ →'}
+                    </Text>
                   }
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.supportTriggerBtn}
+                  onPress={openSupport}
+                >
+                  <Text style={styles.supportTriggerBtnText}>🙋‍♂️ İNSAN DESTEĞİ İSTE</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -267,6 +309,20 @@ export default function DotCapture() {
               <View style={styles.specCard}>
                 <Text style={styles.specText}>{spec}</Text>
               </View>
+
+              {/* Decision Log / Human Feedback */}
+              {supportRequests.some(r => r.status === 'resolved') && (
+                <View style={styles.decisionLogSection}>
+                  <Text style={styles.decisionLogTitle}>📝 KARAR GÜNLÜĞÜ (HITL)</Text>
+                  {supportRequests.filter(r => r.status === 'resolved').map(req => (
+                    <View key={req.id} style={styles.decisionItem}>
+                      <Text style={styles.decisionTitle}>{req.title}</Text>
+                      <Text style={styles.decisionFeedback}>{req.humanFeedback}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+
               <TouchableOpacity style={styles.btnSecondary} onPress={handleReset}>
                 <Text style={styles.btnSecondaryText}>+ YENİ NOKTA</Text>
               </TouchableOpacity>
@@ -277,6 +333,31 @@ export default function DotCapture() {
 
         <Text style={styles.footer}>NOKTA · NAIM Ecosystem · 231118064</Text>
       </ScrollView>
+
+      {/* --- Human Support UI Components --- */}
+      <SupportMascot
+        state={mascotState}
+        onPress={openSupport}
+      />
+
+      <SupportPanel
+        visible={isSupportPanelVisible}
+        onClose={() => {
+          setIsSupportPanelVisible(false);
+          setMascotState('idle');
+        }}
+        requests={supportRequests}
+        onCreateNew={() => {
+          setIsSupportPanelVisible(false);
+          setIsSupportFormVisible(true);
+        }}
+      />
+
+      <SupportForm
+        visible={isSupportFormVisible}
+        onClose={() => setIsSupportFormVisible(false)}
+        onSubmit={handleCreateSupportRequest}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -358,4 +439,53 @@ const styles = StyleSheet.create({
   specText: { color: '#bbb', fontSize: 14, lineHeight: 24 },
 
   footer: { color: '#222', fontSize: 10, textAlign: 'center', marginTop: 40, letterSpacing: 2 },
+
+  // --- Human Support Styles ---
+  supportTriggerBtn: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e8d5a3',
+    alignItems: 'center',
+    borderStyle: 'dashed',
+  },
+  supportTriggerBtnText: {
+    color: '#e8d5a3',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
+  decisionLogSection: {
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: '#111118',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#00b894',
+  },
+  decisionLogTitle: {
+    color: '#00b894',
+    fontSize: 12,
+    fontWeight: '800',
+    marginBottom: 15,
+    letterSpacing: 2,
+  },
+  decisionItem: {
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1e1e2e',
+  },
+  decisionTitle: {
+    color: '#eee',
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  decisionFeedback: {
+    color: '#888',
+    fontSize: 13,
+    fontStyle: 'italic',
+  },
 });
