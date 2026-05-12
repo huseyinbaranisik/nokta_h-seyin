@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyCqjeXtMTBJro_S8ebWnBBHmu2O8e0WWF8';
+const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || 'AIzaSyCfE8dJBvcFpWYYO0O5AujkRobRR7LBqjI';
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent';
 
 export const generateGeminiResponse = async (prompt, history = [], audioBase64 = null, imageBase64 = null) => {
