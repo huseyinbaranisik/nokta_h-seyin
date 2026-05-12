@@ -2,11 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
     View, Text, TouchableOpacity, StyleSheet,
     ScrollView, Animated, Share, Alert, Platform,
+    ActivityIndicator
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Markdown from 'react-native-markdown-display';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADIUS, SHADOWS } from '../theme';
+import { generateExpertReview } from '../services/aiService';
 
 const mdStyles = {
     body: { color: COLORS.textPrimary, fontSize: 14, lineHeight: 22, backgroundColor: 'transparent' },
@@ -26,10 +28,19 @@ const mdStyles = {
     em: { fontStyle: 'italic', color: COLORS.textSecondary },
 };
 
+const expertMdStyles = {
+    body: { color: COLORS.textPrimary, fontSize: 14, lineHeight: 22 },
+    paragraph: { marginBottom: 8 },
+    list_item: { color: COLORS.textPrimary, marginBottom: 4 },
+    strong: { fontWeight: '700', color: COLORS.warning },
+};
+
 export default function SpecSheetScreen({ route, navigation }) {
     const { idea, specMarkdown } = route.params;
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(20)).current;
+    const [expertReview, setExpertReview] = useState(null);
+    const [isReviewing, setIsReviewing] = useState(false);
 
     useEffect(() => {
         Animated.parallel([
@@ -43,6 +54,18 @@ export default function SpecSheetScreen({ route, navigation }) {
             await Share.share({ message: specMarkdown, title: 'Project Spec Sheet — Spec Architect' });
         } catch (e) {
             Alert.alert('Paylaşım Hatası', e.message);
+        }
+    };
+
+    const handleRequestReview = async () => {
+        setIsReviewing(true);
+        try {
+            const review = await generateExpertReview(specMarkdown);
+            setExpertReview(review);
+        } catch (e) {
+            Alert.alert('Hata', e.message);
+        } finally {
+            setIsReviewing(false);
         }
     };
 
@@ -81,7 +104,32 @@ export default function SpecSheetScreen({ route, navigation }) {
                         <Markdown style={mdStyles}>{specMarkdown}</Markdown>
                     </View>
 
+                    {/* Expert Review Card */}
+                    {expertReview && (
+                        <View style={styles.expertCard}>
+                            <View style={styles.expertHeader}>
+                                <Ionicons name="glasses" size={20} color={COLORS.warning} />
+                                <Text style={styles.expertTitle}>Uzman Notu</Text>
+                            </View>
+                            <Markdown style={expertMdStyles}>{expertReview}</Markdown>
+                        </View>
+                    )}
+
                     {/* Actions */}
+                    {!expertReview && !isReviewing && (
+                        <TouchableOpacity style={styles.expertBtn} onPress={handleRequestReview}>
+                            <Ionicons name="people-outline" size={18} color={COLORS.warning} />
+                            <Text style={styles.expertBtnText}>Uzmana Gönder (Eskalasyon)</Text>
+                        </TouchableOpacity>
+                    )}
+
+                    {isReviewing && (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="small" color={COLORS.warning} />
+                            <Text style={styles.loadingText}>Uzman inceliyor...</Text>
+                        </View>
+                    )}
+
                     <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
                         <Ionicons name="share-social-outline" size={18} color="#fff" />
                         <Text style={styles.shareBtnText}>Paylaş</Text>
@@ -109,6 +157,14 @@ const styles = StyleSheet.create({
     successTitle: { fontSize: 14, fontWeight: '700', color: COLORS.success },
     successSub: { fontSize: 12, color: COLORS.textMuted, marginTop: 2 },
     markdownCard: { backgroundColor: COLORS.bgCard, borderRadius: RADIUS.lg, padding: SPACING.lg, borderWidth: 1, borderColor: COLORS.borderSubtle, marginBottom: SPACING.lg },
+    expertCard: { backgroundColor: 'rgba(255, 184, 77, 0.08)', borderRadius: RADIUS.lg, padding: SPACING.lg, borderWidth: 1, borderColor: 'rgba(255, 184, 77, 0.2)', marginBottom: SPACING.lg },
+    expertHeader: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm },
+    expertTitle: { color: COLORS.warning, fontSize: 16, fontWeight: '700' },
+    expertText: { color: COLORS.textPrimary, fontSize: 14, lineHeight: 22, fontStyle: 'italic' },
+    expertBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, backgroundColor: COLORS.bgCard, borderRadius: RADIUS.lg, paddingVertical: SPACING.md, borderWidth: 1, borderColor: COLORS.warning, marginBottom: SPACING.md },
+    expertBtnText: { color: COLORS.warning, fontSize: 15, fontWeight: '700' },
+    loadingContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, paddingVertical: SPACING.md, marginBottom: SPACING.md },
+    loadingText: { color: COLORS.textSecondary, fontSize: 14 },
     shareBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, backgroundColor: COLORS.accent, borderRadius: RADIUS.lg, paddingVertical: SPACING.md, marginBottom: SPACING.md, ...SHADOWS.accent },
     shareBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
     newIdeaBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, backgroundColor: COLORS.bgCard, borderRadius: RADIUS.lg, paddingVertical: SPACING.md, borderWidth: 1, borderColor: COLORS.border },
