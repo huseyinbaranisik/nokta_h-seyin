@@ -16,7 +16,7 @@
 
 ## 📱 Kurulum ve Bağlantılar
 - **Expo QR Kodu:** [![Expo QR](https://img.shields.io/badge/Expo-QR_Kodu_İçin_Tıkla-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/accounts/eexnmy/projects/FitLoop/builds/b40cee76-84a2-488c-9381-5d5dc7e23f96)
-- **APK İndir:** [FitLoop.apk](./FitLoop.apk)
+- **APK İndir:** [app-release.apk](./app-release.apk)
 - **Demo Video:** (Kullanıcı tarafından 60 sn olarak yüklenecektir)
 
 ---
