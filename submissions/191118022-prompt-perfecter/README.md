@@ -6,13 +6,13 @@
 
 ---
 
-## Track Seçimi
+## Track Secimi
 
 **Track A — Dot Capture & Enrich** seçildi.
 
-Ham fikri (text) alan, GPT-5.4-mini AI ile 4 yönlendirici soru soran (problem, kullanıcı, kapsam, kısıt), ardından **tek sayfalık mükemmel prompt** üreten bir mobil uygulama geliştirildi.
+Ham fikri metin veya ses ile alan, GPT-5.4-mini AI ile 4 yonlendirici soru soran (problem, kullanici, kapsam, kisit), ardindan **tek sayfalik mukemmel prompt** ureten bir mobil uygulama gelistirildi.
 
-Klasik Track A akışı: `Ham Fikir → AI Soruları → Detaylı Cevaplar → Mükemmel Prompt`.
+Klasik Track A akisi: `Ham Fikir -> AI Sorulari -> Detayli Cevaplar -> Mukemmel Prompt`.
 
 ---
 
@@ -33,10 +33,17 @@ Klasik Track A akışı: `Ham Fikir → AI Soruları → Detaylı Cevaplar → M
 | 2026-04-22 | React Native Expo SDK 52 | Hızlı APK çıktısı, EAS Build desteği |
 | 2026-04-22 | 4 engineering sorusu: Problem, Hedef Kullanıcı, Kapsam, Kısıt | Track A rubriğine tam uyum |
 | 2026-04-22 | Cross-track bonus: Slop Score | Track B mantığı Track A çıktısına entegre edildi; özgünlük skoru ve öneri üretiyor |
-
 | 2026-04-22 | AI Tool: Antigravity (Google Deepmind) | Kod iskeletini ve ekranları otomatik oluşturdu |
+| 2026-05-12 | Gercek cihazda sesli fikir girisi eklendi | Track A akisini bozmadan ham fikrin mikrofonla alinmasi saglandi |
+| 2026-05-12 | Expo Speech Recognition secildi | Android telefonda dusuk surtunmeli, dogrudan fikir capture bonusu sagliyor |
 
 ## AI Tool Log
 
 - **Antigravity (Google Deepmind Agentic Coding)** — Expo proje iskeletini, tüm ekranları ve Gemini entegrasyonunu otomatik oluşturdu.
+- **Codex / GPT-5** — Telefon testi, sesli giris entegrasyonu ve submission paketleme adimlarinda kullanildi.
 - Rate limit durumunda backup: manuel kod yazımı.
+
+## Ek Capability
+
+- Ham fikir metin yerine mikrofonla da girilebiliyor.
+- Sesli giris ozellikle telefonda test edildi ve Track A'nin "capture" kismini daha dogal hale getirdi.

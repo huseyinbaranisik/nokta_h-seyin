@@ -1,23 +1,103 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity,
-  StyleSheet, SafeAreaView, KeyboardAvoidingView,
-  Platform, ScrollView, BackHandler
+  ActivityIndicator,
+  BackHandler,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent,
+} from 'expo-speech-recognition';
 
 export default function HomeScreen({ onSubmit }) {
   const [prompt, setPrompt] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [voiceError, setVoiceError] = useState(null);
+  const [voiceTranscript, setVoiceTranscript] = useState('');
 
   const examples = [
-    'Arkadaşlarla film izleme deneyimini sosyal hale getiren bir uygulama',
-    'Mahalle sakinlerinin birbirine yardım edebileceği bir platform',
-    'Öğrencilerin ders notlarını birlikte organize ettiği bir araç',
+    'Arkadaslarla film izleme deneyimini sosyal hale getiren bir uygulama',
+    'Mahalle sakinlerinin birbirine yardim edebilecegi bir platform',
+    'Ogrencilerin ders notlarini birlikte organize ettigi bir arac',
   ];
+
+  useEffect(() => {
+    return () => {
+      if (listening) {
+        ExpoSpeechRecognitionModule.stop();
+      }
+    };
+  }, [listening]);
+
+  useSpeechRecognitionEvent('start', () => {
+    setListening(true);
+    setVoiceError(null);
+  });
+
+  useSpeechRecognitionEvent('end', () => {
+    setListening(false);
+  });
+
+  useSpeechRecognitionEvent('result', (event) => {
+    const transcript = event.results[0]?.transcript?.trim() ?? '';
+    if (!transcript) {
+      return;
+    }
+
+    setVoiceTranscript(transcript);
+    setPrompt(transcript);
+  });
+
+  useSpeechRecognitionEvent('error', (event) => {
+    setListening(false);
+    setVoiceError(event.message || 'Ses tanima basarisiz oldu.');
+  });
 
   const handleSubmit = () => {
     if (prompt.trim().length < 10) return;
     onSubmit(prompt.trim());
+  };
+
+  const toggleListening = async () => {
+    if (listening) {
+      ExpoSpeechRecognitionModule.stop();
+      return;
+    }
+
+    setVoiceTranscript('');
+    setVoiceError(null);
+
+    const permission =
+      await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+    if (!permission.granted) {
+      setVoiceError('Mikrofon veya konusma tanima izni verilmedi.');
+      return;
+    }
+
+    try {
+      ExpoSpeechRecognitionModule.start({
+        addsPunctuation: true,
+        continuous: false,
+        interimResults: true,
+        lang: 'tr-TR',
+      });
+    } catch (error) {
+      setListening(false);
+      setVoiceError(
+        error instanceof Error
+          ? error.message
+          : 'Ses tanima baslatilamadi.',
+      );
+    }
   };
 
   return (
@@ -30,27 +110,42 @@ export default function HomeScreen({ onSubmit }) {
           contentContainerStyle={styles.container}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Top Bar / Back button */}
           <View style={styles.topBar}>
-            <TouchableOpacity onPress={() => BackHandler.exitApp()} style={styles.backBtn}>
-              <Text style={styles.backBtnText}>← Geri</Text>
+            <TouchableOpacity
+              onPress={() => BackHandler.exitApp()}
+              style={styles.backBtn}
+            >
+              <Text style={styles.backBtnText}>Geri</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Header */}
           <View style={styles.header}>
             <View style={styles.badge}>
               <Text style={styles.badgeText}>Track A · Dot Capture</Text>
             </View>
             <Text style={styles.title}>Fikrin nedir?</Text>
             <Text style={styles.subtitle}>
-              Ham fikrini yaz, AI ile birlikte mükemmel hale getirelim
+              Ham fikrini yazarak veya sesle anlat, AI ile birlikte netlestirelim.
             </Text>
           </View>
 
-          {/* Input Area */}
           <View style={[styles.inputCard, isFocused && styles.inputCardFocused]}>
-            <Text style={styles.inputLabel}>💡 Ham Fikir</Text>
+            <View style={styles.inputHeader}>
+              <Text style={styles.inputLabel}>Ham Fikir</Text>
+              <TouchableOpacity
+                style={[
+                  styles.voiceButton,
+                  listening ? styles.voiceButtonActive : null,
+                ]}
+                onPress={toggleListening}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.voiceButtonText}>
+                  {listening ? 'Dinliyor' : 'Sesle doldur'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
             <TextInput
               style={styles.textArea}
               placeholder="Bir uygulama fikrim var: insanlar..."
@@ -67,43 +162,70 @@ export default function HomeScreen({ onSubmit }) {
             <Text style={styles.charCount}>{prompt.length}/500</Text>
           </View>
 
-          {/* CTA */}
+          {listening || voiceTranscript ? (
+            <View style={styles.voicePanel}>
+              <View style={styles.voicePulse}>
+                {listening ? <ActivityIndicator color="#6c47ff" /> : null}
+              </View>
+              <View style={styles.voiceCopy}>
+                <Text style={styles.voiceTitle}>
+                  {listening ? 'Dinliyorum...' : 'Ses algilandi'}
+                </Text>
+                <Text style={styles.voiceText}>
+                  {voiceTranscript || 'Fikrini konusarak anlatabilirsin.'}
+                </Text>
+              </View>
+            </View>
+          ) : null}
+
+          {voiceError ? <Text style={styles.errorText}>{voiceError}</Text> : null}
+
           <TouchableOpacity
             style={[styles.btn, prompt.trim().length < 10 && styles.btnDisabled]}
             onPress={handleSubmit}
             activeOpacity={0.85}
             disabled={prompt.trim().length < 10}
           >
-            <Text style={styles.btnText}>🚀  Mükemmelleştir</Text>
+            <Text style={styles.btnText}>Mukemmellestir</Text>
           </TouchableOpacity>
 
-          {/* Examples */}
           <View style={styles.examplesSection}>
-            <Text style={styles.examplesTitle}>Örnek fikirler</Text>
-            {examples.map((ex, i) => (
+            <Text style={styles.examplesTitle}>Ornek fikirler</Text>
+            {examples.map((example, index) => (
               <TouchableOpacity
-                key={i}
+                key={index}
                 style={styles.exampleChip}
-                onPress={() => setPrompt(ex)}
+                onPress={() => setPrompt(example)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.exampleText} numberOfLines={2}>{ex}</Text>
+                <Text style={styles.exampleText} numberOfLines={2}>
+                  {example}
+                </Text>
                 <Text style={styles.exampleArrow}>→</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          {/* Steps indicator */}
           <View style={styles.steps}>
-            {['Fikir Gir', 'Soruları Yanıtla', 'Sonucu Al'].map((step, i) => (
-              <View key={i} style={styles.stepItem}>
-                <View style={[styles.stepDot, i === 0 && styles.stepDotActive]}>
-                  <Text style={styles.stepDotText}>{i + 1}</Text>
+            {['Fikir Gir', 'Sorulari Yanitla', 'Sonucu Al'].map((step, index) => (
+              <View key={step} style={styles.stepItem}>
+                <View
+                  style={[
+                    styles.stepDot,
+                    index === 0 ? styles.stepDotActive : null,
+                  ]}
+                >
+                  <Text style={styles.stepDotText}>{index + 1}</Text>
                 </View>
-                <Text style={[styles.stepLabel, i === 0 && styles.stepLabelActive]}>
+                <Text
+                  style={[
+                    styles.stepLabel,
+                    index === 0 ? styles.stepLabelActive : null,
+                  ]}
+                >
                   {step}
                 </Text>
-                {i < 2 && <Text style={styles.stepLine}>——</Text>}
+                {index < 2 ? <Text style={styles.stepLine}>--</Text> : null}
               </View>
             ))}
           </View>
@@ -158,7 +280,26 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   inputCardFocused: { borderColor: '#6c47ff' },
-  inputLabel: { fontSize: 13, color: '#888', fontWeight: '600', marginBottom: 10 },
+  inputHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  inputLabel: { fontSize: 13, color: '#888', fontWeight: '600' },
+  voiceButton: {
+    backgroundColor: '#1a1a2e',
+    borderColor: '#2a2a4a',
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  voiceButtonActive: {
+    backgroundColor: '#24145b',
+    borderColor: '#6c47ff',
+  },
+  voiceButtonText: { color: '#d7d4ff', fontSize: 12, fontWeight: '700' },
   textArea: {
     color: '#fff',
     fontSize: 16,
@@ -170,6 +311,35 @@ const styles = StyleSheet.create({
     color: '#444',
     fontSize: 12,
     marginTop: 8,
+  },
+
+  voicePanel: {
+    alignItems: 'center',
+    backgroundColor: '#12121f',
+    borderColor: '#1e1e3a',
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 12,
+    padding: 14,
+  },
+  voicePulse: {
+    alignItems: 'center',
+    backgroundColor: '#0a0a1a',
+    borderRadius: 18,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  voiceCopy: { flex: 1 },
+  voiceTitle: { color: '#fff', fontSize: 13, fontWeight: '700', marginBottom: 2 },
+  voiceText: { color: '#9ca3af', fontSize: 13, lineHeight: 18 },
+  errorText: {
+    color: '#ff7b7b',
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 12,
   },
 
   btn: {

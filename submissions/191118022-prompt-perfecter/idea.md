@@ -2,7 +2,7 @@
 
 ## Fikir
 
-Kullanıcı bir uygulama, ürün veya proje hakkında ham bir fikir cümlesi girer. Yapay zeka (GPT-5.4-mini) bu ham fikri anlamlandırmak için 4 mühendislik sorusu sorar. Kullanıcının cevapları ışığında tam bir "mükemmel prompt" üretir.
+Kullanici bir uygulama, urun veya proje hakkinda ham bir fikir cumlesi girer veya bunu sesiyle anlatir. Yapay zeka (GPT-5.4-mini) bu ham fikri anlamlandirmak icin 4 muhendislik sorusu sorar. Kullanicinin cevaplari isiginda tam bir "mukemmel prompt" uretir.
 
 ## Problem
 
@@ -17,23 +17,24 @@ Kullanıcı bir uygulama, ürün veya proje hakkında ham bir fikir cümlesi gir
 
 ## Kapsam (Bu Versiyon)
 
-- Tek ekranlı soru-cevap akışı
-- GPT-5.4-mini ile 4 mühendislik sorusu (problem, kullanıcı, kapsam, kısıt)
-- Mükemmel prompt üretimi (markdown formatında)
-- Prompt kopyalama özelliği
+- Tek ekranli soru-cevap akisi
+- GPT-5.4-mini ile 4 muhendislik sorusu (problem, kullanici, kapsam, kisit)
+- Mukemmel prompt uretimi (markdown formatinda)
+- Prompt kopyalama ozelligi
+- Gercek cihazda sesli fikir girisi
 
-## Kısıtlar
+## Kisitlar
 
-- Sadece metin girişi (ses Track A bonus scope'u — bu versiyonda değil)
-- Internet bağlantısı zorunlu (OpenAI API)
+- Sesli giris cihazin mikrofon ve speech recognition destegine baglidir
+- Internet baglantisi zorunlu (OpenAI API)
 
 ## Track A Uyumu
 
 | Track A Gereksinimi | Uygulama |
 |---|---|
-| Ham fikri alır | ✅ Ana ekran metin girişi |
-| 3-5 engineering soru | ✅ 4 Gemini destekli soru |
-| Tek sayfa spec üretir | ✅ Mükemmel prompt + görsel çıktı ekranı |
+| Ham fikri alır | ✅ Ana ekran metin ve ses girişi |
+| 3-5 engineering soru | ✅ 4 GPT-5.4-mini destekli soru |
+| Tek sayfa spec üretir | ✅ Mukemmel prompt ciktisi |
 
 ## Çılgın Bonus Capability
 
