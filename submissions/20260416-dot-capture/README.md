@@ -16,3 +16,10 @@ Bu projede Track A seçilmiş ve klasik yazılı (text-dump) formülünün ötes
 - **Çarpışma Engelleme (Collision Detection):** Nöronların uzay boşluğundaki konumları hesaplanırken üst üste binmemesi için Öklid mesafesi hesaplayan kural tabanlı bir algoritma eklendi.
 - **Insight Ekranı (X-Ray):** Uygulamanın bir "kara kutu" olmasını engellemek adına, ağı analiz edip kullanıcıya detaylarını (tez, ürün fikri, riskler) transparan bir şekilde sunan yepyeni bir ara katman (InsightScreen) tasarlandı.
 - **Human in the Loop (Hiyerarşik Eskalasyon - HOOP):** Uygulama mimarisi "Yaratıcı AI" (Mascot) ve "Profesyonel İnsan" (HOOP) olarak ikiye ayrıldı. Maskot artık direkt olarak **CaptureScreen (Ağ ekranı)** içine bir yol arkadaşı olarak entegre edildi. `idea.md` dökümanı oluştuktan sonra ise ciddi bir profesyonel denetim için HOOP üzerinden "Uzman Mentor" portalına geçiş sağlandı. Bu sayede tasarım dili ve kullanıcı amacı (Intent) daha net bir hale getirildi.
+
+## AI Tool Log
+Bu projenin geliştirilme sürecinde aşağıdaki yapay zeka araçları ve yöntemleri kullanılmıştır:
+- **Gemini CLI (Interactive Agent):** Projenin tüm mimari tasarımı, kodlama süreci (React Native), PanResponder ile draggable maskot etkileşimi ve `expo-speech` hata ayıklama süreçleri Gemini CLI üzerinden otonom ve interaktif bir şekilde yürütülmüştür.
+- **Karpathy/Autoresearch Felsefesi:** Kod yazımında "Yapay Zeka bir araç değil, bir iş ortağıdır" vizyonuyla hareket edilmiş; prompt mühendisliği yerine bağlamsal (context-aware) kod üretimi tercih edilmiştir.
+- **Expo SDK:** Uygulamanın hızlı prototiplenmesi ve deploy edilmesi için kullanılmıştır.
+
