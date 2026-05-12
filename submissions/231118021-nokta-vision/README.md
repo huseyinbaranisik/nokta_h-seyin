@@ -41,7 +41,7 @@ npx expo start
 ```
 
 **Expo QR / Preview Linki:**
-> `exp://172.20.10.3:8081`
+> `exp://172.20.10.2:8081`
 
 ---
 
@@ -49,7 +49,7 @@ npx expo start
 
 | Alan | Link |
 |------|------|
-| 60 sn Demo Video | https://youtube.com/shorts/gFwZ1mliaJ0?feature=share |
+| 60 sn Demo Video | https://youtube.com/shorts/S0M6sqqnHxM?feature=share |
 | **Android APK** | `app-release.apk` (Root dizininde mevcut) |
 
 ---
@@ -61,7 +61,7 @@ npx expo start
 | Framework | React Native + Expo (v54.0.33) |
 | Architecture | **New Architecture (React Native 0.81.5 / React 19)** |
 | Routing | Expo Router (file-based) |
-| AI Servisi | OpenRouter API → `google/gemma-3-27b-it:free` |
+| AI Servisi | OpenRouter API (Multi-model Fallback: Gemini 2.0, Llama 3.3, Qwen 2.5) |
 | Animasyon | React Native Reanimated v3 (Worklets enabled) |
 | UI | LinearGradient, Glassmorphism, Custom Markdown renderer |
 
@@ -74,7 +74,7 @@ npx expo start
 | 10:09 | Track A seçildi | Nokta'nın çekirdek değer önerisi "slop-free ideation" ile en doğrudan örtüşüyor |
 | 10:15 | Expo Router kullanıldı | File-based routing ile 3 ekran (index → interview → result) hızlı kuruldu |
 | 10:30 | Gemini API → OpenRouter değiştirildi | Gemini v1beta 404 hatası verdi; `gemini-2.0-flash` model adı API'de mevcut değildi. OpenRouter ücretsiz ve stabil alternatif sundu |
-| 10:45 | `google/gemma-3-27b-it:free` seçildi | `meta-llama/llama-3.1-8b` ve `deepseek/deepseek-r1` endpoint bulunamadı; gemma-3-27b aktif ve güçlü bir model |
+| 10:45 | Multi-model Fallback eklendi | Tek modele bağlı kalmamak için Gemini 2.0, Llama 3.3 ve Qwen 2.5 modelleri arasında otomatik geçiş sağlandı |
 | 11:00 | Retry logic eklendi | Ücretsiz modeller zaman zaman 429 dönüyor; 15/30/45s backoff ile otomatik yeniden deneme sağlandı |
 | 11:10 | Türkçe prompt | Kullanıcı deneyimini lokalize etmek için prompt dili Türkçe'ye alındı |
 | 11:15 | Custom Markdown renderer yazıldı | React Native'de `react-native-markdown` yerine sıfırdan renderer — `##`, `-`, `**` parse edilip stilize native component olarak render ediliyor |

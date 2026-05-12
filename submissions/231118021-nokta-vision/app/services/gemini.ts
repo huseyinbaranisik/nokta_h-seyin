@@ -1,12 +1,21 @@
 // OpenRouter API — rate limit yok, ücretsiz modeller
-const OPENROUTER_API_KEY = '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';
+const OPENROUTER_API_KEY = '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';
 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'google/gemma-3-27b-it:free';
+
+// Fallback listesi — biri çalışmazsa diğerine geçer
+const FREE_MODELS = [
+  'google/gemini-2.0-flash-exp:free',
+  'meta-llama/llama-3.3-70b-instruct:free',
+  'qwen/qwen-2.5-72b-instruct:free',
+  'google/gemma-2-9b-it:free',
+  'mistralai/mistral-7b-instruct:free',
+  'microsoft/phi-3-medium-128k-instruct:free',
+];
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export async function askAI(prompt: string, retries = 3): Promise<string> {
-  const response = await fetch(API_URL, {
+async function callModel(model: string, messages: {role: string, content: string}[]): Promise<Response> {
+  return fetch(API_URL, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
@@ -14,41 +23,46 @@ export async function askAI(prompt: string, retries = 3): Promise<string> {
       'HTTP-Referer': 'https://nokta.app',
       'X-Title': 'Nokta Vision',
     },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [{ role: 'user', content: prompt }],
-    }),
+    body: JSON.stringify({ model, messages }),
   });
-
-  // 429 Rate limit — otomatik bekle ve tekrar dene
-  if (response.status === 429 && retries > 0) {
-    const waitMs = (4 - retries) * 15000; // 15s, 30s, 45s
-    console.warn(`Rate limit hit, ${waitMs/1000}s bekleniyor... (${retries} deneme kaldı)`);
-    await sleep(waitMs);
-    return askAI(prompt, retries - 1);
-  }
-
-  const data = await response.json();
-
-  if (data.error) {
-    const msg = data.error.message || 'OpenRouter API error';
-    // Provider hatası da retry'a düşsün
-    if (retries > 0 && (response.status === 429 || msg.includes('Provider'))) {
-      await sleep(10000);
-      return askAI(prompt, retries - 1);
-    }
-    throw new Error(msg);
-  }
-
-  if (!data.choices || data.choices.length === 0) {
-    throw new Error('No response from AI');
-  }
-
-  return data.choices[0].message.content;
 }
 
-export async function askExpert(messages: {role: string, content: string}[], retries = 3): Promise<string> {
-  const EXPERT_MODEL = 'meta-llama/llama-3.3-70b-instruct'; // Daha güçlü model
+export async function askAI(prompt: string): Promise<string> {
+  for (const model of FREE_MODELS) {
+    try {
+      const response = await callModel(model, [{ role: 'user', content: prompt }]);
+
+      // Rate limit veya provider hatası → sonraki modele geç
+      if (response.status === 429 || response.status === 404) {
+        console.warn(`Model atlanıyor (${response.status}): ${model}`);
+        if (response.status === 429) await sleep(1000); // 1 saniye bekle
+        continue;
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        const msg: string = data.error.message || '';
+        console.warn(`Model hatası (${model}): ${msg}`);
+        // Her türlü hata için sonraki modele geç
+        continue;
+      }
+
+      if (!data.choices || data.choices.length === 0) {
+        console.warn(`Model boş yanıt (${model}), sonraki deneniyor...`);
+        continue;
+      }
+
+      return data.choices[0].message.content;
+    } catch (err: any) {
+      console.warn(`Model exception (${model}): ${err.message}`);
+      continue;
+    }
+  }
+  throw new Error('Tüm modeller kullanılamıyor. Lütfen daha sonra tekrar deneyin.');
+}
+
+export async function askExpert(messages: {role: string, content: string}[]): Promise<string> {
   const systemPrompt = {
     role: 'system',
     content: `Sen Nokta Projesi'nin "Kıdemli Ürün Stratejisti Kerem"sin. 
@@ -59,29 +73,34 @@ export async function askExpert(messages: {role: string, content: string}[], ret
     Türkçe konuş ve her zaman profesyonel kal.`
   };
 
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://nokta.app',
-      'X-Title': 'Nokta Vision Expert',
-    },
-    body: JSON.stringify({
-      model: EXPERT_MODEL,
-      messages: [systemPrompt, ...messages],
-    }),
-  });
+  for (const model of FREE_MODELS) {
+    try {
+      const response = await callModel(model, [systemPrompt, ...messages]);
 
-  if (response.status === 429 && retries > 0) {
-    const waitMs = (4 - retries) * 15000;
-    await sleep(waitMs);
-    return askExpert(messages, retries - 1);
+      if (response.status === 429 || response.status === 404) {
+        console.warn(`Expert model atlanıyor (${response.status}): ${model}`);
+        if (response.status === 429) await sleep(1000); // 1 saniye bekle
+        continue;
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        console.warn(`Expert model hatası (${model}): ${data.error.message}`);
+        continue;
+      }
+
+      if (!data.choices || data.choices.length === 0) {
+        continue;
+      }
+
+      return data.choices[0].message.content;
+    } catch (err: any) {
+      console.warn(`Expert model exception (${model}): ${err.message}`);
+      continue;
+    }
   }
-
-  const data = await response.json();
-  if (data.error) throw new Error(data.error.message || 'API Error');
-  return data.choices[0].message.content;
+  throw new Error('Tüm modeller kullanılamıyor.');
 }
 
 export async function generateEngineeringQuestions(idea: string): Promise<string[]> {
