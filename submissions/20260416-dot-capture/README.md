@@ -4,7 +4,8 @@
 Bu projede Track A seçilmiş ve klasik yazılı (text-dump) formülünün ötesine geçilmiştir. Kullanıcıdan uzun bir paragraf girmesini beklemek yerine uygulamaya "Agentic" (otonom ajan) bir yapı kazandırılmış, kullanıcının sadece anahtar kelimeleri attığı ve bu kelimelerden bir **Canlı Sinir Ağı (Obsidian benzeri Node Graph)** oluşturulan interaktif bir deneyim kurgulanmıştır.
 
 ## Expo QR Kodu
-> [Lütfen uygulamanızı Expo'da publish edip QR Linkini Buraya Yapıştırın]
+> **Uygulama Linki:** [https://expo.dev/accounts/ruthlesscat/projects/app/updates/6e788084-60d6-4f51-a979-5e8eb61a0396](https://expo.dev/accounts/ruthlesscat/projects/app/updates/6e788084-60d6-4f51-a979-5e8eb61a0396)
+> (Bu link üzerinden Expo Go ile uygulamayı anında test edebilirsiniz.)
 
 ## 60 Saniye Demo Video
 > [Lütfen ekran kaydı videonuzun YouTube veya Drive linkini buraya yapıştırın]
