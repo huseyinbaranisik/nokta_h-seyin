@@ -35,6 +35,31 @@ export default function HistoryScreen() {
           </View>
         )}
       </View>
+
+      <Text style={[styles.title, { fontSize: 20, marginTop: 24 }]}>Detaylı Günlük</Text>
+      {logs.map((item) => (
+        <View key={item.id} style={styles.logItem}>
+          <View style={styles.logHeader}>
+            <Text style={styles.logDate}>{format(item.createdAt)}</Text>
+            <View style={styles.badgeRow}>
+              {item.isVerified && (
+                <View style={styles.verifiedBadge}>
+                  <Text style={styles.verifiedText}>HITL ONAYLI</Text>
+                </View>
+              )}
+              {item.coachMessage.includes('🎯') && (
+                <View style={[styles.verifiedBadge, { backgroundColor: 'rgba(255, 107, 157, 0.15)' }]}>
+                  <Text style={[styles.verifiedText, { color: colors.accent }]}>MENTOR DESTEKLİ</Text>
+                </View>
+              )}
+            </View>
+          </View>
+          <Text style={styles.logScore}>Skor: {item.fitScore}</Text>
+          <Text style={styles.logMsg} numberOfLines={2}>
+            {item.coachMessage}
+          </Text>
+        </View>
+      ))}
     </ScrollView>
   );
 }
@@ -52,4 +77,19 @@ const styles = StyleSheet.create({
   track: { flex: 1, width: '100%', borderRadius: 10, backgroundColor: colors.surfaceAlt, justifyContent: 'flex-end', overflow: 'hidden' },
   fill: { width: '100%', backgroundColor: colors.primary, borderRadius: 10 },
   date: { color: colors.text, fontSize: 11, marginTop: 8 },
+  logItem: {
+    backgroundColor: colors.surface,
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginTop: 12,
+  },
+  logHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  badgeRow: { flexDirection: 'row', gap: 6 },
+  logDate: { color: colors.text, fontWeight: '800' },
+  verifiedBadge: { backgroundColor: 'rgba(0, 212, 170, 0.15)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
+  verifiedText: { color: colors.success, fontSize: 10, fontWeight: '900' },
+  logScore: { color: colors.accent, fontWeight: '900', fontSize: 16, marginBottom: 4 },
+  logMsg: { color: colors.textSecondary, fontSize: 13, lineHeight: 18 },
 });

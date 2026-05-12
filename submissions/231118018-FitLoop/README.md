@@ -1,68 +1,23 @@
-# Nokta Away Mission - Solo Seferi
+# FitLoop — HITL Fitness Coach
 
-**Ogrenci No:** 231118018  
-**Isim:** Elcin Erdemir  
-**Secilen Track:** Track 2 - Pitch Analizi ve Slop Score
+**Seçilen Track:** Track B (Engineering & Architecture Focused)
 
----
+## 🌟 Ana Özellikler
+- **Dinamik SVG Maskot:** AI skoru ve mesajına göre anlık tepki veren (mutlu, nötr, üzgün) fütüristik "Nokta" maskotu.
+- **Etkili HITL Denetim Merkezi:** AI önerilerini (FitScore, Koç Mesajı) kaydetmeden önce manuel kalibre etme veya bir **Uzman Eskalasyonu** tetikleme imkanı.
+- **Uzman (Mentor) Desteği:** Düşük skorlarda veya belirsiz durumlarda "Uzmana Sor" akışı ile profesyonel tavsiye alma simülasyonu.
+- **Onaylı Geçmiş:** Tüm girişler "HITL ONAYLI" ve "MENTOR DESTEKLİ" rozetleriyle detaylı bir listede saklanır.
 
-## Proje Vizyonu
-**FitLoop**, kullanicinin gunluk yemek, su ve aktivite bilgisini tek ekranda toplayip anlik bir `FitScore` ureten mobil bir fitness micro-coach uygulamasidir. Amac, karmasik wellness uygulamalarinin agir deneyimi yerine 30-60 saniyede veri girilen, hemen geri bildirim veren ve dusuk performansta yonlendirici aksiyon sunan sade bir mobil deneyim olusturmaktir.
+## 🧠 Decision Log (Karar Günlüğü)
+1. **HITL Önceliği:** Sistemin otonom bir "tracker" yerine, insan gözetiminde çalışan bir "koç" olmasına karar verildi. Bu yüzden doğrudan kaydetme yerine bir "Review" paneli eklendi.
+2. **Eskalasyon Mimarisi:** Düşük skorlarda sistemin kendi yetkinliğini sorgulayıp kullanıcıyı bir "mentora" (simüle) yönlendirmesi sağlandı.
+3. **SVG vs Image:** Performans ve dinamizm için maskot görsel yerine kodla (SVG) çizildi, böylece skor değiştikçe ifadeler anlık güncellenebiliyor.
+4. **Local-First:** Gizlilik ve hız için tüm hesaplamaların ve veri saklamanın (AsyncStorage) cihaz içinde yapılması sağlandı.
 
----
-
-## Teknik Stack ve Teslimat
-- **Framework:** React Native + Expo
-- **Dil:** TypeScript
-- **State / Persist:** React Context + AsyncStorage
-- **Navigasyon:** React Navigation
-- **Gorsellestirme:** `react-native-svg` ile skor gostergesi
-- **Mimari:** Tum hesaplamalar cihaz uzerinde, harici API baglantisi yok
-
-### Linkler
-- **Expo Project / QR:** https://expo.dev/accounts/eexnmy/projects/FitLoop
-- **EAS Build:** https://expo.dev/accounts/eexnmy/projects/FitLoop/builds/51194e1e-7ffb-42d4-9de0-1bb393311e82
-- **60 Sn Demo Videosu:** https://youtube.com/shorts/sySnhjO2TzY
-- **APK Dosyasi:** `./app-release.apk`
+## 📱 Kurulum ve Bağlantılar
+- **Expo QR Kodu:** [![Expo QR](https://img.shields.io/badge/Expo-QR_Kodu_İçin_Tıkla-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/accounts/eexnmy/projects/FitLoop/builds/b40cee76-84a2-488c-9381-5d5dc7e23f96)
+- **APK İndir:** [FitLoop.apk](./FitLoop.apk)
+- **Demo Video:** (Kullanıcı tarafından 60 sn olarak yüklenecektir)
 
 ---
-
-## Uygulama Ozeti
-Kullanici tek bir ekranda su verileri girer:
-- Serbest metin olarak yemek ozeti
-- Gunluk su miktari
-- Aktivite seviyesi
-
-Uygulama bunlardan su ciktilari uretir:
-- `FitScore (0-100)`
-- Kisa coach mesaji
-- Dusuk skor durumunda 3 gunluk toparlanma meal plan
-
-Bu yapi sayesinde uygulama bir "tracking dashboard" olmaktan cok, hizli karar veren ve kullaniciyi yormayan bir mikro koç akisi gibi davranir.
-
----
-
-## Decision Log
-1. **Neden bu yapi?** Genis kapsamli bir fitness uygulamasi yerine tek ekranli, hizli veri girisine dayali dar kapsamli bir MVP secildi.
-2. **Skor mantigi:** Kullaniciya sadece veri saklayan bir arayuz degil, aninda yorum ureten bir deneyim vermek icin `FitScore` modeli eklendi.
-3. **Yerel mimari karari:** Harici AI veya beslenme API'lari kullanilmadi; boylece demo kararliligi korundu ve uygulama offline'a yakin bir basitlikte tutuldu.
-4. **Dusuk skor fallback'i:** Kullaniciyi sadece "kotu skor" ile birakmamak icin 50 alti durumda otomatik 3 gunluk basit meal plan akisi tasarlandi.
-5. **UI karari:** Yogun kullanicilar icin okunakli, kart tabanli ve dikkat dagitmayan sade bir mobil arayuz tercih edildi.
-6. **Persist katmani:** Gecmis girisler ve profil verisi `AsyncStorage` ile cihazda saklandi.
-
----
-
-## Engineering Trace
-Proje su teknik kararlar etrafinda sekillendi:
-- `feat: gunluk veri girisi ve anlik FitScore akisi`
-- `feat: dusuk skor icin toparlanma planı mantigi`
-- `feat: gecmis ve profil ekranlari`
-- `refactor: hesaplama ve coach mantigini service katmanina ayirma`
-
----
-
-## Teslim Icerigi
-- `README.md`
-- `idea.md`
-- `app/`
-- `app-release.apk`
+*Bu proje bir NOKTA üretimidir.*

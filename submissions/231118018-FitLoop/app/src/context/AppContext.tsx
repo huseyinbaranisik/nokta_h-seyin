@@ -23,6 +23,7 @@ export interface DailyLog {
   activityLevel: ActivityLevel;
   fitScore: number;
   coachMessage: string;
+  isVerified?: boolean;
   mealPlan: {
     breakfast: string;
     lunch: string;

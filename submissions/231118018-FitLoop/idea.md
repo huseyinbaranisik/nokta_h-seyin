@@ -30,21 +30,21 @@ Bu verilerden anlik:
 
 ## Karpathy & Autoresearch Referanslari
 
-### 1. **Autonomous Agent Loop (Autoresearch)**
-FitLoop, otonomous agent design paternini takip eder:
-- **Giriş**: Kullanici yemek/su/aktivite metni
-- **Otonom İşleme**: Sistem kendi başına FitScore hesaplır (manual intervention yok)
-- **Çıkış Üretimi**: Otomatik coach mesajı + meal plan (user feedback beklemez)
-- **Self-Learning**: Günlük logs → sistem otomatik optimize (future reinforcement learning)
+### 1. **Human-in-the-Loop Loop (HITL-focused Autoresearch)**
+FitLoop, otonom süreçleri insan denetimiyle birleştiren HITL paternini takip eder:
+- **Giriş**: Kullanıcı yemek/su/aktivite metni
+- **İşbirliği**: Sistem FitScore hesaplar, ancak kullanıcı (insan) bu skoru ve koç mesajını onaylamadan/düzenlemeden veri kesinleşmez.
+- **Dinamik Çıkış**: İnsan onaylı koç mesajı + meal plan.
+- **Eskalasyon**: Düşük skorlarda sistem otonom kararı durdurur ve "Uzman Onayı" (expert supervision) bekler.
 
-### 2. **Karpathy's Tesla Autopilot Design: Lokal Inference-First**
-- End-to-end lokal hesaplama: Cihaz içinde tüm data + model çalışır
-- Zero external dependency: API, cloud, LLM yok
-- Real-time response: Kullanıcı input → anında FitScore (latency ~100ms)
-- *Referans: "Software 3.0 sınırlarını bilmek—basitlik güçtür"*
+### 2. **Karpathy's Tesla Autopilot Design: Local & Supervised**
+- End-to-end lokal hesaplama: Cihaz içinde tüm data + model çalışır.
+- Zero external dependency: API, cloud, LLM yok.
+- Supervised Autonomy: Tıpkı Tesla Autopilot gibi, sistem önerir ama "sürücü" (kullanıcı) her an müdahale edebilir ve onay verir.
+- *Referans: "Software 3.0: İnsan gözetiminde otonomi"*
 
-### 3. **Minimal Manual Intervention (Autoresearch Principle)**
-- **30-saniye UX**: Veri gir → sistem hepsi otomatize eder
-- Human loop yok: Sistem user yerine karar alır (meal plan, score, message)
-- Continuous feedback: AsyncStorage logs → pattern analysis → optimize
-- *Referans: Tesla Autopilot "fewer human touchpoints = more autonomy"*
+### 3. **Managed Intervention (Autoresearch Principle)**
+- **HITL Integration**: Veri gir → AI öner → İnsan onayla → Sistem kaydet.
+- Expert Loop: Düşük skorda sistemin hata payına karşı insan doğrulaması şart koşulur.
+- Continuous Alignment: Kullanıcı müdahaleleri (skor düzeltmeleri) sistemin gelecekteki doğruluk payını artırmak için veri tabanına işlenir.
+- *Referans: "Fewer human touchpoints, but high-impact human verification"*

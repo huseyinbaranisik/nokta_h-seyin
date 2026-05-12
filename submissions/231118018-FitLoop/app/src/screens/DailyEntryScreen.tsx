@@ -5,6 +5,8 @@ import Svg, { Circle } from 'react-native-svg';
 import { ActivityLevel, DailyLog, useApp } from '../context/AppContext';
 import { aiSimulationService } from '../services/aiSimulationService';
 import { colors } from '../theme/colors';
+import HITLReviewPanel from '../components/HITLReviewPanel';
+import Mascot from '../components/Mascot';
 
 function makeId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -47,6 +49,9 @@ export default function DailyEntryScreen() {
   const [mealsText, setMealsText] = useState('');
   const [waterLiters, setWaterLiters] = useState('2');
   const [activityLevel, setActivityLevel] = useState<ActivityLevel>('medium');
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [pendingLog, setPendingLog] = useState<DailyLog | null>(null);
+
   const latest = logs[0];
 
   const liveResult = useMemo(() => {
@@ -73,7 +78,7 @@ export default function DailyEntryScreen() {
     };
   }, [activityLevel, latest, mealsText, profile, waterLiters]);
 
-  const onSave = async () => {
+  const onSave = () => {
     if (mealsText.trim().length < 5) {
       Alert.alert('Eksik bilgi', 'Bugün yediklerini kısa bir metin olarak gir.');
       return;
@@ -85,7 +90,6 @@ export default function DailyEntryScreen() {
       return;
     }
 
-    const result = aiSimulationService.calculateFitScore(profile, mealsText, water, activityLevel);
     const log: DailyLog = {
       id: makeId(),
       createdAt: new Date().toISOString(),
@@ -97,15 +101,26 @@ export default function DailyEntryScreen() {
       mealPlan: liveResult.mealPlan,
     };
 
-    await addLog(log);
-    Alert.alert('Kaydedildi', `Bugünkü FitScore: ${liveResult.fitScore}`);
+    setPendingLog(log);
+    setIsReviewing(true);
+  };
+
+  const handleFinalize = async (finalLog: DailyLog) => {
+    await addLog({ ...finalLog, isVerified: true });
+    setIsReviewing(false);
+    setPendingLog(null);
+    Alert.alert('Kaydedildi', `Human-approved FitScore: ${finalLog.fitScore}`);
     setMealsText('');
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <View style={styles.hitlHeader}>
+        <View style={styles.hitlDot} />
+        <Text style={styles.hitlLabel}>SİSTEM MODU: İNSAN DENETİMLİ (HITL)</Text>
+      </View>
       <Text style={styles.title}>Günlük Giriş</Text>
-      <Text style={styles.subtitle}>Girdiğini yaz, anlık FitScore ve koç mesajını aynı ekranda gör.</Text>
+      <Text style={styles.subtitle}>Girdiğini yaz, AI ve uzman denetimli koç mesajını al.</Text>
 
       <View style={styles.card}>
         <Text style={styles.label}>Yediklerin (serbest metin)</Text>
@@ -147,7 +162,10 @@ export default function DailyEntryScreen() {
       </View>
 
       <View style={styles.scoreCard}>
-        <FitGauge score={liveResult.fitScore} />
+        <View style={styles.scoreHeader}>
+          <Mascot score={liveResult.fitScore} size={80} />
+          <FitGauge score={liveResult.fitScore} />
+        </View>
         <Text style={styles.liveMessage}>{liveResult.coachMessage}</Text>
       </View>
 
@@ -168,6 +186,15 @@ export default function DailyEntryScreen() {
       <TouchableOpacity style={styles.button} onPress={() => void onSave()}>
         <Text style={styles.buttonText}>Bugünü Kaydet</Text>
       </TouchableOpacity>
+
+      {pendingLog && (
+        <HITLReviewPanel
+          isVisible={isReviewing}
+          log={pendingLog}
+          onCancel={() => setIsReviewing(false)}
+          onFinalize={handleFinalize}
+        />
+      )}
     </ScrollView>
   );
 }
@@ -186,12 +213,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  scoreHeader: { flexDirection: 'row', alignItems: 'center', gap: 20, marginBottom: 10 },
   gaugeWrap: { width: SIZE, height: SIZE, justifyContent: 'center', alignItems: 'center' },
   gaugeCenter: { position: 'absolute', alignItems: 'center' },
   score: { color: colors.text, fontSize: 40, fontWeight: '900' },
   scoreLabel: { color: colors.textSecondary, marginTop: 2 },
   liveMessage: { color: colors.text, fontSize: 15, lineHeight: 22, marginTop: 10, textAlign: 'center' },
-  card: { backgroundColor: colors.surface, borderRadius: 22, borderWidth: 1, borderColor: colors.border, padding: 16 },
+  card: { backgroundColor: colors.surface, borderRadius: 22, borderWidth: 1, borderColor: colors.border, padding: 16, marginBottom: 12 },
   label: { color: colors.text, fontWeight: '700', marginBottom: 8, marginTop: 10 },
   input: {
     backgroundColor: colors.surfaceAlt,
@@ -222,4 +250,15 @@ const styles = StyleSheet.create({
   item: { color: colors.textSecondary, lineHeight: 20 },
   button: { marginTop: 16, backgroundColor: colors.accent, borderRadius: 14, paddingVertical: 14, alignItems: 'center' },
   buttonText: { color: colors.text, fontWeight: '800', fontSize: 16 },
+  hitlHeader: {
+    backgroundColor: colors.surfaceAlt,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  hitlDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.success, marginRight: 6 },
+  hitlLabel: { color: colors.success, fontSize: 10, fontWeight: '800' },
 });
