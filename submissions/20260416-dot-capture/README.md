@@ -8,7 +8,9 @@ Bu projede Track A seçilmiş ve klasik yazılı (text-dump) formülünün ötes
 > (Bu link üzerinden Expo Go ile uygulamayı anında test edebilirsiniz.)
 
 ## 60 Saniye Demo Video
-> [Lütfen ekran kaydı videonuzun YouTube veya Drive linkini buraya yapıştırın]
+> **İzlemek için:** [https://youtube.com/shorts/jiBsw8_ekiU?si=OeiK9MbthMDIs9V5](https://youtube.com/shorts/jiBsw8_ekiU?si=OeiK9MbthMDIs9V5)
+
+![Nokta Project Banner](https://raw.githubusercontent.com/ParzivalSANN/nokta_seyyah/main/assets/nokta.jpeg)
 
 ## Decision Log (Karar Günlüğü)
 - **Tasarım Dili (Ethereal Amethyst):** Standart karanlık mod UI kalıpları yıkıldı. Bunun yerine derin siyah üzerine parlayan Mor ve Camgöbeği tonlarında (Neon/Glassmorphism) fütüristik bir "Zihin Sarayı" estetiğine geçildi.
