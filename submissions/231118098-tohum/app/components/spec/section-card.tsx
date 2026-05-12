@@ -5,6 +5,8 @@ import { colors, fontSize, radius, spacing, typography } from '@/constants/theme
 export type SectionCardProps = {
   heading: string;
   body: string;
+  expertEdited?: boolean;
+  expertText?: string;
 };
 
 /**
@@ -13,12 +15,20 @@ export type SectionCardProps = {
  * çevirir, paragraflar arasına boşluk bırakır. External markdown
  * kütüphanesine bağlanmadan yeterince okunabilir bir sonuç verir.
  */
-export function SectionCard({ heading, body }: SectionCardProps) {
-  const blocks = parseBody(body);
+export function SectionCard({ heading, body, expertEdited, expertText }: SectionCardProps) {
+  const displayText = expertEdited && expertText ? expertText : body;
+  const blocks = parseBody(displayText);
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.heading}>{heading}</Text>
+    <View style={[styles.card, expertEdited && styles.cardEdited]}>
+      <View style={styles.headingRow}>
+        <Text style={styles.heading}>{heading}</Text>
+        {expertEdited && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>✓ Uzman Düzenledi</Text>
+          </View>
+        )}
+      </View>
       <View style={styles.body}>
         {blocks.map((block, i) => {
           if (block.kind === 'bullets') {
@@ -114,10 +124,36 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     gap: spacing.md,
   },
+  cardEdited: {
+    borderColor: colors.success,
+    borderWidth: 1.5,
+  },
+  headingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+    flexWrap: 'wrap',
+  },
   heading: {
     fontFamily: typography.headlineMedium,
     fontSize: fontSize.lg,
     color: colors.text,
+    fontWeight: '600',
+    flex: 1,
+  },
+  badge: {
+    backgroundColor: '#0D2818',
+    borderWidth: 1,
+    borderColor: colors.success,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+  },
+  badgeText: {
+    fontFamily: typography.bodySemi,
+    fontSize: fontSize.xs,
+    color: colors.success,
     fontWeight: '600',
   },
   body: {

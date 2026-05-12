@@ -17,6 +17,7 @@ export type ExpertReview = {
   rating?: number;
   verdict?: ExpertVerdict;
   reviewedAt?: number;
+  expertEdits?: Record<string, string>;
 };
 
 export type SavedSession = {
