@@ -20,7 +20,9 @@
 
 ## 🎬 Demo Video
 
-> 📹 **Demo Video:** _Yakında eklenecek (60 saniye)_
+> 📹 **Demo Video:** [▶️ YouTube'da İzle](https://youtu.be/aP4nDCNCnkA)
+
+[![Demo Video](https://img.youtube.com/vi/aP4nDCNCnkA/0.jpg)](https://youtu.be/aP4nDCNCnkA)
 
 ---
 
