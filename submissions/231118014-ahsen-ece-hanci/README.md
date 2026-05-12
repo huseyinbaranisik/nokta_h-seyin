@@ -1,81 +1,56 @@
-# Nokta — Slop Detector (Track B)
+# Nokta — Slop Detector + Uzman Desteği (Track B)
 
-> Yatırımcı gözüyle pitch analizi. Bir pitch paragrafını yapıştır, AI onu otopsi masasına yatırsın.
-
----
+Yatırımcı gözüyle pitch analizi. Bir pitch paragrafını yapıştır, AI onu otopsi masasına yatırsın — gerektiğinde gerçek bir **uzmana** eskalasyon yap.
 
 ## Track Seçimi
 
-**Track B — Slop Detector / Due Diligence**
+**Track B — Slop Detector / Due Diligence + Uzman Desteği (HITL)**
 
-Pitch paragrafı yapıştırılır → AI, yatırımcı perspektifiyle çok boyutlu analiz eder → büyük bir **Slop Score** (0–100) + 5 boyutlu kırılım + kırmızı bayraklar + doğrulanması gereken iddialar + grounded rewrite döner.
-
----
+Pitch paragrafı yapıştırılır → AI, yatırımcı perspektifiyle çok boyutlu analiz eder → büyük bir **Slop Score (0–100)** + 5 boyutlu kırılım + kırmızı bayraklar + doğrulanması gereken iddialar + grounded rewrite döner. AI'ın yetersiz kaldığı veya kullanıcının ikinci bir göz istediği durumlarda **"Uzmana Yönlendir"** seçeneğiyle pitch bir insana eskalasyon edilebilir.
 
 ## Demo
 
-- **60 sn Demo Video:** https://www.youtube.com/shorts/KkkGSpYeERU
-- **Expo / Rork Preview Link:** https://rork.app/?exp=p_8v05r484abccw5w3g0lqv--expo.rork.live&p=8v05r484abccw5w3g0lqv&app=false
+- 🎥 **60 sn Demo Video (Uzman Desteği):** https://youtube.com/shorts/cmU881lLbzw
+- 🎥 60 sn Demo Video (Slop Detector temel akış): https://www.youtube.com/shorts/KkkGSpYeERU
+- 📱 **Expo / Rork Preview Link:** https://rork.app/?exp=p_8v05r484abccw5w3g0lqv--expo.rork.live&p=8v05r484abccw5w3g0lqv&app=false
 
-> Linki telefonda aç → Rork / Expo Go ile uygulamayı doğrudan çalıştırabilirsin.
-
----
+Linki telefonda aç → Rork / Expo Go ile uygulamayı doğrudan çalıştırabilirsin.
 
 ## Ana Akış
 
 1. **Dissection Chamber** — Mono textarea'ya pitch yapıştır, "RUN AUTOPSY" bas.
 2. **Running Diagnostics** — Terminal-style canlı log akışı, skor sayacı animasyonu.
-3. **Verdict** — 0–100 skor + tek kelimelik hüküm (PURE SLOP / SLOPPY / MIXED / GROUNDED / SHARP) + 5 boyut bar (Market Claim, Competitor Awareness, Evidence, Novelty, Feasibility).
-4. **Red Flags & Claims to Verify** — Tespit edilen slop sinyalleri ve doğrulanması gereken iddialar checklist'i.
-5. **Grounded Rewrite** — Pitch'in slop'suz yeniden yazımı, kopyalanabilir.
-6. **Archive** — Tüm analizler cihazda yerel saklanır; iki analizi yan yana **Compare** edebilirsin.
-7. **Ayarlar** — Analiz tonu: Standart / Brutal / Merciful.
+3. **Slop Score & Boyutlar** — 0–100 arası skor, 5 boyutta kırılım (claim density, evidence, specificity, novelty, feasibility), kırmızı bayraklar ve grounded rewrite önerisi.
+4. **Uzman Desteği (Yeni)** — Sonuç ekranında **"Uzmana Yönlendir"** butonuyla pitch uzman havuzuna düşer. Uzman değerlendirmesini tamamlayıp sonucu kullanıcıya geri döner.
 
----
+## Uzman Desteği — Detay
 
-## Görsel Dil
-
-- **Laboratuvar terminali** estetiği: karbon siyah (#0A0B0D), neon yeşil aksan (#00FF88), amber uyarı, kritik red.
-- Mono tipografi, CRT vignette, terminal log animasyonları, hafif haptics.
-- Soğuk, analitik, radikal. Jenerik "AI app" görüntüsünden kaçınıldı.
-
----
-
-## Teknik Stack
-
-- **React Native + Expo (SDK 54)** — cross-platform
-- **Expo Router** — file-based routing
-- **TypeScript** (strict)
-- **@nkzw/create-context-hook** + **AsyncStorage** — yerel analiz arşivi
-- **React Query** — mutation state yönetimi (AI çağrısı)
-- **AI Text/JSON üretim servisi** — yapılandırılmış JSON çıktısı, hata durumunda fallback
-
----
-
-## Decision Log
-
-| # | Karar | Gerekçe |
-|---|-------|---------|
-| 1 | Track B seçildi | "Slop detector" Nokta tezinin (anti-slop + due diligence) en saf ifadesi; 2 saatte demo edilebilir dar bir dilim. |
-| 2 | Açık uçlu chatbot YOK | idea.md: "Açık Uçlu Chatbot Değildir". Tek input (pitch) → yapılandırılmış JSON çıktı. |
-| 3 | JSON schema'lı AI çağrısı | Halüsinasyonu minimize etmek için model çıktısı katı şemaya bağlandı; parse hatasında kullanıcı dostu fallback. |
-| 4 | 5 boyutlu kırılım | Tek skor yetersiz — yatırımcı gerçek "due-diligence" ister: Market Claim, Competitor Awareness, Evidence, Novelty, Feasibility. |
-| 5 | Grounded Rewrite zorunlu | Sadece "slop dedi, geçti" değil; kullanıcıya çıkış yolu sun. Nokta'nın "artifact üret" felsefesi. |
-| 6 | Tüm veri cihazda (AsyncStorage) | Pitch'ler hassas; hiçbir şey sunucuda saklanmaz. "Fikirlerinizi istismar etmez" ilkesi. |
-| 7 | Compare modu | İki analizi yan yana → kullanıcı kendi iterasyonunu görebilsin (v1 pitch vs v2 pitch). |
-| 8 | Terminal/lab estetiği | Generic purple-gradient "AI slop" görüntüsünden kaçınıldı; marka kimliği için soğuk analitik dil. |
-| 9 | 3 tonluk analiz (Brutal/Standart/Merciful) | Kullanıcı bağlamına göre sertlik ayarı — yatırımcı hazırlığı vs ilk taslak. |
-| 10 | Reanimated yerine Animated API | Web uyumluluğu (Rork preview web'de de açılıyor) + scope disiplini. |
-
----
+| Konsept         | Açıklama                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| **Model**       | HITL (Human-In-The-Loop) — `hop-imdat` ve `nokta-hoop` repolarındaki HOTL konseptine dayanır |
+| **Tetikleyici** | Düşük AI güven skoru **veya** kullanıcı manuel eskalasyonu                                   |
+| **Akış**        | Pitch + AI ön analiz → uzman kuyruğu → uzman cevabı → kullanıcıya dönüş                      |
+| **UI**          | Sonuç ekranında "Uzmana Yönlendir" butonu + bekleyen istek durumu                            |
 
 ## Scope Dışı Bırakılanlar (bilinçli)
 
 - Track A (Dot Capture) ve Track C (Migration) — fokus dağılmasın.
-- Kullanıcı hesabı / cloud sync — 2 saatlik scope dışı, gizlilik için de gereksiz.
+- Kullanıcı hesabı / cloud sync — scope dışı, gizlilik için de gereksiz.
 - Push notifications, paywall — Track B akışıyla ilgisiz.
+- Uzman tarafında gerçek bir backend kuyruk sistemi — bu iterasyonda UI/akış simülasyonu seviyesinde tutuldu.
 
----
+## Decision Log
+
+1. **Track B seçildi** — Slop Detector akışı, AI'ın güçlü olduğu metin analizine en uygun track.
+2. **Mono terminal UI** — Yatırımcı / due diligence havası için bilinçli estetik tercihi.
+3. **Tek skor + boyut kırılımı** — Sayısal bir kararı tek bakışta okunur kılmak için.
+4. **Grounded rewrite önerisi** — Sadece kritik etmek değil, somut iyileştirme yolu sunmak.
+5. **Uzman desteği eklendi (Yeni)** — AI tek başına yetersiz kaldığında akışın kırılmaması için HITL katmanı.
+6. **Eskalasyon butonu kullanıcı kontrolünde** — Otomatik değil manuel: kullanıcının ne zaman insan istediğine kendisi karar versin.
+7. **APK + Expo link birlikte** — Hem hızlı önizleme hem offline kurulum desteği.
+8. **Rork ile geliştirildi** — Hızlı iterasyon ve Expo SDK 54 uyumluluğu için.
+9. **Decision log + AI tool log şeffaflığı** — Rubrikteki dürüstlük gereği AI kullanımı açıkça raporlandı.
+10. **Uzman desteği için yeni demo video** — Mevcut Slop Detector demosunun üstüne sadece yeni özelliği gösteren ek bir 60 sn video çekildi.
 
 ## Kurulum (lokal geliştirme)
 
@@ -85,3 +60,8 @@ bun run start
 ```
 
 QR kodu tara → Expo Go / Rork app ile aç.
+
+## AI Tool Log
+
+- **Rork** — Mobile app builder (Expo SDK 54 tabanlı)
+- **Claude** — Planlama, decision log, README hazırlığı
