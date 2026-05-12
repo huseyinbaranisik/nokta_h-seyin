@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Dimensions } from 'react-native';
+﻿import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Dimensions, Animated, PanResponder } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import AnimatedBackground from '../components/AnimatedBackground';
 import NodeGraph from '../components/NodeGraph';
+import NoktaMascot2D from '../components/NoktaMascot2D';
+import { Voice } from '../utils/Voice';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const MOCK_DICTIONARY = {
   "araba": ["galeri", "ikinci el", "ekspertiz", "satış", "servis"],
@@ -54,6 +56,53 @@ export default function CaptureScreen({ navigation }) {
   const [keyword, setKeyword] = useState('');
   const [nodes, setNodes] = useState([]); // confirmed
   const [suggestions, setSuggestions] = useState([]); // hover nodes
+  const [mascotState, setMascotState] = useState('idle');
+
+  // DRAGGABLE LOGIC
+  const pan = useRef(new Animated.ValueXY({ x: width - 130, y: height * 0.35 })).current;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        // Only set pan responder if movement is significant (avoids blocking clicks)
+        return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
+      },
+      onPanResponderGrant: () => {
+        pan.setOffset({
+          x: pan.x._value,
+          y: pan.y._value
+        });
+        pan.setValue({ x: 0, y: 0 });
+      },
+      onPanResponderMove: Animated.event(
+        [null, { dx: pan.x, dy: pan.y }],
+        { useNativeDriver: false }
+      ),
+      onPanResponderRelease: () => {
+        pan.flattenOffset();
+      }
+    })
+  ).current;
+
+  useEffect(() => {
+    // Welcome greeting with a slight delay to ensure TTS is ready
+    const timer = setTimeout(() => {
+      const greet = "Merhaba, ben Nokta! Fikirlerini bana anlatmak için üzerime tıklayabilirsin.";
+      Voice.speak(greet, 
+        () => setMascotState('speaking'),
+        () => setMascotState('idle')
+      );
+    }, 1000);
+    return () => {
+      clearTimeout(timer);
+      Voice.stop();
+    };
+  }, []);
+
+  const triggerMascotAction = (type = 'love') => {
+    setMascotState(type);
+    setTimeout(() => setMascotState('idle'), 1500);
+  };
 
   const addConfirmedNode = (text) => {
     const parentId = nodes.length > 0 ? nodes[nodes.length - 1].id : null;
@@ -87,6 +136,7 @@ export default function CaptureScreen({ navigation }) {
     // Clear old suggestions, show new ones branch from this
     setSuggestions(newSuggestions);
     setKeyword('');
+    triggerMascotAction('love');
     Keyboard.dismiss();
   };
 
@@ -98,6 +148,7 @@ export default function CaptureScreen({ navigation }) {
 
   const onSuggestionTap = (suggestion) => {
     addConfirmedNode(suggestion.text);
+    triggerMascotAction('speaking');
   };
 
   const handleNext = () => {
@@ -178,6 +229,25 @@ export default function CaptureScreen({ navigation }) {
           </View>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
+      
+      {/* Nokta Mascot Companion - Draggable & Clickable */}
+      <Animated.View 
+        style={[styles.mascotContainer, pan.getLayout()]}
+        {...panResponder.panHandlers}
+      >
+        <TouchableOpacity 
+          activeOpacity={0.9}
+          onPress={() => navigation.navigate('Assistant', { mode: 'ai' })}
+          style={{ alignItems: 'center' }}
+        >
+          <View style={styles.bubble}>
+            <Text style={styles.bubbleText}>
+              {nodes.length === 0 ? "Fikirlerini bana anlatabilirsin!" : "Detaylar için bana tıkla!"}
+            </Text>
+          </View>
+          <NoktaMascot2D state={mascotState} />
+        </TouchableOpacity>
+      </Animated.View>
     </View>
   );
 }
@@ -227,6 +297,7 @@ const styles = StyleSheet.create({
   },
   inputSection: {
     width: '100%',
+    paddingBottom: 20,
   },
   inputRow: {
     flexDirection: 'row',
@@ -287,6 +358,27 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
   },
+  mascotContainer: {
+    position: 'absolute',
+    // Position handled by pan responder
+    alignItems: 'center',
+    transform: [{ scale: 0.8 }],
+    zIndex: 999,
+  },
+  bubble: {
+    backgroundColor: '#1a6bff',
+    padding: 10,
+    borderRadius: 15,
+    borderBottomRightRadius: 2,
+    marginBottom: 5,
+    maxWidth: 150,
+  },
+  bubbleText: {
+    color: 'white',
+    fontSize: 11,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
   buttonBlur: {
     paddingVertical: 18,
     flexDirection: 'row',
@@ -301,3 +393,5 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   }
 });
+
+

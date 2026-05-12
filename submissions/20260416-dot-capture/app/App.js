@@ -1,4 +1,4 @@
-import * as React from 'react';
+﻿import * as React from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -7,6 +7,7 @@ import ProcessingScreen from './src/screens/ProcessingScreen';
 import InsightScreen from './src/screens/InsightScreen';
 import ClarifyScreen from './src/screens/ClarifyScreen';
 import IdeaResultScreen from './src/screens/IdeaResultScreen';
+import AssistantScreen from './src/screens/AssistantScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +40,9 @@ export default function App() {
         <Stack.Screen name="Insight" component={InsightScreen} />
         <Stack.Screen name="Clarify" component={ClarifyScreen} options={{ presentation: 'transparentModal' }} />
         <Stack.Screen name="IdeaResult" component={IdeaResultScreen} />
+        <Stack.Screen name="Assistant" component={AssistantScreen} options={{ presentation: 'modal' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+

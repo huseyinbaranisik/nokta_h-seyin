@@ -51,7 +51,23 @@ Sektördeki oyuncular, dağınık bilgi ve entegre olmayan araçlar yüzünden g
         </View>
 
         <TouchableOpacity 
-          style={styles.btn}
+          style={[styles.btn, { marginTop: 15 }]}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('Assistant', { mode: 'expert' })}
+        >
+          <LinearGradient
+            colors={['#1a6bff', '#a855f7']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            style={styles.btnBlur}
+          >
+            <Ionicons name="people" size={20} color="white" style={{marginRight: 8}}/>
+            <Text style={[styles.btnText, { color: 'white' }]}>Uzmana Danış (Hoop)</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.btn, { marginTop: 15 }]}
           activeOpacity={0.8}
           onPress={() => navigation.popToTop()}
         >
