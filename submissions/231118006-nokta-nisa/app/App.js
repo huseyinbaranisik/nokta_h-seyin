@@ -34,6 +34,8 @@ export default function App() {
   const [recording, setRecording] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [supportOffer, setSupportOffer] = useState(null);
+  const [facing, setFacing] = useState('back');
+
 
   const changeView = (newView) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -180,6 +182,33 @@ export default function App() {
     respondWithAI(finalAnswer);
   };
 
+  const takePicture = async () => {
+    if (!cameraRef.current) return;
+    try {
+      setLoading(true);
+      setStatus('THINKING');
+      const photo = await cameraRef.current.takePictureAsync({ base64: true, quality: 0.5 });
+      const aiResponse = await generateGeminiResponse("Bu görüntüdeki mühendislik potansiyelini analiz et.", history, null, photo.base64);
+      
+      setHistory(prev => [...prev, 
+        { role: 'user', parts: [{ text: '[Görsel Analiz Talebi]' }] },
+        { role: 'model', parts: [{ text: aiResponse }] }
+      ]);
+      setLoading(false);
+      respondWithAI(aiResponse);
+      setView('CHAT');
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+      setStatus('IDLE');
+    }
+  };
+
+  const toggleCamera = () => {
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
+  };
+
+
 
   if (!permission) return <View />;
   if (!permission.granted) {
@@ -206,13 +235,19 @@ export default function App() {
             </View>
 
             <TouchableOpacity activeOpacity={0.9} onPress={startListening} style={styles.canvasContainerLarge}>
-              <Canvas>
-                <Avatar isTalking={status === 'SPEAKING' || status === 'LISTENING'} audioLevel={audioLevel} />
-              </Canvas>
+              <View style={styles.robotContainer}>
+                <Image source={require('./assets/nokta_robot.png')} style={styles.staticRobot} resizeMode="contain" />
+                <View style={styles.canvasOverlay}>
+                  <Canvas>
+                    <Avatar isTalking={status === 'SPEAKING' || status === 'LISTENING'} audioLevel={audioLevel} />
+                  </Canvas>
+                </View>
+              </View>
               {status === 'LISTENING' && (
                 <View style={styles.listeningRing} />
               )}
             </TouchableOpacity>
+
 
             <View style={styles.statusInfo}>
               <View style={styles.statusPill}>
@@ -227,20 +262,33 @@ export default function App() {
           </View>
         ) : view === 'VISION' ? (
           <View style={styles.visionView}>
-            <CameraView style={styles.camera} facing="back" ref={cameraRef}>
+            <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
               <View style={styles.visionOverlay}>
                 <View style={styles.glassHeader}>
                   <Text style={styles.visionText}>Gözlem Modu</Text>
-                  <Text style={styles.visionSubText}>Çevreni analiz ediyorum...</Text>
+                  <Text style={styles.visionSubText}>{facing === 'back' ? 'Çevreni analiz ediyorum...' : 'Seni görüyorum!'}</Text>
+                </View>
+
+                <View style={styles.visionControls}>
+                  <TouchableOpacity onPress={toggleCamera} style={styles.visionSubButton}>
+                    <Repeat color="#fff" size={24} />
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
+                    <View style={styles.captureInner} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={() => setView('AVATAR')} style={styles.visionSubButton}>
+                    <X color="#fff" size={24} />
+                  </TouchableOpacity>
                 </View>
               </View>
             </CameraView>
             <View style={styles.avatarMini}>
-              <Canvas>
-                <Avatar isTalking={status === 'SPEAKING' || status === 'LISTENING'} audioLevel={audioLevel} />
-              </Canvas>
+              <Image source={require('./assets/nokta_robot.png')} style={{ width: '100%', height: '100%', borderRadius: 40 }} />
             </View>
           </View>
+
         ) : (
           <SafeAreaView style={styles.chatView}>
             <View style={styles.chatHeader}>
@@ -385,14 +433,24 @@ const styles = StyleSheet.create({
   statusDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#444', marginRight: 10 },
   statusTextLarge: { fontSize: 14, fontWeight: '600', color: '#eee' },
 
+  robotContainer: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
+  staticRobot: { width: '85%', height: '85%', position: 'absolute' },
+  canvasOverlay: { width: '100%', height: '100%' },
+
+
   // Vision View
   visionView: { flex: 1, backgroundColor: '#000' },
   camera: { flex: 1 },
-  visionOverlay: { position: 'absolute', top: 60, width: '100%', alignItems: 'center' },
-  glassHeader: { backgroundColor: 'rgba(0,0,0,0.4)', padding: 20, borderRadius: 25, width: '85%', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  visionText: { color: '#fff', fontSize: 18, fontWeight: '800', letterSpacing: 2 },
-  visionSubText: { color: 'rgba(255,255,255,0.6)', fontSize: 12, marginTop: 4 },
-  avatarMini: { position: 'absolute', bottom: 130, right: 20, width: 100, height: 100, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 50, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  visionOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.2)', justifyContent: 'space-between', padding: 20 },
+  visionControls: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginBottom: 40 },
+  visionSubButton: { width: 50, height: 50, borderRadius: 25, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
+  captureButton: { width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.3)', padding: 5, borderWidth: 2, borderColor: '#fff' },
+  captureInner: { flex: 1, borderRadius: 35, backgroundColor: '#fff' },
+  glassHeader: { backgroundColor: 'rgba(255,255,255,0.1)', padding: 20, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', marginTop: 40 },
+  visionText: { color: '#fff', fontSize: 24, fontWeight: 'bold' },
+  visionSubText: { color: 'rgba(255,255,255,0.7)', fontSize: 14, marginTop: 4 },
+  avatarMini: { position: 'absolute', bottom: 140, right: 20, width: 80, height: 80, borderRadius: 40, overflow: 'hidden', borderWidth: 2, borderColor: '#00ffff' },
+
 
   // Chat View
   chatView: { flex: 1, backgroundColor: '#f0f2f5' },

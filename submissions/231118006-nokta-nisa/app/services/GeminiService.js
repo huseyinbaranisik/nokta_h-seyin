@@ -1,7 +1,7 @@
 const API_KEY = 'AIzaSyCqjeXtMTBJro_S8ebWnBBHmu2O8e0WWF8';
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent';
 
-export const generateGeminiResponse = async (prompt, history = [], audioBase64 = null) => {
+export const generateGeminiResponse = async (prompt, history = [], audioBase64 = null, imageBase64 = null) => {
   try {
     const contents = [...history];
     
@@ -14,6 +14,14 @@ export const generateGeminiResponse = async (prompt, history = [], audioBase64 =
         }
       });
       parts.push({ text: prompt || "Lütfen bu sesli mesajı analiz et. Önce kullanıcının ne dediğini tam olarak yazıya dök (transkript), sonra cevabını ver. Format: TRANSKRİPT: [metin] ||| CEVAP: [cevap]" });
+    } else if (imageBase64) {
+      parts.push({
+        inline_data: {
+          mime_type: 'image/jpeg',
+          data: imageBase64
+        }
+      });
+      parts.push({ text: prompt || "Bu resimde ne görüyorsun? Mühendislik perspektifiyle analiz et ve Nokta Vision asistanı olarak yorumla." });
     } else {
       parts.push({ text: prompt });
     }
@@ -21,6 +29,7 @@ export const generateGeminiResponse = async (prompt, history = [], audioBase64 =
     contents.push({ role: 'user', parts });
 
     const response = await fetch(`${BASE_URL}?key=${API_KEY}`, {
+
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
