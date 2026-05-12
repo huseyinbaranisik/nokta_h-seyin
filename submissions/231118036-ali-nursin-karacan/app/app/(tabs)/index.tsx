@@ -12,9 +12,11 @@ import {
   Alert,
   Share,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [notes, setNotes] = useState('');
   const [ideaCards, setIdeaCards] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -26,7 +28,7 @@ export default function HomeScreen() {
     }
 
     setLoading(true);
-    const API_KEY = 'AIzaSyDEceQXTETjxid4G7DOAaaYeG2xc2WHyz8';
+    const API_KEY = 'AIzaSyC33m9Gw18WSMXZaoDiQ2kdsDGIlTJd_Cs';
 
     const prompt = `Aşağıdaki ham not dökümündeki tekrarları (dedup) temizle ve farklı fikirleri ayrıştırarak 'Idea Cards' (Fikir Kartları) oluştur. Her fikir için 1 veya 2 kelimelik alakalı etiketler (tags) üret. Çıktıyı sadece JSON formatında, [{ "title": "Başlık", "summary": "Özet", "tags": ["Etiket1", "Etiket2"] }] şeklinde ver.\n\nNotlar:\n${notes}`;
 
@@ -46,14 +48,31 @@ export default function HomeScreen() {
 
       const data = await response.json();
       const resultText = data.candidates[0].content.parts[0].text;
-      
+
       // AI bazen JSON'u markdown blokları içine koyabiliyor, bunları temizleyelim
       const cleanedText = resultText.replace(/```json|```/g, '').trim();
       const parsedData = JSON.parse(cleanedText);
       setIdeaCards(parsedData);
     } catch (error) {
       console.error("Detaylı Hata:", error.message);
-      Alert.alert('Hata', 'API isteği sırasında bir sorun oluştu.');
+      Alert.alert(
+        'API Hatası (Anahtar Süresi Dolmuş)',
+        'Gemini API anahtarının süresi dolmuş. Test edebilmeniz için örnek fikir kartları yükleniyor...'
+      );
+
+      // Fallback (Yedek) Mock Veri - API çalışmadığında test edebilmek için
+      setIdeaCards([
+        {
+          title: "Kavramsal Paradoks Çözümleyici",
+          summary: "Girdiğiniz karmaşık metindeki epistemolojik belirsizlikleri tespit edip, daha anlaşılır alt katmanlara ayıran bir analiz aracı.",
+          tags: ["Analiz", "Felsefe", "Yapay Zeka"]
+        },
+        {
+          title: "Semantik Zihin Haritası",
+          summary: "Metindeki kaotik nedensellik ağını görsel bir zihin haritasına dönüştürerek, kullanıcının ana fikre odaklanmasını sağlayan bir arayüz.",
+          tags: ["Görselleştirme", "UX/UI"]
+        }
+      ]);
     } finally {
       setLoading(false);
     }
@@ -73,7 +92,7 @@ export default function HomeScreen() {
     <View style={styles.card}>
       <Text style={styles.cardTitle}>{item.title}</Text>
       <Text style={styles.cardSummary}>{item.summary}</Text>
-      
+
       {item.tags && item.tags.length > 0 && (
         <View style={styles.tagContainer}>
           {item.tags.map((tag, index) => (
@@ -85,8 +104,16 @@ export default function HomeScreen() {
       )}
 
       <View style={styles.cardFooter}>
-        <TouchableOpacity 
-          style={styles.shareButton} 
+        <TouchableOpacity
+          style={styles.expertButton}
+          onPress={() => router.push({ pathname: '/modal', params: { ideaTitle: item.title } })}
+          activeOpacity={0.6}
+        >
+          <Text style={styles.expertText}>Uzmana Sor (İnsan)</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.shareButton}
           onPress={() => onShare(item)}
           activeOpacity={0.6}
         >
@@ -109,7 +136,7 @@ export default function HomeScreen() {
                 <Text style={styles.headerTitle}>Not Derleyici</Text>
                 <Text style={styles.headerSubTitle}>& Fikir Kartları</Text>
               </View>
-              
+
               <View style={styles.inputCard}>
                 <TextInput
                   style={styles.textInput}
@@ -296,7 +323,20 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F2F2F7',
     paddingTop: 12,
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  expertButton: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    backgroundColor: '#007AFF15',
+    borderRadius: 8,
+  },
+  expertText: {
+    color: '#007AFF',
+    fontSize: 14,
+    fontWeight: '700',
   },
   shareButton: {
     paddingVertical: 4,
