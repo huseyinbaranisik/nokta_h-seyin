@@ -2,15 +2,41 @@ import {
   Contradiction,
   DistillationResult,
   DraftSection,
+  DraftSectionTitle,
   FragmentCategory,
   IdeaUnit,
   LockedBrief,
+  MentorFeedbackWriteback,
+  MentorPacket,
   NextDecision,
   NoteFragment,
   OverlapGroup,
+  ReadinessReview,
+  ResultSource,
   SignalId,
   UndefinedArea,
 } from '../types/draft';
+
+export type GamePitchAiDraft = {
+  title?: string;
+  gameSummary?: string | string[];
+  coreLoop?: string[];
+  playerFantasy?: string | string[];
+  mechanics?: string[];
+  scopeBoundary?: string[];
+  featureCreepWarnings?: string[];
+  contradictions?: Array<{
+    topic?: Contradiction['topic'];
+    claimA?: string;
+    claimB?: string;
+    rationale?: string;
+    severity?: Contradiction['severity'];
+  }>;
+  prototypePlan?: string[];
+  nextDecisions?: Array<string | NextDecision>;
+  recommendedMentor?: string;
+  mentorQuestions?: string[];
+};
 
 const stopwords = new Set([
   'a',
@@ -23,104 +49,137 @@ const stopwords = new Set([
   'by',
   'for',
   'from',
-  'get',
+  'game',
   'has',
   'have',
-  'if',
   'in',
   'into',
   'is',
   'it',
   'its',
-  'just',
-  'later',
   'like',
-  'mainly',
-  'make',
   'maybe',
   'more',
   'not',
-  'now',
   'of',
   'on',
   'or',
-  'out',
   'should',
   'that',
   'the',
-  'their',
   'this',
   'to',
   'up',
   'very',
-  'where',
   'with',
-  'would',
 ]);
 
 const synonymRules: Array<[RegExp, string]> = [
-  [/\bde-dup\b/g, 'deduplicate'],
-  [/\bdedup(?:licate)?\b/g, 'deduplicate'],
-  [/\bremove duplicates?\b/g, 'deduplicate'],
-  [/\bmessy dump\b/g, 'messy notes'],
-  [/\bnote dump\b/g, 'notes'],
-  [/\bdecision-ready\b/g, 'decision ready'],
-  [/\bfollow up\b/g, 'follow-up'],
+  [/\bco-op\b/g, 'multiplayer'],
+  [/\bcoop\b/g, 'multiplayer'],
+  [/\bmmo\b/g, 'multiplayer online large scope'],
+  [/\bopen-world\b/g, 'open world'],
+  [/\bbasebuilding\b/g, 'base building'],
+  [/\bbossfight\b/g, 'boss fight'],
+  [/\bprototype\b/g, 'demo'],
+  [/\bvertical slice\b/g, 'demo'],
 ];
 
 const categoryRules: Array<[FragmentCategory, RegExp[]]> = [
-  [
-    'problem',
-    [/\bproblem\b/, /\bmessy\b/, /\bunclear\b/, /\bchaotic\b/, /\bweak\b/],
-  ],
-  ['intent', [/\bshould\b/, /\bneed to\b/, /\bhelp\b/, /\bwant\b/]],
-  [
-    'direction',
-    [/\bconcept\b/, /\bdirection\b/, /\bdecision ready\b/, /\bstronger\b/, /\bserious\b/],
-  ],
-  [
-    'feature',
-    [/\bdeduplicate\b/, /\bproduce\b/, /\bgenerate\b/, /\bsurface\b/, /\brefine\b/],
-  ],
-  [
-    'constraint',
-    [/\bno live ai\b/, /\boffline\b/, /\bdeterministic\b/, /\bnot now\b/, /\bv1\b/],
-  ],
-  ['workflow', [/\bpaste\b/, /\bquestions first\b/, /\bresult screen\b/, /\binput\b/]],
-  ['audience', [/\buser\b/, /\bfounder\b/, /\bteam\b/, /\baudience\b/]],
-  ['boundary', [/\bavoid\b/, /\bnot like\b/, /\bdon.t\b/, /\bkeep it\b/]],
-  ['future', [/\blater\b/, /\bfuture\b/, /\beventually\b/, /\bphase 2\b/]],
-  ['output', [/\bdraft\b/, /\bcards\b/, /\bartifact\b/, /\bresult\b/]],
+  ['genre', [/\bgenre\b/, /\bcozy\b/, /\bhorror\b/, /\bsurvival\b/, /\bfarming\b/, /\broguelike\b/]],
+  ['playerFantasy', [/\bfantasy\b/, /\bfeel\b/, /\bplayer\b/, /\bexperience\b/, /\bvibe\b/]],
+  ['coreLoop', [/\bloop\b/, /\bexplore\b/, /\bcollect\b/, /\bupgrade\b/, /\breturn\b/, /\bsurvive\b/]],
+  ['mechanic', [/\bcraft\b/, /\bfishing\b/, /\bcombat\b/, /\bboss\b/, /\bpet\b/, /\bbuilding\b/, /\bstealth\b/]],
+  ['reference', [/\breference\b/, /\binspired\b/, /\bstardew\b/, /\bdredge\b/, /\bdon.t starve\b/, /\bhades\b/]],
+  ['scope', [/\bscope\b/, /\bcut\b/, /\bnot in v1\b/, /\blater\b/, /\btoo big\b/, /\bfeature creep\b/]],
+  ['prototype', [/\bdemo\b/, /\bweek\b/, /\bday\b/, /\bmvp\b/, /\bprototype\b/, /\bvertical slice\b/]],
+  ['platform', [/\bpc\b/, /\bsteam\b/, /\bmobile\b/, /\bweb\b/, /\bconsole\b/]],
+  ['production', [/\bsolo\b/, /\bteam\b/, /\bdeveloper\b/, /\bbudget\b/, /\btime\b/, /\b2d\b/, /\b3d\b/]],
+  ['future', [/\bfuture\b/, /\blater\b/, /\beventually\b/, /\bphase 2\b/]],
+  ['output', [/\bgdd\b/, /\bbrief\b/, /\bpitch\b/, /\bplan\b/]],
 ];
 
 const signalRules: Array<[SignalId, RegExp[]]> = [
-  ['simple', [/\bsimple\b/, /\bminimal\b/, /\bmvp\b/, /\blean\b/]],
-  ['advanced', [/\badvanced\b/, /\bworkspace\b/, /\bsuite\b/, /\bplatform\b/]],
-  ['summarizer', [/\bsummarizer\b/, /\bsummary\b/, /\bsummaries\b/]],
-  ['conceptTool', [/\bconcept distillation\b/, /\bconcept draft\b/, /\bdecision ready\b/, /\bstronger than\b/]],
-  ['cardsOutput', [/\bidea cards\b/, /\bcards\b/]],
-  ['draftOutput', [/\bdraft\b/, /\bstructured concept\b/, /\bartifact\b/]],
-  ['pasteFlow', [/\bpaste\b/, /\bpastes\b/, /\bpaste once\b/]],
-  ['guidedFlow', [/\bfollow-up\b/, /\bquestions first\b/, /\basks lots of\b/]],
-  ['offline', [/\boffline\b/, /\bdeterministic\b/, /\bno live ai\b/, /\blocal\b/]],
-  ['ai', [/\bai\b/, /\bllm\b/, /\bgenerative\b/]],
-  ['soloAudience', [/\bsolo founder\b/, /\bfounders\b/, /\bindie\b/]],
-  ['teamAudience', [/\bteam\b/, /\bproduct teams?\b/, /\binternal teams?\b/]],
-  ['future', [/\blater\b/, /\bfuture\b/, /\bnot now\b/, /\beventually\b/]],
-  ['tightScope', [/\bavoid\b/, /\bkeep it\b/, /\bone flow\b/, /\btrack c\b/]],
-  ['broadScope', [/\bworkspace\b/, /\bproject management\b/, /\bproductivity suite\b/]],
-  ['review', [/\brefine\b/, /\bmark decision\b/, /\breview\b/]],
+  ['cozy', [/\bcozy\b/, /\brelaxing\b/, /\bwholesome\b/]],
+  ['horror', [/\bhorror\b/, /\bscary\b/, /\bcreepy\b/, /\bdread\b/]],
+  ['survival', [/\bsurvival\b/, /\bsurvive\b/, /\bhunger\b/, /\bthirst\b/]],
+  ['farming', [/\bfarming\b/, /\bfarm\b/, /\bcrops?\b/]],
+  ['exploration', [/\bexplore\b/, /\bexploration\b/, /\bisland\b/, /\bdungeon\b/]],
+  ['combat', [/\bcombat\b/, /\bfight\b/, /\battack\b/, /\bweapon\b/]],
+  ['noCombat', [/\bno combat\b/, /\bcombat olmasin\b/, /\bcombat olmasin\b/, /\bwithout combat\b/]],
+  ['boss', [/\bboss\b/, /\bboss fight\b/]],
+  ['multiplayer', [/\bmultiplayer\b/, /\bonline\b/, /\bco-?op\b/, /\bmmo\b/]],
+  ['offline', [/\boffline\b/, /\bsingle player\b/, /\bsingle-player\b/]],
+  ['soloDev', [/\bsolo\b/, /\bone dev\b/, /\btek kisi\b/, /\btek kiÅŸi\b/, /\bindie\b/]],
+  ['shortPrototype', [/\b1 week\b/, /\b2 week\b/, /\bweekend\b/, /\b7 day\b/, /\b14 day\b/, /\bhafta\b/]],
+  ['largeScope', [/\bopen world\b/, /\bprocedural\b/, /\bmultiplayer\b/, /\bmmo\b/, /\blive service\b/, /\bbase building\b/]],
+  ['pc', [/\bpc\b/, /\bsteam\b/, /\bdesktop\b/]],
+  ['mobile', [/\bmobile\b/, /\bios\b/, /\bandroid\b/]],
+  ['web', [/\bweb\b/, /\bbrowser\b/]],
+  ['crafting', [/\bcraft\b/, /\bcrafting\b/]],
+  ['baseBuilding', [/\bbase building\b/, /\bbuild base\b/, /\bsettlement\b/]],
+  ['pets', [/\bpet\b/, /\bpets\b/, /\bcompanion\b/]],
+  ['openWorld', [/\bopen world\b/]],
+  ['procedural', [/\bprocedural\b/, /\bgenerated\b/, /\brandom world\b/]],
+  ['story', [/\bstory\b/, /\bnarrative\b/, /\bquest\b/]],
+  ['future', [/\blater\b/, /\bfuture\b/, /\beventually\b/, /\bnot now\b/]],
+  ['cut', [/\bcut\b/, /\bremove\b/, /\bnot in v1\b/, /\bavoid\b/]],
+  ['mentor', [/\bmentor\b/, /\bexpert\b/, /\bproducer\b/, /\bdesigner\b/]],
+];
+
+const featureCreepCatalog: Array<{ label: string; pattern: RegExp; warning: string }> = [
+  {
+    label: 'Online multiplayer',
+    pattern: /\bmultiplayer\b|\bco-?op\b|\bonline\b|\bmmo\b/,
+    warning: 'Online multiplayer should stay out of the first solo prototype unless it is the only core mechanic.',
+  },
+  {
+    label: 'Open world',
+    pattern: /\bopen world\b/,
+    warning: 'Open world scope is too large for a first playable slice; use one bounded area instead.',
+  },
+  {
+    label: 'Procedural generation',
+    pattern: /\bprocedural\b|\brandom world\b|\bgenerated world\b/,
+    warning: 'Procedural systems add design and debugging cost before the core loop is proven.',
+  },
+  {
+    label: 'Base building',
+    pattern: /\bbase building\b|\bsettlement\b|\bbuild base\b/,
+    warning: 'Base building is a secondary system; cut it unless building is the main loop.',
+  },
+  {
+    label: 'Pet or companion system',
+    pattern: /\bpet\b|\bpets\b|\bcompanion\b/,
+    warning: 'Pet systems add AI, animation, UI, and balancing work that can wait until after the demo.',
+  },
+  {
+    label: 'Crafting economy',
+    pattern: /\bcraft\b|\bcrafting\b|\beconomy\b/,
+    warning: 'Crafting can explode into inventory, recipes, and balance work; keep one recipe in the prototype.',
+  },
+  {
+    label: 'Boss encounters',
+    pattern: /\bboss\b|\bboss fight\b/,
+    warning: 'Boss fights require combat rules, telegraphs, tuning, and content; avoid them if combat is not core.',
+  },
+  {
+    label: 'Quest/story system',
+    pattern: /\bquest\b|\bstory system\b|\bnarrative system\b/,
+    warning: 'A full quest or story system should be replaced with one scripted playable moment in the first demo.',
+  },
 ];
 
 const canonicalTitles: Record<FragmentCategory, string> = {
-  problem: 'Problem Signal',
-  intent: 'Intent Signal',
-  direction: 'Direction Signal',
-  feature: 'Feature Signal',
-  constraint: 'Constraint Signal',
-  workflow: 'Workflow Signal',
-  audience: 'Audience Signal',
-  boundary: 'Boundary Signal',
+  genre: 'Genre Signal',
+  playerFantasy: 'Player Fantasy Signal',
+  coreLoop: 'Core Loop Signal',
+  mechanic: 'Mechanic Signal',
+  reference: 'Reference Signal',
+  scope: 'Scope Signal',
+  prototype: 'Prototype Signal',
+  platform: 'Platform Signal',
+  production: 'Production Signal',
   future: 'Future Signal',
   output: 'Output Signal',
   unknown: 'General Signal',
@@ -215,8 +274,11 @@ function similarityScore(a: NoteFragment, b: NoteFragment) {
 
 function cleanSentence(text: string) {
   const sentence = text.replace(/\s+/g, ' ').trim();
-  const capitalized = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+  if (!sentence) {
+    return '';
+  }
 
+  const capitalized = sentence.charAt(0).toUpperCase() + sentence.slice(1);
   return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`;
 }
 
@@ -312,6 +374,13 @@ function uniqueById<T extends { id: string }>(items: T[]) {
   });
 }
 
+function uniqueStrings(items: string[]) {
+  return items
+    .map(cleanSentence)
+    .filter(Boolean)
+    .filter((item, index, list) => list.indexOf(item) === index);
+}
+
 function createContradiction(
   id: string,
   topic: Contradiction['topic'],
@@ -342,48 +411,47 @@ function findBySignal(fragments: NoteFragment[], signal: SignalId) {
 function detectContradictions(fragments: NoteFragment[]) {
   const contradictions = [
     createContradiction(
+      'contradiction-tone',
+      'tone',
+      findBySignal(fragments, 'cozy'),
+      findBySignal(fragments, 'horror'),
+      'The pitch mixes a cozy promise with horror tension; the prototype needs one dominant tone.',
+      'medium'
+    ),
+    createContradiction(
+      'contradiction-combat',
+      'combat',
+      findBySignal(fragments, 'noCombat'),
+      findBySignal(fragments, 'boss') ?? findBySignal(fragments, 'combat'),
+      'The notes avoid combat but still mention boss or fight content.',
+      'high'
+    ),
+    createContradiction(
       'contradiction-scope',
       'scope',
-      findBySignal(fragments, 'simple'),
-      findBySignal(fragments, 'advanced'),
-      'The notes want a minimal first version but also hint at a broader advanced workspace.',
+      findBySignal(fragments, 'soloDev') ?? findBySignal(fragments, 'shortPrototype'),
+      findBySignal(fragments, 'largeScope'),
+      'The production constraint is small, but the requested systems point to a large game scope.',
       'high'
     ),
     createContradiction(
-      'contradiction-positioning',
-      'positioning',
-      findBySignal(fragments, 'summarizer'),
-      findBySignal(fragments, 'conceptTool'),
-      'The concept is framed both as a plain summarizer and as a stronger concept-distillation tool.',
-      'high'
-    ),
-    createContradiction(
-      'contradiction-workflow',
-      'workflow',
-      findBySignal(fragments, 'pasteFlow'),
-      findBySignal(fragments, 'guidedFlow'),
-      'The workflow switches between instant paste-and-distill and a question-first flow.',
-      'medium'
-    ),
-    createContradiction(
-      'contradiction-output',
-      'output',
-      findBySignal(fragments, 'cardsOutput'),
-      findBySignal(fragments, 'draftOutput'),
-      'The output is described both as idea cards and as a decision-ready draft.',
-      'medium'
-    ),
-    createContradiction(
-      'contradiction-audience',
-      'audience',
-      findBySignal(fragments, 'soloAudience'),
-      findBySignal(fragments, 'teamAudience'),
-      'The primary user is not fixed between solo founders and small teams.',
+      'contradiction-multiplayer',
+      'multiplayer',
+      findBySignal(fragments, 'offline'),
+      findBySignal(fragments, 'multiplayer'),
+      'The game is framed as offline or single-player while also asking for multiplayer.',
       'medium'
     ),
   ].filter((item): item is Contradiction => Boolean(item));
 
   return uniqueById(contradictions);
+}
+
+function detectFeatureCreep(input: string) {
+  const normalized = normalizeText(input);
+  return featureCreepCatalog
+    .filter((entry) => entry.pattern.test(normalized))
+    .map((entry) => entry.warning);
 }
 
 function detectUndefinedAreas(
@@ -392,79 +460,67 @@ function detectUndefinedAreas(
 ) {
   const undefinedAreas: UndefinedArea[] = [];
 
-  const hasAudience = fragments.some((fragment) => fragment.category === 'audience');
-  const hasWorkflow = fragments.some((fragment) => fragment.category === 'workflow');
-  const hasOutput = fragments.some((fragment) => fragment.category === 'output');
-  const hasMetric = fragments.some((fragment) =>
-    /\bmetric\b|\bsuccess\b|\btime saved\b|\bquality\b/.test(fragment.normalized)
-  );
+  const hasCoreLoop = fragments.some((fragment) => fragment.category === 'coreLoop');
+  const hasFantasy =
+    fragments.some((fragment) => fragment.category === 'playerFantasy') ||
+    fragments.some((fragment) => fragment.signals.includes('cozy') || fragment.signals.includes('horror'));
+  const hasPlatform = fragments.some((fragment) => fragment.category === 'platform');
+  const hasPrototype = fragments.some((fragment) => fragment.category === 'prototype');
+  const hasScopeBoundary =
+    fragments.some((fragment) => fragment.category === 'scope') ||
+    fragments.some((fragment) => fragment.signals.includes('cut'));
 
-  if (!hasAudience || contradictions.some((entry) => entry.topic === 'audience')) {
+  if (!hasCoreLoop) {
     undefinedAreas.push({
-      id: 'undefined-user',
-      area: 'Target User',
+      id: 'undefined-loop',
+      area: 'Core Loop',
       explanation:
-        'The notes imply multiple audiences, but the primary user is still not committed.',
+        'The notes do not yet name the repeatable play loop: what the player does every minute.',
       severity: 'high',
-      fragmentIds: fragments
-        .filter((fragment) =>
-          fragment.signals.includes('soloAudience') ||
-          fragment.signals.includes('teamAudience')
-        )
-        .map((fragment) => fragment.id),
+      fragmentIds: [],
     });
   }
 
-  if (!hasWorkflow || contradictions.some((entry) => entry.topic === 'workflow')) {
+  if (!hasFantasy) {
     undefinedAreas.push({
-      id: 'undefined-workflow',
-      area: 'Workflow',
+      id: 'undefined-fantasy',
+      area: 'Player Fantasy',
       explanation:
-        'It is still unclear whether v1 should be paste-first only or include a guided clarification step.',
-      severity: 'medium',
-      fragmentIds: fragments
-        .filter((fragment) =>
-          fragment.signals.includes('pasteFlow') ||
-          fragment.signals.includes('guidedFlow')
-        )
-        .map((fragment) => fragment.id),
-    });
-  }
-
-  if (!hasOutput || contradictions.some((entry) => entry.topic === 'output')) {
-    undefinedAreas.push({
-      id: 'undefined-output',
-      area: 'Output Contract',
-      explanation:
-        'The final artifact is mostly draft-oriented, but the role of idea cards versus the final draft still needs one explicit rule.',
-      severity: 'medium',
-      fragmentIds: fragments
-        .filter((fragment) =>
-          fragment.signals.includes('cardsOutput') ||
-          fragment.signals.includes('draftOutput')
-        )
-        .map((fragment) => fragment.id),
-    });
-  }
-
-  if (!hasMetric) {
-    undefinedAreas.push({
-      id: 'undefined-metric',
-      area: 'Success Metric',
-      explanation:
-        'The notes do not say what makes the draft successful: clearer scope, fewer duplicates, or faster decisions.',
+        'The pitch needs one clear player fantasy, such as being a careful explorer, clever survivor, or cozy collector.',
       severity: 'medium',
       fragmentIds: [],
     });
   }
 
-  if (contradictions.some((entry) => entry.topic === 'scope')) {
+  if (!hasPlatform) {
+    undefinedAreas.push({
+      id: 'undefined-platform',
+      area: 'Target Platform',
+      explanation:
+        'The notes do not commit to PC, mobile, or web, which makes controls and prototype scope fuzzy.',
+      severity: 'medium',
+      fragmentIds: [],
+    });
+  }
+
+  if (!hasPrototype) {
+    undefinedAreas.push({
+      id: 'undefined-prototype',
+      area: 'Prototype Constraint',
+      explanation:
+        'The prototype timebox is missing; without it, feature cuts are harder to defend.',
+      severity: 'medium',
+      fragmentIds: [],
+    });
+  }
+
+  if (!hasScopeBoundary || contradictions.some((entry) => entry.topic === 'scope')) {
     undefinedAreas.push({
       id: 'undefined-scope',
       area: 'Scope Boundary',
       explanation:
-        'The v1 boundary still needs a clear line between the essential flow and the later workspace ideas.',
-      severity: 'high',
+        'The first playable build needs a firm cut line between core loop and later wishlist systems.',
+      severity: contradictions.some((entry) => entry.topic === 'scope') ? 'high' : 'medium',
       fragmentIds: contradictions
         .filter((entry) => entry.topic === 'scope')
         .flatMap((entry) => entry.fragmentIds),
@@ -472,28 +528,6 @@ function detectUndefinedAreas(
   }
 
   return undefinedAreas;
-}
-
-function chooseAudience(fragments: NoteFragment[]) {
-  const audienceParts: string[] = [];
-
-  if (fragments.some((fragment) => fragment.signals.includes('soloAudience'))) {
-    audienceParts.push('solo founders');
-  }
-
-  if (fragments.some((fragment) => fragment.signals.includes('teamAudience'))) {
-    audienceParts.push('small product teams');
-  }
-
-  if (audienceParts.length === 0) {
-    return 'an as-yet undefined project owner';
-  }
-
-  if (audienceParts.length === 1) {
-    return audienceParts[0];
-  }
-
-  return `${audienceParts[0]} and ${audienceParts[1]}`;
 }
 
 function collectStatements(
@@ -512,94 +546,178 @@ function fallbackStatement(statements: string[], fallback: string) {
   return statements.length > 0 ? statements : [fallback];
 }
 
+function hasSignal(fragments: NoteFragment[], signal: SignalId) {
+  return fragments.some((fragment) => fragment.signals.includes(signal));
+}
+
+function chooseGenreDirection(fragments: NoteFragment[]) {
+  const parts: string[] = [];
+  if (hasSignal(fragments, 'cozy')) {
+    parts.push('cozy');
+  }
+  if (hasSignal(fragments, 'horror')) {
+    parts.push('horror');
+  }
+  if (hasSignal(fragments, 'survival')) {
+    parts.push('survival');
+  }
+  if (hasSignal(fragments, 'farming')) {
+    parts.push('farming');
+  }
+  if (hasSignal(fragments, 'exploration')) {
+    parts.push('exploration');
+  }
+
+  return parts.length > 0 ? parts.join(' ') : 'focused indie prototype';
+}
+
+function choosePlatform(fragments: NoteFragment[]) {
+  if (hasSignal(fragments, 'pc')) {
+    return 'PC prototype';
+  }
+  if (hasSignal(fragments, 'mobile')) {
+    return 'mobile prototype';
+  }
+  if (hasSignal(fragments, 'web')) {
+    return 'web prototype';
+  }
+  return 'platform undecided';
+}
+
 function buildTitle(fragments: NoteFragment[]) {
-  if (fragments.some((fragment) => fragment.signals.includes('conceptTool'))) {
-    return 'Concept Distillation Draft';
-  }
-
-  if (fragments.some((fragment) => fragment.signals.includes('draftOutput'))) {
-    return 'Structured Concept Draft';
-  }
-
-  return 'Distilled Project Concept';
+  const direction = chooseGenreDirection(fragments);
+  return direction === 'focused indie prototype'
+    ? 'Indie Game Pitch Brief'
+    : `${direction
+        .split(' ')
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ')} Brief`;
 }
 
 function buildSummary(fragments: NoteFragment[], contradictions: Contradiction[]) {
-  const audience = chooseAudience(fragments);
-  const outcome = fragments.some((fragment) => fragment.signals.includes('draftOutput'))
-    ? 'a structured concept draft'
-    : 'a cleaner concept direction';
-  const method = fragments.some((fragment) => fragment.signals.includes('offline'))
-    ? 'through deterministic local distillation'
-    : 'through overlap cleanup and synthesis';
+  const genre = chooseGenreDirection(fragments);
+  const platform = choosePlatform(fragments);
+  const constraint = hasSignal(fragments, 'soloDev')
+    ? 'for a solo developer'
+    : hasSignal(fragments, 'shortPrototype')
+      ? 'for a short prototype window'
+      : 'for a constrained indie build';
   const tensionLine =
     contradictions.length > 0
-      ? 'The current notes still contain tensions that should be resolved before calling the concept stable.'
-      : 'The current notes stay mostly aligned around one usable direction.';
+      ? 'The current notes contain design tensions that should be resolved before locking the prototype.'
+      : 'The current notes point toward one playable prototype direction.';
 
   return [
-    `This concept turns messy raw notes into ${outcome} for ${audience} ${method}.`,
+    `This pitch should become a ${genre} ${platform} ${constraint}.`,
     tensionLine,
+  ];
+}
+
+function buildPrototypePlan(fragments: NoteFragment[], featureCreepWarnings: string[]) {
+  const loopFocus = hasSignal(fragments, 'exploration')
+    ? 'Build a tiny playable exploration space with one interactable objective.'
+    : 'Build one room-scale playable scene that proves the core interaction.';
+  const mechanicFocus = hasSignal(fragments, 'crafting')
+    ? 'Add one collect-and-craft interaction, limited to a single recipe.'
+    : hasSignal(fragments, 'farming')
+      ? 'Add one repeatable resource action and one visible state change.'
+      : 'Add one repeatable mechanic that can be tested in under two minutes.';
+  const cutLine =
+    featureCreepWarnings.length > 0
+      ? 'Cut every secondary system that does not support this first loop.'
+      : 'Keep the demo to one loop, one space, and one clear finish condition.';
+
+  return [
+    loopFocus,
+    mechanicFocus,
+    'Add a simple fail, success, or completion condition so the prototype can be judged.',
+    cutLine,
   ];
 }
 
 function buildNextDecisions(
   contradictions: Contradiction[],
-  undefinedAreas: UndefinedArea[]
+  undefinedAreas: UndefinedArea[],
+  featureCreepWarnings: string[]
 ) {
   const decisions: NextDecision[] = [];
 
-  if (contradictions.some((entry) => entry.topic === 'positioning')) {
+  if (contradictions.some((entry) => entry.topic === 'tone')) {
     decisions.push({
-      id: 'decision-positioning',
-      question: 'Should v1 behave like a summarizer or a stronger concept-distillation tool?',
+      id: 'decision-genre',
+      question: 'What is the dominant tone for the first prototype?',
       recommendation:
-        'Commit to concept distillation so the result screen stays draft-first instead of summary-first.',
-      options: ['Concept distillation tool', 'Plain summarizer'],
+        'Pick one lead tone and let the other become flavor, not a second design direction.',
+      options: ['Cozy exploration first', 'Survival horror first', 'Quiet mystery first'],
       priority: 'Now',
     });
   }
 
-  if (undefinedAreas.some((entry) => entry.area === 'Target User')) {
+  if (undefinedAreas.some((entry) => entry.area === 'Core Loop')) {
     decisions.push({
-      id: 'decision-user',
-      question: 'Who is the primary v1 user?',
+      id: 'decision-loop',
+      question: 'What is the single repeatable core loop?',
       recommendation:
-        'Pick one primary audience so the copy, sample input, and output emphasis stay consistent.',
-      options: ['Solo founders', 'Small product teams'],
+        'Use a four-beat loop that can be played repeatedly in the prototype.',
+      options: ['Explore -> collect -> upgrade -> return', 'Talk -> choose -> consequence -> reflect', 'Gather -> craft -> survive -> expand'],
       priority: 'Now',
     });
   }
 
-  if (undefinedAreas.some((entry) => entry.area === 'Output Contract')) {
+  if (contradictions.some((entry) => entry.topic === 'combat')) {
     decisions.push({
-      id: 'decision-output',
-      question: 'What is the main artifact after distillation?',
+      id: 'decision-combat',
+      question: 'How should combat work in v1?',
       recommendation:
-        'Treat the structured draft as the primary artifact and keep idea units as internal support.',
-      options: ['Structured draft first', 'Idea cards first'],
+        'Avoid boss fights unless combat is the main prototype promise.',
+      options: ['No combat in v1', 'One light encounter', 'Boss prototype only'],
       priority: 'Now',
     });
   }
 
-  if (undefinedAreas.some((entry) => entry.area === 'Workflow')) {
+  if (
+    contradictions.some((entry) => entry.topic === 'multiplayer') ||
+    featureCreepWarnings.some((warning) => warning.includes('multiplayer'))
+  ) {
     decisions.push({
-      id: 'decision-workflow',
-      question: 'Should the first version be paste-and-distill only?',
+      id: 'decision-multiplayer',
+      question: 'Should multiplayer exist in the first prototype?',
       recommendation:
-        'Keep v1 to a single paste flow and leave guided questioning for a later version.',
-      options: ['Paste and distill only', 'Add guided questions'],
+        'Keep multiplayer out of v1 unless the whole idea fails without it.',
+      options: ['Single-player v1', 'Local co-op later', 'Online multiplayer later'],
+      priority: 'Now',
+    });
+  }
+
+  if (undefinedAreas.some((entry) => entry.area === 'Target Platform')) {
+    decisions.push({
+      id: 'decision-platform',
+      question: 'Which platform is the prototype targeting first?',
+      recommendation:
+        'Choose one platform so input design and prototype scope stay consistent.',
+      options: ['PC prototype', 'Mobile prototype', 'Web prototype'],
       priority: 'Soon',
     });
   }
 
-  if (undefinedAreas.some((entry) => entry.area === 'Success Metric')) {
+  if (undefinedAreas.some((entry) => entry.area === 'Prototype Constraint')) {
     decisions.push({
-      id: 'decision-metric',
-      question: 'How will you judge whether the draft is better?',
+      id: 'decision-scope',
+      question: 'What is the prototype timebox?',
       recommendation:
-        'Choose one metric such as clearer scope, fewer repeated claims, or faster decision making.',
-      options: ['Clarity gain', 'Duplicate reduction', 'Faster decisions'],
+        'Choose a short timebox and cut features until it feels realistic.',
+      options: ['Weekend build', 'Two-week prototype', 'One-month vertical slice'],
+      priority: 'Soon',
+    });
+  }
+
+  if (decisions.length === 0) {
+    decisions.push({
+      id: 'decision-scope',
+      question: 'What should be cut from the first playable build?',
+      recommendation:
+        'Lock the prototype around one loop and move secondary systems into later milestones.',
+      options: ['Cut multiplayer', 'Cut base building', 'Cut boss fights'],
       priority: 'Soon',
     });
   }
@@ -607,277 +725,477 @@ function buildNextDecisions(
   return decisions;
 }
 
-function buildSections(
-  fragments: NoteFragment[],
-  ideaUnits: IdeaUnit[],
-  contradictions: Contradiction[],
-  undefinedAreas: UndefinedArea[],
-  nextDecisions: NextDecision[]
-) {
-  const sections: DraftSection[] = [];
+function buildReadiness(input: {
+  contradictions: Contradiction[];
+  undefinedAreas: UndefinedArea[];
+  nextDecisions: NextDecision[];
+  featureCreepWarnings: string[];
+  fragments: NoteFragment[];
+}): ReadinessReview {
+  let score = 100;
+  const rationale: string[] = [];
+  const highContradictions = input.contradictions.filter(
+    (entry) => entry.severity === 'high'
+  ).length;
 
-  sections.push({
-    title: 'Concept Summary',
-    items: buildSummary(fragments, contradictions),
-  });
+  score -= highContradictions * 18;
+  score -= (input.contradictions.length - highContradictions) * 10;
+  score -= input.undefinedAreas.filter((area) => area.severity === 'high').length * 14;
+  score -= input.undefinedAreas.filter((area) => area.severity !== 'high').length * 8;
+  score -= Math.min(30, input.featureCreepWarnings.length * 7);
 
-  sections.push({
-    title: 'Problem and Intent',
-    items: fallbackStatement(
-      collectStatements(ideaUnits, ['problem', 'intent'], 3),
-      'The raw notes point to a planning problem, but the exact problem statement still needs stronger language.'
-    ),
-  });
+  if (hasSignal(input.fragments, 'soloDev')) {
+    rationale.push('Solo developer constraint detected.');
+  }
+  if (hasSignal(input.fragments, 'shortPrototype')) {
+    rationale.push('Short prototype timebox detected.');
+  }
+  if (input.featureCreepWarnings.length > 0) {
+    rationale.push(`${input.featureCreepWarnings.length} feature creep risk(s) detected.`);
+  }
+  if (input.contradictions.length > 0) {
+    rationale.push(`${input.contradictions.length} game design tension(s) need review.`);
+  }
+  if (input.undefinedAreas.length > 0) {
+    rationale.push(`${input.undefinedAreas.length} missing area(s) weaken the pitch.`);
+  }
+  if (rationale.length === 0) {
+    rationale.push('The pitch has a clear direction and a manageable prototype surface.');
+  }
 
-  sections.push({
-    title: 'Core Product Direction',
-    items: fallbackStatement(
-      collectStatements(ideaUnits, ['direction', 'workflow', 'output'], 4),
-      'The strongest direction is to turn messy notes into one clearer concept artifact.'
-    ),
-  });
+  const boundedScore = Math.max(0, Math.min(100, score));
 
-  sections.push({
-    title: 'Key Features',
-    items: fallbackStatement(
-      collectStatements(ideaUnits, ['feature', 'workflow', 'output'], 5),
-      'Distill overlapping notes into one readable draft with explicit tensions and next decisions.'
-    ),
-  });
+  if (boundedScore < 50 || highContradictions > 0) {
+    return {
+      score: boundedScore,
+      mode: 'HITL',
+      status: 'Mentor Required',
+      rationale,
+    };
+  }
 
-  sections.push({
-    title: 'Constraints and Boundaries',
-    items: [
-      ...fallbackStatement(
-        collectStatements(ideaUnits, ['constraint', 'boundary', 'future'], 4),
-        'The scope boundary is still light in the notes and should be tightened before expansion.'
+  if (boundedScore < 78 || input.featureCreepWarnings.length >= 2) {
+    return {
+      score: boundedScore,
+      mode: 'HOTL',
+      status: 'Mentor Recommended',
+      rationale,
+    };
+  }
+
+  return {
+    score: boundedScore,
+    mode: 'HOOTL',
+    status: 'Buildable Prototype',
+    rationale,
+  };
+}
+
+function buildMentorPacket(input: {
+  title: string;
+  summary: string[];
+  contradictions: Contradiction[];
+  undefinedAreas: UndefinedArea[];
+  featureCreepWarnings: string[];
+  nextDecisions: NextDecision[];
+}): MentorPacket {
+  const needsTechnicalProducer =
+    input.featureCreepWarnings.length >= 2 ||
+    input.contradictions.some((entry) => entry.topic === 'scope' || entry.topic === 'production');
+  const recommendedMentor = needsTechnicalProducer
+    ? 'Game designer / technical producer'
+    : 'Game designer mentor';
+  const topRisk =
+    input.contradictions[0]?.rationale ??
+    input.featureCreepWarnings[0] ??
+    input.undefinedAreas[0]?.explanation ??
+    'The pitch is mostly stable, but a mentor can still sharpen the playable slice.';
+  const questions = input.nextDecisions.slice(0, 3).map((decision) => decision.question);
+
+  while (questions.length < 3) {
+    const fallbackQuestions = [
+      'What should be the single playable core loop?',
+      'Which mechanic must be cut from the first prototype?',
+      'What would make the first two-minute demo feel complete?',
+    ];
+    const next = fallbackQuestions.find((question) => !questions.includes(question));
+    if (!next) {
+      break;
+    }
+    questions.push(next);
+  }
+
+  return {
+    recommendedMentor,
+    topic: input.title,
+    why: uniqueStrings([
+      topRisk,
+      ...input.featureCreepWarnings.slice(0, 2),
+      ...input.undefinedAreas.slice(0, 1).map((area) => area.explanation),
+    ]),
+    questions,
+  };
+}
+
+function buildSections(input: {
+  fragments: NoteFragment[];
+  ideaUnits: IdeaUnit[];
+  contradictions: Contradiction[];
+  undefinedAreas: UndefinedArea[];
+  featureCreepWarnings: string[];
+  nextDecisions: NextDecision[];
+  aiDraft?: GamePitchAiDraft;
+}) {
+  const summary = toList(input.aiDraft?.gameSummary);
+  const fantasy = toList(input.aiDraft?.playerFantasy);
+  const sections: DraftSection[] = [
+    {
+      title: 'Game Summary',
+      items:
+        summary.length > 0
+          ? uniqueStrings(summary)
+          : buildSummary(input.fragments, input.contradictions),
+    },
+    {
+      title: 'Core Loop',
+      items: fallbackStatement(
+        uniqueStrings([
+          ...(input.aiDraft?.coreLoop ?? []),
+          ...collectStatements(input.ideaUnits, ['coreLoop'], 4),
+        ]),
+        'The prototype should prove one repeatable loop before adding secondary systems.'
       ),
-      ...undefinedAreas
-        .filter((area) => area.area === 'Scope Boundary')
-        .map((area) => area.explanation),
-      ...nextDecisions
-        .filter((decision) => decision.priority === 'Now')
-        .slice(0, 1)
-        .map((decision) => decision.recommendation),
-    ]
-      .map(cleanSentence)
-      .filter((item, index, items) => items.indexOf(item) === index),
-  });
-
-  sections.push({
-    title: 'Contradictions and Tensions',
-    items:
-      contradictions.length > 0
-        ? contradictions.map((entry) => cleanSentence(entry.rationale))
-        : ['No direct contradictions were detected in the current notes.'],
-  });
-
-  sections.push({
-    title: 'Undefined Areas',
-    items:
-      undefinedAreas.length > 0
-        ? undefinedAreas.map((entry) => cleanSentence(entry.explanation))
-        : ['No major undefined areas were detected in the current notes.'],
-  });
-
-  sections.push({
-    title: 'Recommended Next Decisions',
-    items:
-      nextDecisions.length > 0
-        ? nextDecisions.map((entry) => cleanSentence(entry.question))
-        : ['No immediate next decisions were generated from the current notes.'],
-  });
+    },
+    {
+      title: 'Player Fantasy',
+      items:
+        fantasy.length > 0
+          ? uniqueStrings(fantasy)
+          : fallbackStatement(
+              collectStatements(input.ideaUnits, ['playerFantasy', 'genre'], 3),
+              'The player fantasy still needs one clear sentence: who the player becomes and why it feels compelling.'
+            ),
+    },
+    {
+      title: 'Core Mechanics',
+      items: fallbackStatement(
+        uniqueStrings([
+          ...(input.aiDraft?.mechanics ?? []),
+          ...collectStatements(input.ideaUnits, ['mechanic', 'coreLoop'], 5),
+        ]),
+        'Keep the first prototype to one movement verb, one interaction verb, and one feedback loop.'
+      ),
+    },
+    {
+      title: 'Scope Boundary',
+      items: fallbackStatement(
+        uniqueStrings([
+          ...(input.aiDraft?.scopeBoundary ?? []),
+          ...collectStatements(input.ideaUnits, ['scope', 'prototype', 'production', 'future'], 5),
+          ...input.undefinedAreas
+            .filter((area) => area.area === 'Scope Boundary')
+            .map((area) => area.explanation),
+        ]),
+        'The first build should be one scene, one loop, and one visible success condition.'
+      ),
+    },
+    {
+      title: 'Feature Creep Warnings',
+      items:
+        input.featureCreepWarnings.length > 0
+          ? uniqueStrings(input.featureCreepWarnings)
+          : ['No major feature creep signal was detected from the current notes.'],
+    },
+    {
+      title: 'Prototype Plan',
+      items:
+        input.aiDraft?.prototypePlan && input.aiDraft.prototypePlan.length > 0
+          ? uniqueStrings(input.aiDraft.prototypePlan)
+          : buildPrototypePlan(input.fragments, input.featureCreepWarnings),
+    },
+  ];
 
   return sections;
 }
 
-function buildRefinements(sections: DraftSection[], contradictions: Contradiction[]) {
-  const summarySection = sections.find((section) => section.title === 'Concept Summary');
-  const featureSection = sections.find((section) => section.title === 'Key Features');
+function buildRefinements(sections: DraftSection[], featureCreepWarnings: string[]) {
+  const summarySection = sections.find((section) => section.title === 'Game Summary');
+  const mechanicSection = sections.find((section) => section.title === 'Core Mechanics');
 
   return {
     sharpenedSummary:
       summarySection?.items[0] ??
-      'This concept needs one cleaner summary before it becomes decision-ready.',
-    focusedFeatures: (featureSection?.items ?? []).slice(0, 3),
+      'This game pitch needs one clearer prototype promise before it becomes buildable.',
+    focusedFeatures: (mechanicSection?.items ?? []).slice(0, 3),
     scopeBoundary:
-      contradictions.some((entry) => entry.topic === 'scope')
-        ? 'Keep v1 centered on paste, distill, review, and decision support. Leave workspace expansion for later.'
-        : 'Keep v1 centered on one clean input flow and one section-based result view.',
+      featureCreepWarnings.length > 0
+        ? 'Lock v1 to one playable loop and explicitly move feature-creep systems into later milestones.'
+        : 'Lock v1 to one playable loop, one bounded space, and one completion condition.',
   };
 }
 
-export function distill(input: string): DistillationResult {
+function buildFinalBrief(
+  result: DistillationResult,
+  selections: Record<string, string>,
+  feedback?: MentorFeedbackWriteback
+) {
+  const genre =
+    selections['decision-genre'] ?? result.sections.find((section) => section.title === 'Game Summary')?.items[0] ?? 'Focused indie prototype';
+  const platform = selections['decision-platform'] ?? choosePlatform(result.fragments);
+  const combat = selections['decision-combat'] ?? 'No combat in v1';
+  const multiplayer = selections['decision-multiplayer'] ?? 'Single-player v1';
+  const scope = selections['decision-scope'] ?? 'Two-week prototype';
+  const loop =
+    selections['decision-loop'] ??
+    result.sections.find((section) => section.title === 'Core Loop')?.items[0] ??
+    'one repeatable core loop';
+
+  const directionItems = [
+    cleanSentence(`Ship the prototype as ${genre}`),
+    cleanSentence(`Core loop: ${loop}`),
+    cleanSentence(`Target platform: ${platform}`),
+  ];
+
+  const featureFocus = [
+    cleanSentence(`Combat direction: ${combat}`),
+    cleanSentence(`Multiplayer direction: ${multiplayer}`),
+    cleanSentence(`Prototype timebox: ${scope}`),
+  ];
+
+  const boundaryItems = uniqueStrings([
+    result.refinements.scopeBoundary,
+    ...result.featureCreepWarnings.slice(0, 3),
+    ...(feedback?.newConstraints ?? []),
+  ]);
+
+  const changeLog = Object.entries(selections).map(([decisionId, value]) =>
+    cleanSentence(`${decisionId.replace('decision-', '')} locked to ${value}`)
+  );
+
+  if (feedback) {
+    changeLog.push(cleanSentence(`Mentor feedback applied: ${feedback.summary}`));
+  }
+
+  if (changeLog.length === 0) {
+    changeLog.push(
+      'No decisions are locked yet. Resolve at least one game decision or add mentor feedback to tighten the brief.'
+    );
+  }
+
+  return {
+    title:
+      Object.keys(selections).length >= 3 || feedback
+        ? 'Final GDD-lite Brief'
+        : 'Partial Game Pitch Brief',
+    lockedSummary: cleanSentence(
+      `Nokta Game Pitch should focus this idea into ${platform.toLowerCase()} with ${loop.toLowerCase()}. ${combat} and ${multiplayer.toLowerCase()} keep the first build manageable.`
+    ),
+    directionItems,
+    featureFocus,
+    boundaryItems,
+    changeLog,
+    resolvedCount: Object.keys(selections).length,
+    totalDecisionCount: result.nextDecisions.length,
+    unresolvedQuestions: result.nextDecisions
+      .filter((decision) => !selections[decision.id])
+      .map((decision) => decision.question),
+    mentorFeedback: feedback,
+    labels: {
+      genreDirection: genre,
+      prototypePlatform: platform,
+      combatDirection: combat,
+      multiplayerDirection: multiplayer,
+      scopeMetric: scope,
+    },
+  } satisfies LockedBrief;
+}
+
+function buildResult(input: string, source: ResultSource, aiDraft?: GamePitchAiDraft): DistillationResult {
   const fragments = buildFragments(input);
   const groups = groupFragments(fragments);
   const ideaUnits = buildIdeaUnits(groups, fragments);
-  const contradictions = detectContradictions(fragments);
+  const localContradictions = detectContradictions(fragments);
+  const aiContradictions = normalizeAiContradictions(aiDraft?.contradictions);
+  const contradictions = uniqueById([...localContradictions, ...aiContradictions]);
+  const featureCreepWarnings = uniqueStrings([
+    ...detectFeatureCreep(input),
+    ...(aiDraft?.featureCreepWarnings ?? []),
+  ]);
   const undefinedAreas = detectUndefinedAreas(fragments, contradictions);
-  const nextDecisions = buildNextDecisions(contradictions, undefinedAreas);
-  const sections = buildSections(
+  const nextDecisions = mergeNextDecisions(
+    buildNextDecisions(contradictions, undefinedAreas, featureCreepWarnings),
+    aiDraft?.nextDecisions
+  );
+  const sections = buildSections({
     fragments,
     ideaUnits,
     contradictions,
     undefinedAreas,
-    nextDecisions
-  );
+    featureCreepWarnings,
+    nextDecisions,
+    aiDraft,
+  });
+  const title = aiDraft?.title ? cleanSentence(aiDraft.title).replace(/[.]$/, '') : buildTitle(fragments);
+  const readiness = buildReadiness({
+    contradictions,
+    undefinedAreas,
+    nextDecisions,
+    featureCreepWarnings,
+    fragments,
+  });
+  const mentorPacket = buildMentorPacket({
+    title,
+    summary: sections.find((section) => section.title === 'Game Summary')?.items ?? [],
+    contradictions,
+    undefinedAreas,
+    featureCreepWarnings,
+    nextDecisions,
+  });
 
   return {
-    title: buildTitle(fragments),
+    title,
     sections,
     contradictions,
     undefinedAreas,
     nextDecisions,
     fragments,
     ideaUnits,
+    featureCreepWarnings,
+    readiness,
+    mentorPacket: aiDraft?.recommendedMentor || aiDraft?.mentorQuestions?.length
+      ? {
+          recommendedMentor: aiDraft.recommendedMentor ?? mentorPacket.recommendedMentor,
+          topic: mentorPacket.topic,
+          why: mentorPacket.why,
+          questions:
+            aiDraft.mentorQuestions && aiDraft.mentorQuestions.length > 0
+              ? uniqueStrings(aiDraft.mentorQuestions).slice(0, 3)
+              : mentorPacket.questions,
+        }
+      : mentorPacket,
+    source,
     metrics: {
       fragmentCount: fragments.length,
       duplicatesCollapsed: Math.max(0, fragments.length - groups.length),
       ideaUnitCount: ideaUnits.length,
+      featureCreepCount: featureCreepWarnings.length,
     },
-    refinements: buildRefinements(sections, contradictions),
+    refinements: buildRefinements(sections, featureCreepWarnings),
   };
 }
 
-function proseForPositioning(option: string) {
-  if (option === 'Plain summarizer') {
-    return 'a plain summarizer';
+function toList(value: string | string[] | undefined) {
+  if (!value) {
+    return [];
   }
 
-  return 'a concept-distillation tool';
+  return Array.isArray(value) ? value : [value];
 }
 
-function proseForArtifact(option: string) {
-  if (option === 'Idea cards first') {
-    return 'idea units first, with the structured draft following after review';
-  }
-
-  return 'a structured concept draft as the first artifact';
+function normalizeAiContradictions(
+  contradictions: GamePitchAiDraft['contradictions']
+): Contradiction[] {
+  return (contradictions ?? [])
+    .filter((entry) => entry.claimA && entry.claimB)
+    .map((entry, index) => ({
+      id: `ai-contradiction-${index + 1}`,
+      topic: entry.topic ?? 'scope',
+      claimA: cleanSentence(entry.claimA ?? ''),
+      claimB: cleanSentence(entry.claimB ?? ''),
+      rationale: cleanSentence(entry.rationale ?? 'The AI analysis found a game design tension.'),
+      severity: entry.severity ?? 'medium',
+      fragmentIds: [],
+    }));
 }
 
-function proseForWorkflow(option: string) {
-  if (option === 'Add guided questions') {
-    return 'paste rough notes first, then answer a short guided clarification pass';
-  }
+function mergeNextDecisions(
+  localDecisions: NextDecision[],
+  aiDecisions: GamePitchAiDraft['nextDecisions']
+) {
+  const normalizedAi = (aiDecisions ?? []).map((entry, index): NextDecision => {
+    if (typeof entry === 'string') {
+      return {
+        id: `ai-decision-${index + 1}`,
+        question: cleanSentence(entry),
+        recommendation: 'Resolve this before calling the prototype brief stable.',
+        options: ['Lock for v1', 'Move to later', 'Ask mentor'],
+        priority: index === 0 ? 'Now' : 'Soon',
+      };
+    }
 
-  return 'paste rough notes once and get a distilled result without extra questioning';
+    return {
+      id: entry.id ?? `ai-decision-${index + 1}`,
+      question: entry.question,
+      recommendation: entry.recommendation,
+      options: entry.options,
+      priority: entry.priority,
+    };
+  });
+
+  return uniqueById([...localDecisions, ...normalizedAi]).slice(0, 6);
 }
 
-function proseForMetric(option: string) {
-  if (option === 'Duplicate reduction') {
-    return 'how much repetition and overlap disappear from the input';
-  }
+function extractFeedbackLines(feedback: string) {
+  return splitIntoFragments(feedback)
+    .map(cleanSentence)
+    .filter(Boolean);
+}
 
-  if (option === 'Faster decisions') {
-    return 'how quickly the user can move from messy notes to project decisions';
-  }
+export function buildMentorFeedbackWriteback(
+  feedback: string
+): MentorFeedbackWriteback {
+  const lines = extractFeedbackLines(feedback);
+  const acceptedDecisions = lines.filter((line) =>
+    /\bkeep\b|\bconfirm\b|\bshould\b|\bfocus\b|\bstay\b|\block\b|\bonay\b|\bkalsin\b/i.test(line)
+  );
+  const rejectedAssumptions = lines.filter((line) =>
+    /\bcut\b|\bremove\b|\bnot\b|\bavoid\b|\bwait\b|\blater\b|\bskip\b|\bexclude\b/i.test(line)
+  );
+  const newConstraints = lines.filter((line) =>
+    /\bconstraint\b|\blimit\b|\btimebox\b|\bsolo\b|\btwo-week\b|\bweekend\b|\bscope\b/i.test(line)
+  );
+  const nextActions = lines.filter((line) =>
+    /\bbuild\b|\bprototype\b|\btest\b|\bcreate\b|\bimplement\b|\bnext\b|\bstart\b/i.test(line)
+  );
 
-  return 'how much clearer and more decision-ready the concept becomes';
+  return {
+    summary:
+      lines[0] ??
+      'Mentor feedback was added, but it needs clearer decisions before it can strongly change the brief.',
+    acceptedDecisions:
+      acceptedDecisions.length > 0
+        ? uniqueStrings(acceptedDecisions).slice(0, 4)
+        : ['No explicit accepted decision was detected in the mentor feedback.'],
+    rejectedAssumptions:
+      rejectedAssumptions.length > 0
+        ? uniqueStrings(rejectedAssumptions).slice(0, 4)
+        : ['No explicit rejected assumption was detected in the mentor feedback.'],
+    newConstraints:
+      newConstraints.length > 0
+        ? uniqueStrings(newConstraints).slice(0, 4)
+        : ['No new production constraint was detected in the mentor feedback.'],
+    nextActions:
+      nextActions.length > 0
+        ? uniqueStrings(nextActions).slice(0, 4)
+        : ['Turn the strongest mentor note into one prototype task.'],
+  };
+}
+
+export function distill(input: string): DistillationResult {
+  return buildResult(input, 'local');
+}
+
+export function distillFromGamePitchDraft(
+  input: string,
+  aiDraft: GamePitchAiDraft
+): DistillationResult {
+  return buildResult(input, 'groq', aiDraft);
 }
 
 export function buildLockedBrief(
   result: DistillationResult,
-  selections: Record<string, string>
+  selections: Record<string, string>,
+  feedback?: MentorFeedbackWriteback
 ): LockedBrief {
-  const positioning =
-    selections['decision-positioning'] ?? 'Concept distillation tool';
-  const primaryUser =
-    selections['decision-user'] ?? chooseAudience(result.fragments);
-  const mainArtifact =
-    selections['decision-output'] ?? 'Structured draft first';
-  const workflow =
-    selections['decision-workflow'] ?? 'Paste and distill only';
-  const successMetric =
-    selections['decision-metric'] ?? 'Clarity gain';
-
-  const unresolvedQuestions = result.nextDecisions
-    .filter((decision) => !selections[decision.id])
-    .map((decision) => decision.question);
-
-  const changeLog: string[] = [];
-
-  if (selections['decision-positioning']) {
-    changeLog.push(`Positioning locked to ${positioning.toLowerCase()}.`);
-  }
-
-  if (selections['decision-user']) {
-    changeLog.push(`Primary audience narrowed to ${primaryUser.toLowerCase()}.`);
-  }
-
-  if (selections['decision-output']) {
-    changeLog.push(`Main artifact locked to ${mainArtifact.toLowerCase()}.`);
-  }
-
-  if (selections['decision-workflow']) {
-    changeLog.push(`Workflow locked to ${workflow.toLowerCase()}.`);
-  }
-
-  if (selections['decision-metric']) {
-    changeLog.push(`Success metric locked to ${successMetric.toLowerCase()}.`);
-  }
-
-  if (changeLog.length === 0) {
-    changeLog.push(
-      'No decisions are locked yet. Resolve at least one decision to tighten the draft into a handoff-ready brief.'
-    );
-  }
-
-  const directionItems = [
-    cleanSentence(
-      `Ship Nokta Draft as ${proseForPositioning(positioning)}, not as a generic workspace or chat assistant`
-    ),
-    cleanSentence(`Primary v1 user: ${primaryUser}`),
-    cleanSentence(`Treat ${proseForArtifact(mainArtifact)}.`),
-  ];
-
-  const featureFocus = [
-    cleanSentence(
-      mainArtifact === 'Idea cards first'
-        ? 'Expose idea units first, then roll them up into the final draft after review'
-        : 'Generate the structured concept draft first and keep idea units as internal support'
-    ),
-    cleanSentence(
-      workflow === 'Add guided questions'
-        ? 'Keep the clarification step short and attached to the pasted note dump'
-        : 'Keep the core flow to one paste-first action and one result screen'
-    ),
-    cleanSentence(`Judge the result by ${proseForMetric(successMetric)}.`),
-  ];
-
-  const boundaryItems = [
-    cleanSentence(
-      workflow === 'Add guided questions'
-        ? 'Do not let guided clarification turn into an open-ended chatbot workflow'
-        : 'Do not require an interview step before the first useful result appears'
-    ),
-    cleanSentence(
-      mainArtifact === 'Idea cards first'
-        ? 'Avoid card explosion by keeping the cards limited and rolling them into one final draft'
-        : 'Avoid making the draft feel secondary to cards or internal fragments'
-    ),
-  ];
-
-  return {
-    title:
-      Object.keys(selections).length >= 3
-        ? 'Decision-Locked Handoff Brief'
-        : 'Partial Decision-Locked Brief',
-    lockedSummary: cleanSentence(
-      `Nokta Draft should ship as ${proseForPositioning(positioning)} for ${primaryUser.toLowerCase()}, using a workflow where users ${proseForWorkflow(workflow)} and receive ${proseForArtifact(mainArtifact)}. Success should be measured by ${proseForMetric(successMetric)}`
-    ),
-    directionItems,
-    featureFocus,
-    boundaryItems,
-    changeLog: changeLog.map(cleanSentence),
-    resolvedCount: Object.keys(selections).length,
-    totalDecisionCount: result.nextDecisions.length,
-    unresolvedQuestions,
-    labels: {
-      positioning,
-      primaryUser,
-      mainArtifact,
-      workflow,
-      successMetric,
-    },
-  };
+  return buildFinalBrief(result, selections, feedback);
 }

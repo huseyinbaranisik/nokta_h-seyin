@@ -1,27 +1,16 @@
-export const sampleInput = `Nokta Draft rough notes
-- mobile app where the user pastes a messy project dump from chats, copied AI notes, and bullet lists
-- paste rough project notes from chats and bullet lists into one mobile app
-- should deduplicate repeated ideas and produce a structured concept draft
-- deduplicate overlap and turn repeated notes into one cleaner concept draft
-- not just a summarizer, stronger than that, more like concept distillation
-- maybe keep it simple first
-- but maybe advanced workspace ideas later for teams
-- should feel serious and polished, not like chat
-- should not look like chat
-- users should paste once and get a result quickly
-- maybe it asks lots of follow-up questions first? not sure
-- surface contradictions and undefined areas clearly
-- output could be idea cards
-- output should mainly be a decision-ready draft
-- primary output should be a decision-ready draft, not only cards
-- no live AI in v1, keep it offline and deterministic
-- keep v1 offline and deterministic
-- remove repeated bullets / deduplicate repeated bullets / collapse overlap
-- collapse overlap and remove repeated bullets before building the draft
-- help separate core product direction from future nice-to-haves
-- target user could be solo founders
-- or small product teams, not fully decided yet
-- avoid turning this into project management
-- avoid a generic productivity suite
-- maybe export later, not now
-- lightweight refine actions inside the result screen would help`;
+export const sampleInput = `Moon Orchard rough game notes
+- cozy farming game but with quiet horror under the surface
+- player explores a small island at night and gathers strange fruit
+- Stardew Valley + Dredge vibe, but smaller and more prototype friendly
+- core loop maybe explore -> collect fruit -> return to lighthouse -> upgrade lantern
+- no combat in v1, but maybe a boss fight later?
+- solo developer, two week prototype
+- PC first, maybe mobile later
+- crafting, fishing, pets, base building, weather, and multiplayer could be cool
+- multiplayer later would be nice but not in first demo
+- the first playable version should feel mysterious in two minutes
+- avoid huge open world, one handcrafted island is enough
+- player fantasy: a careful night gardener uncovering what the island is hiding
+- need a mentor to help decide what to cut from v1
+- prototype should have one resource, one upgrade, one ending condition
+- art can be simple 2D with strong lighting`;

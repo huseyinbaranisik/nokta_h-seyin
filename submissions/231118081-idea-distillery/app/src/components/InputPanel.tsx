@@ -17,13 +17,16 @@ type InputPanelProps = {
   onLoadSample: () => void;
   onClear: () => void;
   onDistill: () => void;
+  isLoading?: boolean;
+  errorText?: string | null;
+  groqEnabled?: boolean;
 };
 
-const placeholder = `Paste the rough thing here.
+const placeholder = `Paste the rough game idea here.
 
-Half-finished notes, repeated bullets, conflicting directions, copied chat lines, and vague scope are all valid input.
+Half-finished mechanics, reference games, prototype constraints, feature wishlist, contradictions, and mentor notes are all valid input.
 
-Nokta Draft will collapse overlap, surface tensions, and return one stronger concept draft.`;
+Nokta Game Pitch will collapse overlap, detect feature creep, and return one buildable GDD-lite brief.`;
 
 export function InputPanel({
   value,
@@ -31,6 +34,9 @@ export function InputPanel({
   onLoadSample,
   onClear,
   onDistill,
+  isLoading = false,
+  errorText,
+  groqEnabled = false,
 }: InputPanelProps) {
   return (
     <KeyboardAvoidingView
@@ -48,26 +54,28 @@ export function InputPanel({
           end={{ x: 1, y: 1 }}
           style={styles.hero}
         >
-          <Text style={styles.eyebrow}>Track C / Concept Distillation</Text>
-          <Text style={styles.title}>Nokta Draft</Text>
+          <Text style={styles.eyebrow}>Track C / Game Pitch Distillation</Text>
+          <Text style={styles.title}>Nokta Game Pitch</Text>
           <Text style={styles.subtitle}>
-            Turn raw planning noise into a structured, decision-ready project concept.
+            Turn messy indie game notes into a scoped GDD-lite brief with mentor handoff.
           </Text>
           <View style={styles.capabilityRow}>
             <View style={styles.capabilityChip}>
-              <Text style={styles.capabilityText}>Deduplicates overlap</Text>
+              <Text style={styles.capabilityText}>Detects feature creep</Text>
             </View>
             <View style={styles.capabilityChip}>
-              <Text style={styles.capabilityText}>Surfaces tensions</Text>
+              <Text style={styles.capabilityText}>Builds prototype plan</Text>
             </View>
             <View style={styles.capabilityChip}>
-              <Text style={styles.capabilityText}>Stays local</Text>
+              <Text style={styles.capabilityText}>
+                {groqEnabled ? 'Groq enabled' : 'Local fallback ready'}
+              </Text>
             </View>
           </View>
         </LinearGradient>
 
         <View style={styles.inputShell}>
-          <Text style={styles.inputLabel}>Raw note dump</Text>
+          <Text style={styles.inputLabel}>Raw game notes</Text>
           <TextInput
             multiline
             value={value}
@@ -76,6 +84,7 @@ export function InputPanel({
             placeholderTextColor={palette.muted}
             style={styles.input}
             textAlignVertical="top"
+            editable={!isLoading}
           />
           <View style={styles.actionsRow}>
             <Pressable style={styles.secondaryAction} onPress={onLoadSample}>
@@ -85,8 +94,9 @@ export function InputPanel({
               <Text style={styles.secondaryActionText}>Clear</Text>
             </Pressable>
           </View>
+          {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
           <Text style={styles.helper}>
-            Messy is fine. The app splits fragments, deduplicates overlap, and assembles one stronger draft.
+            Messy is fine. The app extracts core loop, player fantasy, mechanics, scope cuts, and mentor questions.
           </Text>
         </View>
       </ScrollView>
@@ -96,12 +106,15 @@ export function InputPanel({
           style={({ pressed }) => [
             styles.primaryAction,
             !value.trim() && styles.primaryActionDisabled,
-            pressed && value.trim() && styles.primaryActionPressed,
+            isLoading && styles.primaryActionDisabled,
+            pressed && value.trim() && !isLoading && styles.primaryActionPressed,
           ]}
           onPress={onDistill}
-          disabled={!value.trim()}
+          disabled={!value.trim() || isLoading}
         >
-          <Text style={styles.primaryActionText}>Distill Draft</Text>
+          <Text style={styles.primaryActionText}>
+            {isLoading ? 'Distilling Game Pitch...' : 'Distill Game Pitch'}
+          </Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>
@@ -205,6 +218,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     color: palette.muted,
+  },
+  errorText: {
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 13,
+    lineHeight: 20,
+    color: palette.rust,
   },
   footer: {
     paddingHorizontal: 20,

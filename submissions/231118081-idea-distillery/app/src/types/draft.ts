@@ -1,47 +1,60 @@
 export type FragmentCategory =
-  | 'problem'
-  | 'intent'
-  | 'direction'
-  | 'feature'
-  | 'constraint'
-  | 'workflow'
-  | 'audience'
-  | 'boundary'
+  | 'genre'
+  | 'playerFantasy'
+  | 'coreLoop'
+  | 'mechanic'
+  | 'reference'
+  | 'scope'
+  | 'prototype'
+  | 'platform'
+  | 'production'
   | 'future'
   | 'output'
   | 'unknown';
 
 export type SignalId =
-  | 'simple'
-  | 'advanced'
-  | 'summarizer'
-  | 'conceptTool'
-  | 'cardsOutput'
-  | 'draftOutput'
-  | 'pasteFlow'
-  | 'guidedFlow'
+  | 'cozy'
+  | 'horror'
+  | 'survival'
+  | 'farming'
+  | 'exploration'
+  | 'combat'
+  | 'noCombat'
+  | 'boss'
+  | 'multiplayer'
   | 'offline'
-  | 'ai'
-  | 'soloAudience'
-  | 'teamAudience'
+  | 'soloDev'
+  | 'shortPrototype'
+  | 'largeScope'
+  | 'pc'
+  | 'mobile'
+  | 'web'
+  | 'crafting'
+  | 'baseBuilding'
+  | 'pets'
+  | 'openWorld'
+  | 'procedural'
+  | 'story'
   | 'future'
-  | 'tightScope'
-  | 'broadScope'
-  | 'review';
+  | 'cut'
+  | 'mentor';
 
 export type Severity = 'low' | 'medium' | 'high';
 export type DecisionPriority = 'Now' | 'Soon';
 export type SectionTone = 'default' | 'muted';
+export type ReviewMode = 'HOOTL' | 'HOTL' | 'HITL';
+export type ResultSource = 'groq' | 'local';
 
 export type DraftSectionTitle =
-  | 'Concept Summary'
-  | 'Problem and Intent'
-  | 'Core Product Direction'
-  | 'Key Features'
-  | 'Constraints and Boundaries'
-  | 'Contradictions and Tensions'
-  | 'Undefined Areas'
-  | 'Recommended Next Decisions';
+  | 'Game Summary'
+  | 'Core Loop'
+  | 'Player Fantasy'
+  | 'Core Mechanics'
+  | 'Scope Boundary'
+  | 'Feature Creep Warnings'
+  | 'Prototype Plan'
+  | 'Final GDD-lite Brief'
+  | 'Mentor Feedback Writeback';
 
 export interface NoteFragment {
   id: string;
@@ -77,12 +90,12 @@ export interface DraftSection {
 export interface Contradiction {
   id: string;
   topic:
+    | 'tone'
+    | 'combat'
     | 'scope'
-    | 'positioning'
-    | 'workflow'
-    | 'output'
-    | 'audience'
-    | 'technical';
+    | 'platform'
+    | 'production'
+    | 'multiplayer';
   claimA: string;
   claimB: string;
   rationale: string;
@@ -93,11 +106,12 @@ export interface Contradiction {
 export interface UndefinedArea {
   id: string;
   area:
-    | 'Target User'
-    | 'Workflow'
-    | 'Output Contract'
-    | 'Success Metric'
-    | 'Scope Boundary';
+    | 'Core Loop'
+    | 'Player Fantasy'
+    | 'Target Platform'
+    | 'Prototype Constraint'
+    | 'Scope Boundary'
+    | 'Mentor Feedback';
   explanation: string;
   severity: Severity;
   fragmentIds: string[];
@@ -111,6 +125,28 @@ export interface NextDecision {
   priority: DecisionPriority;
 }
 
+export interface ReadinessReview {
+  score: number;
+  mode: ReviewMode;
+  status: 'Buildable Prototype' | 'Mentor Recommended' | 'Mentor Required';
+  rationale: string[];
+}
+
+export interface MentorPacket {
+  recommendedMentor: string;
+  topic: string;
+  why: string[];
+  questions: string[];
+}
+
+export interface MentorFeedbackWriteback {
+  summary: string;
+  acceptedDecisions: string[];
+  rejectedAssumptions: string[];
+  newConstraints: string[];
+  nextActions: string[];
+}
+
 export interface LockedBrief {
   title: string;
   lockedSummary: string;
@@ -121,12 +157,13 @@ export interface LockedBrief {
   resolvedCount: number;
   totalDecisionCount: number;
   unresolvedQuestions: string[];
+  mentorFeedback?: MentorFeedbackWriteback;
   labels: {
-    positioning: string;
-    primaryUser: string;
-    mainArtifact: string;
-    workflow: string;
-    successMetric: string;
+    genreDirection: string;
+    prototypePlatform: string;
+    combatDirection: string;
+    multiplayerDirection: string;
+    scopeMetric: string;
   };
 }
 
@@ -134,6 +171,7 @@ export interface DistillationMetrics {
   fragmentCount: number;
   duplicatesCollapsed: number;
   ideaUnitCount: number;
+  featureCreepCount: number;
 }
 
 export interface DistillationResult {
@@ -144,10 +182,49 @@ export interface DistillationResult {
   nextDecisions: NextDecision[];
   fragments: NoteFragment[];
   ideaUnits: IdeaUnit[];
+  featureCreepWarnings: string[];
+  readiness: ReadinessReview;
+  mentorPacket: MentorPacket;
+  source: ResultSource;
   metrics: DistillationMetrics;
   refinements: {
     sharpenedSummary: string;
     focusedFeatures: string[];
     scopeBoundary: string;
   };
+}
+
+export type BriefStatus = 'saved' | 'mentor_review' | 'reviewed';
+export type ReviewTicketStatus = 'pending' | 'resolved';
+
+export interface SavedGameBrief {
+  id: string;
+  title: string;
+  rawInput: string;
+  result: DistillationResult;
+  selections: Record<string, string>;
+  finalBrief: LockedBrief;
+  status: BriefStatus;
+  createdAt: string;
+  updatedAt: string;
+  mentorFeedback?: MentorFeedbackWriteback;
+  futurePlan: string[];
+}
+
+export interface ReviewTicket {
+  id: string;
+  briefId: string;
+  title: string;
+  status: ReviewTicketStatus;
+  mentorPacket: MentorPacket;
+  readiness: ReadinessReview;
+  createdAt: string;
+  updatedAt: string;
+  feedbackText?: string;
+  resolvedAt?: string;
+}
+
+export interface GamePitchStore {
+  briefs: SavedGameBrief[];
+  tickets: ReviewTicket[];
 }

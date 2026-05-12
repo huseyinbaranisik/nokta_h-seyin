@@ -1,15 +1,23 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { palette } from '../theme';
-import { DistillationMetrics } from '../types/draft';
+import { DistillationMetrics, ReadinessReview, ResultSource } from '../types/draft';
 
 type ResultHeaderProps = {
   title: string;
   metrics: DistillationMetrics;
+  readiness: ReadinessReview;
+  source: ResultSource;
   onBack: () => void;
 };
 
-export function ResultHeader({ title, metrics, onBack }: ResultHeaderProps) {
+export function ResultHeader({
+  title,
+  metrics,
+  readiness,
+  source,
+  onBack,
+}: ResultHeaderProps) {
   return (
     <LinearGradient
       colors={['#FBFAF5', '#EEF2F8']}
@@ -21,24 +29,28 @@ export function ResultHeader({ title, metrics, onBack }: ResultHeaderProps) {
         <Text style={styles.backActionText}>Edit Notes</Text>
       </Pressable>
 
-      <Text style={styles.eyebrow}>Distilled Project Concept Draft</Text>
+      <Text style={styles.eyebrow}>Game Design Brief / {source.toUpperCase()}</Text>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.subtitle}>
-        The raw dump has been split, deduplicated, and reassembled into one stronger draft.
+        The raw game dump has been distilled into a scoped prototype brief with review guidance.
       </Text>
 
       <View style={styles.metricsRow}>
         <View style={styles.metricChip}>
-          <Text style={styles.metricLabel}>Fragments</Text>
-          <Text style={styles.metricValue}>{metrics.fragmentCount}</Text>
+          <Text style={styles.metricLabel}>Readiness</Text>
+          <Text style={styles.metricValue}>{readiness.score}</Text>
         </View>
         <View style={styles.metricChip}>
-          <Text style={styles.metricLabel}>Duplicates Removed</Text>
+          <Text style={styles.metricLabel}>Review Mode</Text>
+          <Text style={styles.metricMode}>{readiness.mode}</Text>
+        </View>
+        <View style={styles.metricChip}>
+          <Text style={styles.metricLabel}>Feature Risks</Text>
+          <Text style={styles.metricValue}>{metrics.featureCreepCount}</Text>
+        </View>
+        <View style={styles.metricChip}>
+          <Text style={styles.metricLabel}>Duplicates Cut</Text>
           <Text style={styles.metricValue}>{metrics.duplicatesCollapsed}</Text>
-        </View>
-        <View style={styles.metricChip}>
-          <Text style={styles.metricLabel}>Idea Units</Text>
-          <Text style={styles.metricValue}>{metrics.ideaUnitCount}</Text>
         </View>
       </View>
     </LinearGradient>
@@ -110,6 +122,11 @@ const styles = StyleSheet.create({
   metricValue: {
     fontFamily: 'Newsreader_700Bold',
     fontSize: 26,
+    color: palette.ink,
+  },
+  metricMode: {
+    fontFamily: 'Newsreader_700Bold',
+    fontSize: 22,
     color: palette.ink,
   },
 });

@@ -37,11 +37,11 @@ export function LockedBriefCard({ brief }: LockedBriefCardProps) {
       <Text style={styles.summary}>{brief.lockedSummary}</Text>
 
       <View style={styles.fieldGrid}>
-        <Field label="Positioning" value={brief.labels.positioning} />
-        <Field label="Primary User" value={brief.labels.primaryUser} />
-        <Field label="Main Artifact" value={brief.labels.mainArtifact} />
-        <Field label="Workflow" value={brief.labels.workflow} />
-        <Field label="Success Metric" value={brief.labels.successMetric} />
+        <Field label="Genre Direction" value={brief.labels.genreDirection} />
+        <Field label="Prototype Platform" value={brief.labels.prototypePlatform} />
+        <Field label="Combat Direction" value={brief.labels.combatDirection} />
+        <Field label="Multiplayer" value={brief.labels.multiplayerDirection} />
+        <Field label="Scope Metric" value={brief.labels.scopeMetric} />
       </View>
 
       <View style={styles.subsection}>
@@ -73,6 +73,18 @@ export function LockedBriefCard({ brief }: LockedBriefCardProps) {
           </View>
         ))}
       </View>
+
+      {brief.mentorFeedback ? (
+        <View style={styles.subsection}>
+          <Text style={styles.subsectionTitle}>Mentor Feedback Applied</Text>
+          {[brief.mentorFeedback.summary, ...brief.mentorFeedback.nextActions].map((item) => (
+            <View key={item} style={styles.itemRow}>
+              <View style={[styles.bullet, styles.changeBullet]} />
+              <Text style={styles.itemText}>{item}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
 
       {brief.unresolvedQuestions.length > 0 ? (
         <View style={styles.subsection}>
