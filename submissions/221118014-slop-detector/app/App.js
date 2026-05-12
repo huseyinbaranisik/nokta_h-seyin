@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ActivityIndicator, ScrollView, SafeAreaView, Alert } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ActivityIndicator, ScrollView, SafeAreaView, Alert, Modal, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function App() {
@@ -8,6 +8,11 @@ export default function App() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const [usedFallback, setUsedFallback] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const flatListRef = useRef(null);
 
   const fallbackMockAI = (text) => {
     const lowerPitch = text.toLowerCase();
@@ -39,6 +44,95 @@ export default function App() {
     }
 
     return { score, explanation };
+  };
+
+  const openChat = () => {
+    setShowChatModal(true);
+    if (chatMessages.length === 0) {
+      setChatMessages([
+        { id: '1', role: 'model', text: 'Merhaba! Ben Nokta Ventures\'tan Kıdemli Yatırım Uzmanı Can. Pitch veya proje özetinle ilgili nasıl yardımcı olabilirim? Projeni dinlemeye hazırım.' }
+      ]);
+    }
+  };
+
+  const closeChat = () => {
+    setShowChatModal(false);
+  };
+
+  const sendChatMessage = async () => {
+    if (!chatInput.trim()) return;
+
+    const userMsgText = chatInput.trim();
+    const newUserMsg = { id: Date.now().toString(), role: 'user', text: userMsgText };
+    
+    setChatMessages(prev => [...prev, newUserMsg]);
+    setChatInput('');
+    setIsChatLoading(true);
+
+    if (!apiKey.trim()) {
+      setTimeout(() => {
+        setChatMessages(prev => [...prev, { 
+          id: Date.now().toString() + 'm', 
+          role: 'model', 
+          text: 'Şu anda API anahtarın olmadığı için sana yapay zeka beynimle cevap veremiyorum, ama projen kulağa ilginç geliyor. Daha fazla detay verebilir misin? (Offline Mod)' 
+        }]);
+        setIsChatLoading(false);
+      }, 1000);
+      return;
+    }
+
+    try {
+      const systemPrompt = `Sen tecrübeli, profesyonel ama sıcakkanlı bir melek yatırımcı/analistsin. Karşındaki kişi sana startup veya proje fikirlerinden bahsediyor. 
+      Görevin onlarla insan gibi, doğal bir dille sohbet etmek. Onlara yapıcı eleştiriler yap, sorular sor. 
+      KESİNLİKLE bir yapay zeka veya bot olduğunu belli etme, "Ben bir yapay zekayım" gibi cümleler KULLANMA. İnsani tepkiler ver. 
+      Eğer kullanıcı projeyle ilgili abartılı buzzwordler kullanırsa (slop), onları tatlı sert bir dille uyar.
+      Bağlam için, kullanıcının sisteme ilk girdiği pitch metni şuydu (eğer boş değilse): "${pitch}"`;
+
+      const history = chatMessages.slice(1).map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.text }]
+      }));
+
+      const contents = [...history, { role: 'user', parts: [{ text: userMsgText }] }];
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey.trim()}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: contents,
+          generationConfig: {
+            temperature: 0.7,
+          }
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error.message || "API Hatası");
+      }
+
+      const aiText = data.candidates[0].content.parts[0].text;
+      
+      setChatMessages(prev => [...prev, { 
+        id: Date.now().toString() + 'm', 
+        role: 'model', 
+        text: aiText 
+      }]);
+
+    } catch (error) {
+      console.warn("Chat API Hatası:", error.message);
+      setChatMessages(prev => [...prev, { 
+        id: Date.now().toString() + 'e', 
+        role: 'model', 
+        text: 'Bağlantımda ufak bir sorun oluştu (API Hatası). Birazdan tekrar dener misin?' 
+      }]);
+    } finally {
+      setIsChatLoading(false);
+    }
   };
 
   const analyzePitch = async () => {
@@ -131,7 +225,7 @@ export default function App() {
           <Text style={styles.label}>Gemini API Key (Opsiyonel):</Text>
           <TextInput
             style={styles.inputSmall}
-            placeholder="AIzaSy... (Boş bırakırsanız offline çalışır)"
+            placeholder="Buraya girin (Boş bırakırsanız offline çalışır)"
             placeholderTextColor="#64748b"
             value={apiKey}
             onChangeText={setApiKey}
@@ -158,6 +252,19 @@ export default function App() {
             ) : (
               <Text style={styles.buttonText}>Yapay Zeka ile Test Et</Text>
             )}
+          </TouchableOpacity>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>VEYA</Text>
+            <View style={styles.divider} />
+          </View>
+
+          <TouchableOpacity 
+            style={[styles.buttonSecondary, (!pitch.trim() && !chatMessages.length) && styles.buttonDisabledSecondary]} 
+            onPress={openChat}
+          >
+            <Text style={styles.buttonTextSecondary}>Uzman ile Sohbet Et</Text>
           </TouchableOpacity>
         </View>
 
@@ -193,6 +300,74 @@ export default function App() {
         )}
 
       </ScrollView>
+
+      {/* Chat Modal */}
+      <Modal
+        visible={showChatModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={closeChat}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.chatHeader}>
+            <Text style={styles.chatHeaderTitle}>Uzman Yatırımcı Can</Text>
+            <Text style={styles.chatHeaderSubtitle}>Çevrimiçi</Text>
+            <TouchableOpacity style={styles.closeChatButton} onPress={closeChat}>
+              <Text style={styles.closeChatText}>Kapat</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <KeyboardAvoidingView 
+            style={styles.chatBody} 
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          >
+            <FlatList
+              ref={flatListRef}
+              data={chatMessages}
+              keyExtractor={item => item.id}
+              contentContainerStyle={styles.chatListContent}
+              onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+              onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
+              renderItem={({ item }) => (
+                <View style={[
+                  styles.chatBubbleContainer, 
+                  item.role === 'user' ? styles.chatBubbleUser : styles.chatBubbleModel
+                ]}>
+                  <Text style={[
+                    styles.chatBubbleText, 
+                    item.role === 'user' ? styles.chatBubbleTextUser : styles.chatBubbleTextModel
+                  ]}>
+                    {item.text}
+                  </Text>
+                </View>
+              )}
+            />
+            
+            <View style={styles.chatInputContainer}>
+              <TextInput
+                style={styles.chatInput}
+                placeholder="Mesaj yazın..."
+                placeholderTextColor="#64748b"
+                value={chatInput}
+                onChangeText={setChatInput}
+                multiline
+              />
+              <TouchableOpacity 
+                style={[styles.chatSendBtn, (!chatInput.trim() || isChatLoading) && styles.chatSendBtnDisabled]}
+                onPress={sendChatMessage}
+                disabled={!chatInput.trim() || isChatLoading}
+              >
+                {isChatLoading ? (
+                  <ActivityIndicator color="#0f172a" size="small" />
+                ) : (
+                  <Text style={styles.chatSendText}>Gönder</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 }
@@ -289,6 +464,151 @@ const styles = StyleSheet.create({
     color: '#0f172a',
     fontSize: 16,
     fontWeight: '800',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  dividerText: {
+    color: '#64748b',
+    paddingHorizontal: 16,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  buttonSecondary: {
+    backgroundColor: 'transparent',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#38bdf8',
+  },
+  buttonDisabledSecondary: {
+    borderColor: '#475569',
+    opacity: 0.5,
+  },
+  buttonTextSecondary: {
+    color: '#38bdf8',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#0f172a',
+    marginTop: Platform.OS === 'ios' ? 40 : 0,
+  },
+  chatHeader: {
+    padding: 16,
+    paddingTop: Platform.OS === 'ios' ? 20 : 16,
+    backgroundColor: '#1e293b',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  chatHeaderTitle: {
+    color: '#f8fafc',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  chatHeaderSubtitle: {
+    color: '#4ade80',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  closeChatButton: {
+    position: 'absolute',
+    right: 16,
+    top: Platform.OS === 'ios' ? 24 : 16,
+    padding: 8,
+  },
+  closeChatText: {
+    color: '#38bdf8',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  chatBody: {
+    flex: 1,
+  },
+  chatListContent: {
+    padding: 16,
+    gap: 12,
+  },
+  chatBubbleContainer: {
+    maxWidth: '80%',
+    padding: 12,
+    borderRadius: 16,
+  },
+  chatBubbleUser: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#38bdf8',
+    borderBottomRightRadius: 4,
+  },
+  chatBubbleModel: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(30, 41, 59, 0.9)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomLeftRadius: 4,
+  },
+  chatBubbleText: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  chatBubbleTextUser: {
+    color: '#0f172a',
+    fontWeight: '500',
+  },
+  chatBubbleTextModel: {
+    color: '#f8fafc',
+  },
+  chatInputContainer: {
+    flexDirection: 'row',
+    padding: 12,
+    backgroundColor: '#1e293b',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'flex-end',
+  },
+  chatInput: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    borderRadius: 20,
+    color: '#f8fafc',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
+    minHeight: 44,
+    maxHeight: 120,
+    fontSize: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  chatSendBtn: {
+    backgroundColor: '#38bdf8',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  chatSendBtnDisabled: {
+    backgroundColor: '#475569',
+  },
+  chatSendText: {
+    color: '#0f172a',
+    fontWeight: '700',
+    fontSize: 15,
   },
   resultCard: {
     backgroundColor: 'rgba(15, 23, 42, 0.8)',
