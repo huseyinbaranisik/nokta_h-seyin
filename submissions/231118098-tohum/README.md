@@ -16,7 +16,7 @@ Tohum, ham bir fikri AI destekli rehberli sohbetle NOKTA `idea.md` standardında
 |---|---|
 | 60 saniyelik demo video | https://youtube.com/shorts/OSNfmsCfokQ |
 | APK indirme (repo içi) | [`./app-release.apk`](./app-release.apk) |
-| EAS Build sayfası | https://expo.dev/accounts/aerarslan1919/projects/tohum/builds/9895cf49-bba3-4bb1-9752-4c63aebcb0ea |
+| EAS Build sayfası | https://expo.dev/accounts/aerarslan1919/projects/tohum/builds/c15365e8-3213-4d98-a018-000c6e1bffc6 |
 
 ### Yerel Çalıştırma
 
