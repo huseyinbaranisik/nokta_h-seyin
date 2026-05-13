@@ -1,6 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Compass, Radar, Terminal } from 'lucide-react-native';
-import { View, StyleSheet } from 'react-native';
+import { Compass, Radar, Terminal, MessageCircle, ShieldCheck } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -35,10 +34,26 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="chat"
+        options={{
+          title: 'AI Chat',
+          headerTitle: '⚡ RADAR AI',
+          tabBarIcon: ({ color }) => <MessageCircle color={color} size={24} />,
+        }}
+      />
+      <Tabs.Screen
         name="manifesto"
         options={{
           title: 'Manifesto',
           tabBarIcon: ({ color }) => <Terminal color={color} size={24} />,
+        }}
+      />
+      <Tabs.Screen
+        name="admin"
+        options={{
+          title: 'Admin',
+          headerTitle: '🛡 ADMIN PANELİ',
+          tabBarIcon: ({ color }) => <ShieldCheck color={color} size={24} />,
         }}
       />
     </Tabs>
