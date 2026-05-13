@@ -31,6 +31,7 @@ function RootLayoutNav() {
       <Stack.Screen name="history" options={{ title: "ARCHIVE" }} />
       <Stack.Screen name="compare" options={{ title: "COMPARE", presentation: "modal" }} />
       <Stack.Screen name="settings" options={{ title: "SETTINGS", presentation: "modal" }} />
+      <Stack.Screen name="expert" options={{ title: "EXPERT SUPPORT", presentation: "modal" }} />
     </Stack>
   );
 }

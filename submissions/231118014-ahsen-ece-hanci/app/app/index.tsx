@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { Archive, Beaker, Settings as SettingsIcon, Sparkles } from "lucide-react-native";
+import { Archive, Beaker, Settings as SettingsIcon, Sparkles, UserCheck } from "lucide-react-native";
 
 import { Brand } from "@/components/Brand";
 import { GridBackground } from "@/components/GridBackground";
@@ -122,6 +122,21 @@ export default function HomeScreen() {
               </View>
             </View>
 
+            <Pressable
+              onPress={() => router.push("/expert")}
+              style={({ pressed }) => [styles.expertCard, pressed && { borderColor: theme.accent }]}
+              testID="open-expert"
+            >
+              <View style={styles.expertIcon}>
+                <UserCheck size={18} color={theme.accent} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.expertTitle}>TALK TO AN EXPERT</Text>
+                <Text style={styles.expertSub}>Senior VC review of your pitch. 24-48h turnaround.</Text>
+              </View>
+              <Text style={styles.expertArrow}>&gt;</Text>
+            </Pressable>
+
             {recent.length > 0 && (
               <View style={styles.recent}>
                 <Text style={styles.recentLabel}>&gt; RECENT AUTOPSIES</Text>
@@ -203,4 +218,9 @@ const styles = StyleSheet.create({
   recentPitch: { color: theme.textDim, fontFamily: monoFont, fontSize: 11, lineHeight: 15 },
   ctaBar: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8, borderTopWidth: 1, borderColor: theme.border, backgroundColor: theme.bg },
   hint: { color: theme.textDim, fontFamily: monoFont, fontSize: 10, textAlign: "center", marginTop: 6 },
+  expertCard: { marginTop: 24, flexDirection: "row", alignItems: "center", gap: 14, borderWidth: 1, borderColor: theme.borderStrong, borderRadius: 6, padding: 14, backgroundColor: theme.bgCard },
+  expertIcon: { width: 38, height: 38, borderRadius: 4, borderWidth: 1, borderColor: theme.accent, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,255,136,0.06)" },
+  expertTitle: { color: theme.text, fontFamily: monoFont, fontSize: 12, fontWeight: "700", letterSpacing: 1.5 },
+  expertSub: { color: theme.textDim, fontFamily: monoFont, fontSize: 10, lineHeight: 14, marginTop: 3 },
+  expertArrow: { color: theme.accent, fontFamily: monoFont, fontSize: 18, fontWeight: "700" },
 });

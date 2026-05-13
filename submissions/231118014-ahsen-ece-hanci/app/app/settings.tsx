@@ -1,7 +1,8 @@
 import React from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Stack } from "expo-router";
-import { Check, Flame, Hand, Target, Trash2 } from "lucide-react-native";
+import { ChevronRight, Check, Flame, Hand, Target, Trash2, UserCheck } from "lucide-react-native";
+import { useRouter } from "expo-router";
 
 import { GridBackground } from "@/components/GridBackground";
 import { monoFont, theme } from "@/constants/theme";
@@ -15,6 +16,7 @@ const TONES: { key: AnalysisTone; label: string; desc: string; Icon: typeof Targ
 ];
 
 export default function SettingsScreen() {
+  const router = useRouter();
   const { tone, setTone, analyses, clearAll } = useAnalysisContext();
 
   const confirmClear = () => {
@@ -56,6 +58,18 @@ export default function SettingsScreen() {
               </Pressable>
             );
           })}
+        </View>
+
+        <Text style={[styles.sectionLabel, { marginTop: 28 }]}>&gt; HUMAN SUPPORT</Text>
+        <View style={styles.group}>
+          <Pressable onPress={() => router.push("/expert")} style={styles.row} testID="open-expert-from-settings">
+            <UserCheck size={16} color={theme.accent} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.rowTitle, { color: theme.accent }]}>TALK TO AN EXPERT</Text>
+              <Text style={styles.rowDesc}>Get a senior VC review. 24-48h turnaround.</Text>
+            </View>
+            <ChevronRight size={14} color={theme.textDim} />
+          </Pressable>
         </View>
 
         <Text style={[styles.sectionLabel, { marginTop: 28 }]}>&gt; ARCHIVE</Text>
