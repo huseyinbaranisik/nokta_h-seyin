@@ -1,10 +1,10 @@
-# Nokta: Dot Capture & Enrich — Track A
+# Nokta Vision: Dot Capture & Enrich — Track A (Final Version)
 
 ## 1. Vizyon
 
-Günümüzde yapay zeka destekli araçlar sayesinde kod üretmek ve prototip oluşturmak giderek kolaylaşırken, **gerçekten iyi formüle edilmiş bir fikir** nadir ve değerli bir kaynak olmaya devam ediyor. İnsanlar günlük yaşamlarında — yürürken, duş alırken, metroda beklerken — sayısız fikir üretir; ancak bunların büyük çoğunluğu not edilmeden kaybolur. Not edilenler ise genellikle "yapay zeka ile bilmem ne uygulaması yap" seviyesinde kalarak hiçbir zaman uygulanabilir bir forma kavuşamaz.
+Günümüzde yapay zeka destekli araçlar sayesinde kod üretmek ve prototip oluşturmak giderek kolaylaşırken, **gerçekten iyi formüle edilmiş bir fikir** nadir ve değerli bir kaynak olmaya devam ediyor. 
 
-**NisaDot**, bu boşluğu kapatan bir mobil aracıdır. Kullanıcının ham fikir kırıntısını (noktayı) yakalayıp, onu mühendislik disiplini ile adım adım yapılandırılmış bir ürün spesifikasyonuna dönüştürür. Amaç "vibe coding" değil, **"engineering-guided ideation"** sağlamaktır.
+**Nokta Vision**, bu vizyonu bir adım öteye taşıyarak; sevimli bir **Robot Mascot** eşliğinde, kullanıcının sadece metinle değil, sesli komutlar ve **Gözlem (Vision)** moduyla çevresindeki nesnelerden fikir yakalamasını sağlar. Amaç, multimodal AI desteğiyle ham fikir kırıntılarını (noktaları) mühendislik disiplini ile yapılandırılmış "slop-free" spesifikasyonlara dönüştürmektir.
 
 ---
 
@@ -23,21 +23,15 @@ Günümüzde yapay zeka destekli araçlar sayesinde kod üretmek ve prototip olu
 
 Uygulama, aşağıdaki **dört aşamalı pipeline** ile çalışır:
 
-### Aşama 1 — Dot Capture (Ham Giriş)
-- Kullanıcı, fikir kırıntısını **metin kutusu** aracılığıyla girer
-- Giriş kasıtlı olarak minimalisttir: sadece bir cümle veya kısa paragraf
-- Amaç: düşünce sürecini kesmeden, anlık ilhamı yakalamak
+### Aşama 1 — Dot Capture (Multimodal Giriş)
+- **Metin & Ses:** Kullanıcı fikrini yazabilir veya doğrudan Robot Mascot'a sesli olarak anlatabilir.
+- **Vision (Gözlem) Modu:** Kamerayı kullanarak fiziksel objeleri veya taslak çizimleri AI'a analiz ettirip fikir tohumu oluşturabilir.
 
-### Aşama 2 — Engineering Questions (AI Sorgulaması)
-Girilen ham fikir Gemini AI'a gönderilir. AI, fikri derinleştirmek için **5 kritik mühendislik sorusu** sorar:
+### Aşama 2 — Engineering Questions (AI & Expert Guidance)
+Girilen ham fikir Gemini 1.5 Flash AI'a gönderilir. AI, fikri derinleştirmek için kritik sorular sorar.
 
-1. **Problem (Acı Noktası):** Bu fikrin çözdüğü spesifik sorun nedir?
-2. **User (Kullanıcı):** Bu çözümü kimin kullanacağını, hangi bağlamda kullanacağını tanımla
-3. **Scope (Kapsam):** MVP sınırları nerede başlıyor, nerede bitiyor?
-4. **Constraints (Kısıtlar):** Teknik, finansal veya operasyonel limitler neler?
-5. **Differentiation (Farklılaşma):** Mevcut çözümlerden farkı nedir?
-
-Her soru **tek seferde değil**, birer birer wizard (adım adım) formatında sorulur. Kullanıcı her soruyu okuyup düşünerek cevap verir.
+**Yenilik — Human-In-The-Loop:**
+Eğer fikir teknik bir karmaşıklık (mühendislik) veya tıbbi bir hassasiyet içeriyorsa, uygulama otomatik olarak **Hernes Engineering** veya **Uzman Doktor** desteği önerir.
 
 ### Aşama 3 — Spec Generation (Yapılandırılmış Çıktı)
 Tüm cevaplar toplandıktan sonra AI, aşağıdaki bölümlerden oluşan **tek sayfalık bir teknik spesifikasyon** üretir:
@@ -60,15 +54,13 @@ Tüm cevaplar toplandıktan sonra AI, aşağıdaki bölümlerden oluşan **tek s
 
 ---
 
-## 4. Teknik Mimari
-
 | Katman | Teknoloji | Açıklama |
 |--------|-----------|----------|
 | **Frontend** | React Native + Expo | Cross-platform mobil uygulama |
-| **AI Engine** | Groq (Llama 3.3) | Yüksek hızlı soru üretimi ve spec generation |
-| **State Management** | AsyncStorage | Lokal idea history saklama |
-| **UI Framework** | Custom Glassmorphism Components | Premium dark theme tasarım |
-| **Navigation** | React Navigation | Screen transitions ve modal yönetimi |
+| **AI Engine** | Gemini 1.5 Flash | Çok modlu (Vision/Ses) analiz ve zenginleştirme |
+| **Mascot Logic** | Three.js / Canvas | İnteraktif robot avatarı ve animasyonlar |
+| **UI Framework** | Glassmorphism UI | Premium dark theme ve LayoutAnimation |
+| **Expert Bridge** | Human-In-The-Loop | Hernes Engineering & Tıbbi uzman yönlendirme sistemi |
 
 ---
 
