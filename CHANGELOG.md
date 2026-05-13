@@ -14,6 +14,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0-challenge] - 2026-05-13
+
+Round of community-driven submission grading. Repo briefly pivoted to a
+"student challenge" model parallel to the section-ratchet system; this entry
+captures that work and the supporting CI fixes.
+
+### Added
+- **49 merged student/community submissions** under `submissions/<id>-<slug>/` covering Tracks A–D (capture, slop detection, idea-spec, HITL, expert support, etc.). Highest auto-score: 103/110 (8 submissions tied — see LEADERBOARD.md).
+- **`scoring/scores.json` + `scoring/scores.md`** — first auto-generated rubric snapshot covering 68 submissions. Anti-slop (TF-IDF cosine ≥ 0.80) flagged 22 copycat pairs.
+- **`scoring/similarity.json`** — per-submission similarity matrix; copycat-detected entries received the configured −35 % anti-slop penalty.
+- **LEADERBOARD.md** repurposed for the challenge rubric: Delivery 35 + Scope 25 + Anti-Slop 20 + Trace 20 + APK (±3/−5). Top contributors and per-submission breakdown auto-populated from `scoring/scores.json` + merged-PR author map.
+
+### Changed
+- **`.github/workflows/validate-pr.yml`** — submission folder regex widened `^[0-9]{6,}-[a-z0-9-]+$` → `^[0-9]{6,}-[A-Za-z0-9-]+$` to accept CamelCase slugs (`231118018-FitLoop`, `241478088-spec-architect-Abdulkahhar`, `211118085-RavzanurErdogan`). PR #166.
+- **`.github/workflows/score.yml`** — added job-level `permissions: contents: write` so `github-actions[bot]` can push the auto-generated `scoring/` directory back to `main`; the bot was failing silently with HTTP 403 prior. PR #167.
+
+### Closed (without merge)
+- **26 PRs closed** for failing the validate-pr.yml gate or the artifact requirement (README + Expo/demo-video link):
+  - 14 with non-conforming folder names (Turkish chars / spaces / missing student-id prefix)
+  - 13 missing a `README.md` in the submission folder
+  - 12 touching paths outside `submissions/` (root `.gitignore`, `.DS_Store`, stray `package-lock.json`, etc.)
+  - 8 with neither Expo nor demo-video link in README
+  - 4 with merge conflicts against main
+- **4 superseded PRs** auto-closed when the more comprehensive duplicate from the same author was merged: #84 (← #158), #102 (← #125), #79 (← #118), #75 (← #97). Authors: Yilmazurun, mehmetalisahingm, esramusul, sengka.
+
+### Restored
+- **`assets/nokta.jpeg`** — original 1021356-byte logo restored from blob `cafe70e` (commit `add2b99`); had been deleted by student PR `3509b51` on 2026-05-11.
+- **Rich documentation set** (`README.md`, `CHANGELOG.md`, `AGENT.md`, `CLAUDE.md`, `LEADERBOARD.md`, `PLAN.md`, `program.md`, `mobile-skeleton.md`, `workflow.md`) brought from `origin/section/09-ratchet-clarity-2` to `main` for the first time. PR #169.
+
+### Notes
+- Validate-pr.yml gate held during the merge round — none of the 49 merged PRs touched root files.
+- Manual "Çılgınlık +10" demo-day bonus not yet applied; LEADERBOARD shows auto-score only.
+- 61 unique contributors recognised in this round.
+
+---
+
 ## [0.1.0-dev] - 2025-04-01
 
 ### Added
