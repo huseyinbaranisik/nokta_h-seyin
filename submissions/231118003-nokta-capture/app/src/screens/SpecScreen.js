@@ -1,14 +1,37 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, TextInput } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { COLORS } from "../theme";
-import { enhanceIdea } from "../services/gemini";
+import { enhanceIdea, refineSpecWithExpertFeedback } from "../services/gemini";
 
 export default function SpecScreen({ route, navigation }) {
   const { spec } = route.params;
+  const [currentSpec, setCurrentSpec] = useState(spec);
   const [enhancements, setEnhancements] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  // Expert Mode States
+  const [expertMode, setExpertMode] = useState(false);
+  const [expertFeedback, setExpertFeedback] = useState("");
+  const [refining, setRefining] = useState(false);
+
+  const handleExpertRefine = async () => {
+    if (!expertFeedback.trim()) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setRefining(true);
+    try {
+      const updatedSpec = await refineSpecWithExpertFeedback(currentSpec, expertFeedback);
+      setCurrentSpec({ ...updatedSpec, isExpertReviewed: true });
+      setExpertMode(false);
+      setExpertFeedback("");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (e) {
+      console.error(e);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    }
+    setRefining(false);
+  };
 
   const handleEnhance = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -28,53 +51,56 @@ export default function SpecScreen({ route, navigation }) {
     <LinearGradient colors={[COLORS.bg, "#1A0830"]} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>{spec.title}</Text>
+          <Text style={styles.title}>{currentSpec.title}</Text>
+          {currentSpec.isExpertReviewed && (
+            <View style={styles.expertBadge}><Text style={styles.expertBadgeText}>✓ Uzman Onaylı</Text></View>
+          )}
         </View>
-        <Text style={styles.tagline}>{spec.tagline}</Text>
+        <Text style={styles.tagline}>{currentSpec.tagline}</Text>
 
         {/* Detailed Scores */}
         <View style={styles.scoreRow}>
-          <View style={styles.scoreBadge}><Text style={styles.scoreLabel}>Clarity</Text><Text style={styles.scoreVal}>{spec.scores?.clarity || 0}/10</Text></View>
-          <View style={styles.scoreBadge}><Text style={styles.scoreLabel}>Feasibility</Text><Text style={styles.scoreVal}>{spec.scores?.feasibility || 0}/10</Text></View>
-          <View style={styles.scoreBadge}><Text style={styles.scoreLabel}>Impact</Text><Text style={styles.scoreVal}>{spec.scores?.impact || 0}/10</Text></View>
+          <View style={styles.scoreBadge}><Text style={styles.scoreLabel}>Clarity</Text><Text style={styles.scoreVal}>{currentSpec.scores?.clarity || 0}/10</Text></View>
+          <View style={styles.scoreBadge}><Text style={styles.scoreLabel}>Feasibility</Text><Text style={styles.scoreVal}>{currentSpec.scores?.feasibility || 0}/10</Text></View>
+          <View style={styles.scoreBadge}><Text style={styles.scoreLabel}>Impact</Text><Text style={styles.scoreVal}>{currentSpec.scores?.impact || 0}/10</Text></View>
         </View>
 
         {/* Ambiguity Detector */}
-        {spec.ambiguities && spec.ambiguities.length > 0 && (
+        {currentSpec.ambiguities && currentSpec.ambiguities.length > 0 && (
           <View style={styles.ambiguityBox}>
             <Text style={styles.sectionTitle}>⚡ Ambiguity Detector</Text>
-            {spec.ambiguities.map((amb, i) => (
+            {currentSpec.ambiguities.map((amb, i) => (
               <Text key={i} style={styles.ambiguityText}>⚠️ {amb}</Text>
             ))}
           </View>
         )}
 
         <View style={styles.card}>
-          <Text style={styles.justification}>"{spec.slop_justification}"</Text>
+          <Text style={styles.justification}>"{currentSpec.slop_justification}"</Text>
           
           <Text style={styles.label}>🎯 Problem</Text>
-          <Text style={styles.val}>{spec.problem}</Text>
+          <Text style={styles.val}>{currentSpec.problem}</Text>
           
           <Text style={styles.label}>👤 Kullanıcı</Text>
-          <Text style={styles.val}>{spec.user}</Text>
+          <Text style={styles.val}>{currentSpec.user}</Text>
           
           <Text style={styles.label}>🗺️ Kapsam</Text>
-          <Text style={styles.val}>{spec.scope}</Text>
+          <Text style={styles.val}>{currentSpec.scope}</Text>
 
           <Text style={styles.label}>⚙️ Kısıtlar</Text>
-          <Text style={styles.val}>{spec.constraints}</Text>
+          <Text style={styles.val}>{currentSpec.constraints}</Text>
 
           <Text style={styles.label}>📊 Başarı Metriği</Text>
-          <Text style={styles.val}>{spec.success}</Text>
+          <Text style={styles.val}>{currentSpec.success}</Text>
         </View>
 
         {/* Risk Analizi ve Çözümler */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🔴 Risk Analizi</Text>
-          {spec.risks?.map((r, i) => <Text key={i} style={styles.riskText}>- {r}</Text>)}
+          {currentSpec.risks?.map((r, i) => <Text key={i} style={styles.riskText}>- {r}</Text>)}
           
           <Text style={[styles.sectionTitle, {marginTop: 20}]}>💡 Çözüm Önerileri (AI)</Text>
-          {spec.solutions?.map((s, i) => <Text key={i} style={styles.solutionText}>👉 {s}</Text>)}
+          {currentSpec.solutions?.map((s, i) => <Text key={i} style={styles.solutionText}>👉 {s}</Text>)}
         </View>
 
         {/* Fikri Geliştir Section */}
@@ -88,10 +114,57 @@ export default function SpecScreen({ route, navigation }) {
         )}
 
         {!enhancements ? (
-          <TouchableOpacity style={styles.enhanceBtn} onPress={handleEnhance} disabled={loading}>
+          <TouchableOpacity style={styles.enhanceBtn} onPress={handleEnhance} disabled={loading || refining}>
             {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.enhanceBtnT}>Fikri Geliştir ✨</Text>}
           </TouchableOpacity>
         ) : null}
+
+        {/* HUMAN-IN-THE-LOOP SECTION */}
+        <View style={[styles.card, { borderColor: COLORS.mint, marginTop: 10 }]}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 }}>
+            <Text style={styles.sectionTitle}>👨‍🏫 Uzman Görüşü (Human-in-the-Loop)</Text>
+          </View>
+          
+          {!expertMode ? (
+            <TouchableOpacity 
+              style={styles.expertBtn} 
+              onPress={() => {
+                Haptics.selectionAsync();
+                setExpertMode(true);
+              }}
+            >
+              <Text style={styles.expertBtnT}>Eleştiri veya Yönlendirme Ekle</Text>
+            </TouchableOpacity>
+          ) : (
+            <View>
+              <TextInput
+                style={styles.expertInput}
+                placeholder="Örn: Bütçe kısıtlarını çok abartmışsın, hedef kitleye lise öğrencilerini de dahil et..."
+                placeholderTextColor="rgba(255,255,255,0.4)"
+                multiline
+                numberOfLines={4}
+                value={expertFeedback}
+                onChangeText={setExpertFeedback}
+              />
+              <View style={{ flexDirection: "row", gap: 10 }}>
+                <TouchableOpacity 
+                  style={[styles.expertSubmitBtn, { flex: 1, backgroundColor: refining ? "#555" : COLORS.pink }]} 
+                  onPress={handleExpertRefine} 
+                  disabled={refining}
+                >
+                  {refining ? <ActivityIndicator color="#fff" /> : <Text style={{ color: "#fff", fontWeight: "bold" }}>AI'a Gönder ve Güncelle</Text>}
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.expertSubmitBtn, { backgroundColor: "rgba(255,255,255,0.1)" }]} 
+                  onPress={() => setExpertMode(false)}
+                  disabled={refining}
+                >
+                  <Text style={{ color: "#fff" }}>İptal</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </View>
 
         <TouchableOpacity 
           style={styles.btn} 
@@ -133,6 +206,13 @@ const styles = StyleSheet.create({
   enhanceBtn: { backgroundColor: "rgba(255,255,255,0.1)", padding: 18, borderRadius: 30, alignItems: "center", marginBottom: 15, borderWidth: 1, borderColor: "rgba(255,255,255,0.2)" },
   enhanceBtnT: { color: "#fff", fontWeight: "bold", fontSize: 16 },
 
-  btn: { backgroundColor: COLORS.mint, padding: 18, borderRadius: 30, alignItems: "center", shadowColor: COLORS.mint, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10 },
+  expertBtn: { backgroundColor: "rgba(0, 255, 170, 0.15)", padding: 15, borderRadius: 15, alignItems: "center", borderWidth: 1, borderColor: "rgba(0, 255, 170, 0.3)" },
+  expertBtnT: { color: COLORS.mint, fontWeight: "bold", fontSize: 14 },
+  expertInput: { backgroundColor: "rgba(0,0,0,0.4)", color: "#fff", borderRadius: 15, padding: 15, fontSize: 15, minHeight: 100, textAlignVertical: "top", marginBottom: 15, borderWidth: 1, borderColor: "rgba(255,255,255,0.1)" },
+  expertSubmitBtn: { padding: 15, borderRadius: 15, alignItems: "center", justifyContent: "center" },
+  expertBadge: { backgroundColor: COLORS.mint, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, marginTop: 5, alignSelf: "flex-start" },
+  expertBadgeText: { color: "#0A0A18", fontSize: 10, fontWeight: "900", textTransform: "uppercase" },
+
+  btn: { backgroundColor: COLORS.mint, padding: 18, borderRadius: 30, alignItems: "center", shadowColor: COLORS.mint, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, marginTop: 10 },
   btnT: { fontWeight: "800", color: "#0A0A18", fontSize: 16 }
 });
