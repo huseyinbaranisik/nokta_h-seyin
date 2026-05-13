@@ -1,5 +1,5 @@
 {
-  "count": 67,
+  "count": 68,
   "results": [
     {
       "submission": "20260416-dot-capture",
@@ -2600,6 +2600,48 @@
           "max": 20,
           "total_commits": 1,
           "meaningful_commits": 1
+        }
+      },
+      "penalties": [
+        {
+          "reason": "APK eksik",
+          "applied": "-5"
+        }
+      ]
+    },
+    {
+      "submission": "231118087-dot-capture",
+      "base_score": 28,
+      "apk_adjustment": -5,
+      "final_auto": 23,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 0,
+          "max": 35,
+          "readme": false,
+          "expo_link": false,
+          "demo_video": false,
+          "apk": false,
+          "app_json": false
+        },
+        "scope": {
+          "points": 0,
+          "max": 25,
+          "track": null,
+          "decision_log": false,
+          "readme_length": 0
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 8,
+          "max": 20,
+          "total_commits": 3,
+          "meaningful_commits": 3
         }
       },
       "penalties": [
