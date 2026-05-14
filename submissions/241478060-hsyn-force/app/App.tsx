@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, SafeAreaView, Animated, ScrollView } from 'reac
 import { StatusBar } from 'expo-status-bar';
 import { captureScreen, captureRef } from 'react-native-view-shot';
 import * as FileSystem from 'expo-file-system';
+// @ts-ignore
+const { documentDirectory, writeAsStringAsync, EncodingType } = FileSystem;
 import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -71,13 +73,13 @@ export default function App() {
           captureScreen: () => captureScreen({ format: 'png', result: 'tmpfile' }),
           captureRef: (ref) => captureRef(ref, { format: 'png', result: 'tmpfile' }),
           writeFile: async (filename, content) => {
-            const uri = FileSystem.documentDirectory + filename;
-            await FileSystem.writeAsStringAsync(uri, content);
+            const uri = (documentDirectory || '') + filename;
+            await writeAsStringAsync(uri, content);
             return uri;
           },
           writeFileBinary: async (filename, base64) => {
-            const uri = FileSystem.documentDirectory + filename;
-            await FileSystem.writeAsStringAsync(uri, base64, { encoding: FileSystem.EncodingType.Base64 });
+            const uri = (documentDirectory || '') + filename;
+            await writeAsStringAsync(uri, base64, { encoding: EncodingType?.Base64 });
             return uri;
           },
           shareFile: (uri) => Sharing.shareAsync(uri),
