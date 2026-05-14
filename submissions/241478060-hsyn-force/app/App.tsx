@@ -8,6 +8,8 @@ import {
   ScrollView,
   Dimensions,
   Platform,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { captureScreen, captureRef } from 'react-native-view-shot';
@@ -84,8 +86,7 @@ export default function App() {
               <Text style={styles.badgeText}>B TRACK: CREATIVITY</Text>
             </View>
             <TouchableOpacity onPress={() => {
-              // @ts-ignore
-              import('react-native').then(({ Alert }) => Alert.alert('Test', 'Uygulama çalışıyor!'));
+              Alert.alert('Test', 'Uygulama çalışıyor!');
             }}>
               <Text style={styles.title}>Nokta Forge</Text>
             </TouchableOpacity>

@@ -7,6 +7,7 @@ import {
   Animated,
   Dimensions,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { NoteManager } from '../core/storage';
 import { buildMarkdown } from '../export/markdown';
@@ -58,16 +59,10 @@ export function AuditWidget({ deps, appName = 'App' }: Props) {
         highlightBounds: null,
         reporterId: deps.reporterId,
       });
-      // @ts-ignore
-      import('react-native').then(({ Alert }) => {
-        Alert.alert('Başarılı', 'Bug raporu başarıyla kaydedildi! Paylaşmak için butona uzun basın.');
-      });
+      Alert.alert('Başarılı', 'Bug raporu başarıyla kaydedildi! Paylaşmak için butona uzun basın.');
     } catch (e) {
       console.error('[AuditWidget] Error:', e);
-      // @ts-ignore
-      import('react-native').then(({ Alert }) => {
-        Alert.alert('Hata', 'Rapor kaydedilirken bir sorun oluştu.');
-      });
+      Alert.alert('Hata', 'Rapor kaydedilirken bir sorun oluştu.');
     }
   };
 
@@ -77,10 +72,7 @@ export function AuditWidget({ deps, appName = 'App' }: Props) {
     try {
       const all = await manager.getAll();
       if (all.length === 0) {
-        // @ts-ignore
-        import('react-native').then(({ Alert }) => {
-          Alert.alert('Bilgi', 'Henüz kaydedilmiş bir rapor bulunmuyor.');
-        });
+        Alert.alert('Bilgi', 'Henüz kaydedilmiş bir rapor bulunmuyor.');
         return;
       }
       const md = buildMarkdown(all, { appName, exportedAt: new Date().toISOString(), totalNotes: all.length });
