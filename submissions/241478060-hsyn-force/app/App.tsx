@@ -78,14 +78,19 @@ export default function App() {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            <View style={styles.header}>
-              <View style={styles.badge}>
-                <Sparkles size={14} color="#818cf8" />
-                <Text style={styles.badgeText}>B TRACK: CREATIVITY</Text>
-              </View>
-              <Text style={styles.title}>Nokta Forge</Text>
-              <Text style={styles.idText}>241478060 — hsyn-force</Text>
+          <View style={styles.header}>
+            <View style={styles.badge}>
+              <Sparkles size={14} color="#818cf8" />
+              <Text style={styles.badgeText}>B TRACK: CREATIVITY</Text>
             </View>
+            <TouchableOpacity onPress={() => {
+              // @ts-ignore
+              import('react-native').then(({ Alert }) => Alert.alert('Test', 'Uygulama çalışıyor!'));
+            }}>
+              <Text style={styles.title}>Nokta Forge</Text>
+            </TouchableOpacity>
+            <Text style={styles.idText}>241478060 — hsyn-force</Text>
+          </View>
 
             <View style={styles.heroSection}>
               <LinearGradient

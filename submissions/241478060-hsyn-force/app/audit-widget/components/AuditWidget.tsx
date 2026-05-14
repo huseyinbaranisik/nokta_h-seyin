@@ -46,9 +46,11 @@ export function AuditWidget({ deps, appName = 'App' }: Props) {
   };
 
   const handlePress = async () => {
+    console.log('[AuditWidget] Button pressed');
     animatePress();
     try {
       const uri = await deps.captureScreen();
+      console.log('[AuditWidget] Screen captured:', uri);
       await manager.add({
         screenName: deps.currentScreen,
         screenshot: uri,
@@ -56,22 +58,36 @@ export function AuditWidget({ deps, appName = 'App' }: Props) {
         highlightBounds: null,
         reporterId: deps.reporterId,
       });
-      // Simple feedback could be added here
+      // @ts-ignore
+      import('react-native').then(({ Alert }) => {
+        Alert.alert('Başarılı', 'Bug raporu başarıyla kaydedildi! Paylaşmak için butona uzun basın.');
+      });
     } catch (e) {
-      console.error(e);
+      console.error('[AuditWidget] Error:', e);
+      // @ts-ignore
+      import('react-native').then(({ Alert }) => {
+        Alert.alert('Hata', 'Rapor kaydedilirken bir sorun oluştu.');
+      });
     }
   };
 
   const handleLongPress = async () => {
+    console.log('[AuditWidget] Long press detected - Exporting...');
     setIsExporting(true);
     try {
       const all = await manager.getAll();
-      if (all.length === 0) return;
+      if (all.length === 0) {
+        // @ts-ignore
+        import('react-native').then(({ Alert }) => {
+          Alert.alert('Bilgi', 'Henüz kaydedilmiş bir rapor bulunmuyor.');
+        });
+        return;
+      }
       const md = buildMarkdown(all, { appName, exportedAt: new Date().toISOString(), totalNotes: all.length });
       const fileUri = await deps.writeFile(`audit-${Date.now()}.md`, md);
       await deps.shareFile(fileUri);
     } catch (e) {
-      console.error(e);
+      console.error('[AuditWidget] Export Error:', e);
     } finally {
       setIsExporting(false);
     }
