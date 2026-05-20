@@ -32,12 +32,12 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 | 12 | `231118023-storyforge` | **96** | 35/35 | 25/25 | 20/20 | 13/20 | +3 ✅ | — | — |  |
 | 13 | `231118046-nokta-spec-builder` | **96** | 35/35 | 25/25 | 20/20 | 13/20 | +3 ✅ | — | — |  |
 | 14 | `231118053-nokta-sengk` | **96** | 35/35 | 25/25 | 20/20 | 13/20 | +3 ✅ | — | — |  |
-| 15 | `9221118097-note-migrator` | **96** | 35/35 | 25/25 | 20/20 | 13/20 | +3 ✅ | — | — |  |
+| 15 | `9221118097-note-migrator` | **96** | 35/35 | 25/25 | 20/20 | 13/20 | +3 ✅ | — | — | ⚠️ similarity |
 | 16 | `211118018-dot-capture` | **93** | 25/35 | 25/25 | 20/20 | 20/20 | +3 ✅ | — | — |  |
 | 17 | `221118054-idea-spec` | **93** | 25/35 | 25/25 | 20/20 | 20/20 | +3 ✅ | — | — |  |
 | 18 | `231118012-slop-detector` | **93** | 35/35 | 15/25 | 20/20 | 20/20 | +3 ✅ | — | — |  |
 | 19 | `231118020-learndot` | **93** | 25/35 | 25/25 | 20/20 | 20/20 | +3 ✅ | — | — |  |
-| 20 | `9211118091-mohammed-almashhor` | **93** | 25/35 | 25/25 | 20/20 | 20/20 | +3 ✅ | — | — |  |
+| 20 | `9211118091-mohammed-almashhor` | **93** | 25/35 | 25/25 | 20/20 | 20/20 | +3 ✅ | — | — | ⚠️ similarity |
 | 21 | `231118059-nokta-radar` | **92** | 35/35 | 25/25 | 20/20 | 9/20 | +3 ✅ | — | — |  |
 | 22 | `231118064-dot-capture` | **92** | 35/35 | 25/25 | 20/20 | 9/20 | +3 ✅ | — | — |  |
 | 23 | `231118081-idea-distillery` | **92** | 35/35 | 25/25 | 20/20 | 9/20 | +3 ✅ | — | — |  |
@@ -69,7 +69,7 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 | 49 | `231118033-dot-capture-enrich` | **71** | 25/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — |  |
 | 50 | `231118052-spec-gen` | **71** | 35/35 | 15/25 | 13/20 | 5/20 | +3 ✅ | — | — |  |
 | 51 | `231118063-nokta-health-assistant` | **70** | 20/35 | 15/25 | 20/20 | 20/20 | −5 ❌ | — | — |  |
-| 52 | `231118036-ali-nursin-karacan` | **68** | 25/35 | 15/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 52 | `231118036-ali-nursin-karacan` | **68** | 25/35 | 15/25 | 20/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
 | 53 | `241478077-migration-dedup` | **68** | 15/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
 | 54 | `231118071-nokta-sudenuryazici` | **67** | 22/35 | 7/25 | 20/20 | 15/20 | +3 ✅ | — | — |  |
 | 55 | `231118004-dot-capture` | **65** | 20/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
@@ -86,7 +86,7 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 | 66 | `241478088-spec-architect-Abdulkahhar` | **52** | 20/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
 | 67 | `231118061-fikir-asistani` | **45** | 10/35 | 15/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
 | 68 | `231118087-dot-capture` | **23** | 0/35 | 0/25 | 20/20 | 8/20 | −5 ❌ | — | — |  |
-| 69 | `2026-05-05-hoop` | **11** | 3/35 | 0/25 | 13/20 | 0/20 | −5 ❌ | — | — | ⚠️ similarity |
+| 69 | `2026-05-05-hoop` | **18** | 3/35 | 0/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
 
 ---
 
@@ -100,7 +100,24 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 ### All Submissions
 | Rank | Submission | Score | Delivery | Scope | Anti-Slop | Trace | APK | Author | PR | Flags |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `231118012-mustafa-karakoyun` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
+| 1 | `211118018-audit-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 2 | `211118068-audit-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 3 | `231118012-mustafa-karakoyun` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 4 | `231118018-fitloop-audit` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 5 | `231118044-slopdetec-audit` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 6 | `231118052-audit-forge` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 7 | `9221118084-minimal-audit` | **88** | 35/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 8 | `191118022-audit-forge` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
+| 9 | `231118009-audit-track-a-` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
+| 10 | `231118023-busenur` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
+| 11 | `231118040-audit-forge` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
+| 12 | `211118032-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 13 | `231118014-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 14 | `231118053-noktav3-sengk` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 15 | `231118070-audit-forge` | **59** | 27/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
+| 16 | `231118027-audit-forge` | **55** | 10/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
+| 17 | `241478088-Abdulkahhar-main` | **55** | 15/35 | 17/25 | 20/20 | 0/20 | +3 ✅ | — | — |  |
+| 18 | `9221118087-audit-forge` | **32** | 0/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
 
 ---
 
@@ -110,21 +127,34 @@ TF-IDF cosine similarity; `.github/scripts/similarity_check.py` detayını üret
 
 | Original | Copycat | Similarity |
 |---|---|---|
-| `2026-05-05-hoop` | `231118012-mustafa-karakoyun` | **0.825** |
-| `231118098-tohum` | `231118012-mustafa-karakoyun` | **0.823** |
-| `231118098-tohum` | `2026-05-05-hoop` | **0.804** |
+| `231118072-idea-tracker` | `9211118091-mohammed-almashhor` | **0.889** |
+| `9211118091-mohammed-almashhor` | `9221118097-note-migrator` | **0.861** |
+| `231118072-idea-tracker` | `9221118097-note-migrator` | **0.845** |
+| `9211118091-mohammed-almashhor` | `231118023-busenur` | **0.841** |
+| `231118072-idea-tracker` | `231118023-busenur` | **0.838** |
+| `231118072-idea-tracker` | `231118036-ali-nursin-karacan` | **0.835** |
+| `231118072-idea-tracker` | `191118022-audit-forge` | **0.830** |
+| `9211118091-mohammed-almashhor` | `231118036-ali-nursin-karacan` | **0.825** |
+| `231118011-faruk-emre-ok` | `231118040-audit-forge` | **0.822** |
+| `231118023-busenur` | `191118022-audit-forge` | **0.817** |
+| `9211118091-mohammed-almashhor` | `191118022-audit-forge` | **0.817** |
+| `231118036-ali-nursin-karacan` | `231118023-busenur` | **0.814** |
+| `231118036-ali-nursin-karacan` | `231118009-audit-track-a-` | **0.809** |
+| `231118036-ali-nursin-karacan` | `9221118097-note-migrator` | **0.807** |
+| `9221118097-note-migrator` | `231118023-busenur` | **0.805** |
+| `9221118097-note-migrator` | `191118022-audit-forge` | **0.802** |
 
 ---
 
-**Last Updated:** 2026-05-20 22:01 UTC
+**Last Updated:** 2026-05-20 22:07 UTC
 
 **Total Contributors:** 0
 
 **Total Submissions (Challenge 1):** 69
 
-**Total Submissions (Challenge 2):** 1
+**Total Submissions (Challenge 2):** 18
 
-**Similarity flags:** 3
+**Similarity flags:** 16
 
 
 🤖 Otomatik üretildi — kaynak: `scoring/scores.json` + `gh pr list --state merged`. Manuel "Çılgınlık +10" bonusu eklenmedi.
