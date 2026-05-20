@@ -18,7 +18,7 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 ### All Submissions
 | Rank | Submission | Score | Delivery | Scope | Anti-Slop | Trace | APK | Author | PR | Flags |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `2026-05-05-hoop` | **18** | 3/35 | 0/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
+| 1 | `2026-05-05-hoop` | **11** | 3/35 | 0/25 | 13/20 | 0/20 | −5 ❌ | — | — | ⚠️ similarity |
 
 ---
 
@@ -32,7 +32,7 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 ### All Submissions
 | Rank | Submission | Score | Delivery | Scope | Anti-Slop | Trace | APK | Author | PR | Flags |
 |---|---|---|---|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — | — | — | — | — |
+| 1 | `231118098-tohum` | **93** | 25/35 | 25/25 | 20/20 | 20/20 | +3 ✅ | — | — |  |
 
 ---
 
@@ -42,40 +42,19 @@ TF-IDF cosine similarity; `.github/scripts/similarity_check.py` detayını üret
 
 | Original | Copycat | Similarity |
 |---|---|---|
-| `231118070-nokta-not-ayirici` | `231118033-dot-capture-enrich` | **0.950** |
-| `231118004-dot-capture` | `231118004-human-dot` | **0.912** |
-| `231118009-track-a` | `231118070-nokta-not-ayirici` | **0.903** |
-| `241478009-nokta-capture` | `231118070-nokta-not-ayirici` | **0.901** |
-| `241478009-nokta-capture` | `231118009-track-a` | **0.901** |
-| `231118009-track-a` | `231118033-dot-capture-enrich` | **0.897** |
-| `241478009-nokta-capture` | `231118033-dot-capture-enrich` | **0.889** |
-| `231118027-pitch-validator` | `231118052-spec-gen` | **0.887** |
-| `9221118085-notepoint` | `231118070-nokta-not-ayirici` | **0.867** |
-| `9221118085-notepoint` | `231118033-dot-capture-enrich` | **0.857** |
-| `241478013-nokta-engineer-ai` | `231118052-spec-gen` | **0.854** |
-| `231118009-track-a` | `9221118085-notepoint` | **0.840** |
-| `231118036-ali-nursin-karacan` | `231118052-spec-gen` | **0.835** |
-| `241478009-nokta-capture` | `9221118085-notepoint` | **0.835** |
-| `231118036-ali-nursin-karacan` | `241478013-nokta-engineer-ai` | **0.828** |
-| `231118027-pitch-validator` | `241478013-nokta-engineer-ai` | **0.824** |
-| `231118033-dot-capture-enrich` | `231118052-spec-gen` | **0.816** |
-| `231118070-nokta-not-ayirici` | `231118052-spec-gen` | **0.811** |
-| `231118033-nokta-mascot-human-support` | `231118045-patiler` | **0.810** |
-| `231118009-track-a` | `231118052-spec-gen` | **0.808** |
-| `241478009-nokta-capture` | `231118052-spec-gen` | **0.806** |
-| `231118036-ali-nursin-karacan` | `231118027-pitch-validator` | **0.802** |
+| `231118098-tohum` | `2026-05-05-hoop` | **0.832** |
 
 ---
 
-**Last Updated:** 2026-05-20 19:52 UTC
+**Last Updated:** 2026-05-20 21:41 UTC
 
 **Total Contributors:** 0
 
 **Total Submissions (Challenge 1):** 1
 
-**Total Submissions (Challenge 2):** 0
+**Total Submissions (Challenge 2):** 1
 
-**Similarity flags:** 22
+**Similarity flags:** 1
 
 
 🤖 Otomatik üretildi — kaynak: `scoring/scores.json` + `gh pr list --state merged`. Manuel "Çılgınlık +10" bonusu eklenmedi.

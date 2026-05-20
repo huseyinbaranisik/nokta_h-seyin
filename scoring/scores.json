@@ -1,12 +1,52 @@
 {
-  "count": 1,
+  "count": 2,
   "results": [
+    {
+      "submission": "231118098-tohum",
+      "challenge_version": 2,
+      "base_score": 90,
+      "apk_adjustment": 3,
+      "final_auto": 93,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 25,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": false,
+          "apk": true,
+          "app_json": true,
+          "audit_reports_count": 3
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "A",
+          "decision_log": true,
+          "readme_length": 2955
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 20,
+          "max": 20,
+          "total_commits": 28,
+          "meaningful_commits": 28,
+          "has_forge": true
+        }
+      },
+      "penalties": []
+    },
     {
       "submission": "2026-05-05-hoop",
       "challenge_version": 1,
-      "base_score": 23,
+      "base_score": 16,
       "apk_adjustment": -5,
-      "final_auto": 18,
+      "final_auto": 11,
       "manual_craziness_bonus_pending": "demo day +0..+10",
       "breakdown": {
         "delivery": {
@@ -26,9 +66,9 @@
           "readme_length": 0
         },
         "antislop": {
-          "points": 20,
+          "points": 13,
           "max": 20,
-          "flagged": false
+          "flagged": true
         },
         "trace": {
           "points": 0,
@@ -38,6 +78,10 @@
         }
       },
       "penalties": [
+        {
+          "reason": "similarity >= 0.80",
+          "applied": "-35% on antislop"
+        },
         {
           "reason": "APK eksik",
           "applied": "-5"
