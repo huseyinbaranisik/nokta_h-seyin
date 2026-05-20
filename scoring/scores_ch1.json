@@ -1,5 +1,5 @@
 {
-  "count": 69,
+  "count": 68,
   "results": [
     {
       "submission": "20260416-dot-capture",
@@ -760,46 +760,6 @@
       },
       "penalties": [],
       "challenge_version": 1
-    },
-    {
-      "submission": "231118098-tohum",
-      "challenge_version": 2,
-      "base_score": 90,
-      "apk_adjustment": 3,
-      "final_auto": 93,
-      "manual_craziness_bonus_pending": "demo day +0..+10",
-      "breakdown": {
-        "delivery": {
-          "points": 25,
-          "max": 35,
-          "readme": true,
-          "expo_link": true,
-          "demo_video": false,
-          "apk": true,
-          "app_json": true,
-          "audit_reports_count": 3
-        },
-        "scope": {
-          "points": 25,
-          "max": 25,
-          "track": "A",
-          "decision_log": true,
-          "readme_length": 2955
-        },
-        "antislop": {
-          "points": 20,
-          "max": 20,
-          "flagged": false
-        },
-        "trace": {
-          "points": 20,
-          "max": 20,
-          "total_commits": 28,
-          "meaningful_commits": 28,
-          "has_forge": true
-        }
-      },
-      "penalties": []
     },
     {
       "submission": "231118059-nokta-radar",
@@ -2759,5 +2719,7 @@
       ],
       "challenge_version": 1
     }
-  ]
+  ],
+  "frozen": true,
+  "note": "Challenge 1 - Away Mission - frozen scores, do not regenerate"
 }
