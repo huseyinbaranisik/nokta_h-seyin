@@ -1,5 +1,5 @@
 {
-  "count": 69,
+  "count": 70,
   "results": [
     {
       "submission": "20260416-dot-capture",
@@ -762,46 +762,6 @@
       "challenge_version": 1
     },
     {
-      "submission": "231118098-tohum",
-      "challenge_version": 2,
-      "base_score": 90,
-      "apk_adjustment": 3,
-      "final_auto": 93,
-      "manual_craziness_bonus_pending": "demo day +0..+10",
-      "breakdown": {
-        "delivery": {
-          "points": 25,
-          "max": 35,
-          "readme": true,
-          "expo_link": true,
-          "demo_video": false,
-          "apk": true,
-          "app_json": true,
-          "audit_reports_count": 3
-        },
-        "scope": {
-          "points": 25,
-          "max": 25,
-          "track": "A",
-          "decision_log": true,
-          "readme_length": 2955
-        },
-        "antislop": {
-          "points": 20,
-          "max": 20,
-          "flagged": false
-        },
-        "trace": {
-          "points": 20,
-          "max": 20,
-          "total_commits": 28,
-          "meaningful_commits": 28,
-          "has_forge": true
-        }
-      },
-      "penalties": []
-    },
-    {
       "submission": "231118059-nokta-radar",
       "base_score": 89,
       "apk_adjustment": 3,
@@ -1423,6 +1383,51 @@
         }
       ],
       "challenge_version": 1
+    },
+    {
+      "submission": "231118012-mustafa-karakoyun",
+      "challenge_version": 2,
+      "base_score": 78,
+      "apk_adjustment": 3,
+      "final_auto": 81,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 35,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": true,
+          "apk": true,
+          "app_json": true,
+          "audit_reports_count": 3
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "B",
+          "decision_log": true,
+          "readme_length": 2598
+        },
+        "antislop": {
+          "points": 13,
+          "max": 20,
+          "flagged": true
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": [
+        {
+          "reason": "similarity >= 0.80",
+          "applied": "-35% on antislop"
+        }
+      ]
     },
     {
       "submission": "231118011-faruk-emre-ok",
@@ -2758,6 +2763,53 @@
         }
       ],
       "challenge_version": 1
+    },
+    {
+      "submission": "2026-05-05-hoop",
+      "challenge_version": 1,
+      "base_score": 16,
+      "apk_adjustment": -5,
+      "final_auto": 11,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 3,
+          "max": 35,
+          "readme": false,
+          "expo_link": false,
+          "demo_video": false,
+          "apk": false,
+          "app_json": true
+        },
+        "scope": {
+          "points": 0,
+          "max": 25,
+          "track": null,
+          "decision_log": false,
+          "readme_length": 0
+        },
+        "antislop": {
+          "points": 13,
+          "max": 20,
+          "flagged": true
+        },
+        "trace": {
+          "points": 0,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1
+        }
+      },
+      "penalties": [
+        {
+          "reason": "similarity >= 0.80",
+          "applied": "-35% on antislop"
+        },
+        {
+          "reason": "APK eksik",
+          "applied": "-5"
+        }
+      ]
     }
   ]
 }

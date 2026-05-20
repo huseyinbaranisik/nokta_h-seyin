@@ -86,6 +86,7 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 | 66 | `241478088-spec-architect-Abdulkahhar` | **52** | 20/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
 | 67 | `231118061-fikir-asistani` | **45** | 10/35 | 15/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
 | 68 | `231118087-dot-capture` | **23** | 0/35 | 0/25 | 20/20 | 8/20 | −5 ❌ | — | — |  |
+| 69 | `2026-05-05-hoop` | **11** | 3/35 | 0/25 | 13/20 | 0/20 | −5 ❌ | — | — | ⚠️ similarity |
 
 ---
 
@@ -99,7 +100,7 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 ### All Submissions
 | Rank | Submission | Score | Delivery | Scope | Anti-Slop | Trace | APK | Author | PR | Flags |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `231118098-tohum` | **93** | 25/35 | 25/25 | 20/20 | 20/20 | +3 ✅ | — | — |  |
+| 1 | `231118012-mustafa-karakoyun` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
 
 ---
 
@@ -109,19 +110,21 @@ TF-IDF cosine similarity; `.github/scripts/similarity_check.py` detayını üret
 
 | Original | Copycat | Similarity |
 |---|---|---|
-| `231118098-tohum` | `2026-05-05-hoop` | **0.832** |
+| `2026-05-05-hoop` | `231118012-mustafa-karakoyun` | **0.825** |
+| `231118098-tohum` | `231118012-mustafa-karakoyun` | **0.823** |
+| `231118098-tohum` | `2026-05-05-hoop` | **0.804** |
 
 ---
 
-**Last Updated:** 2026-05-20 21:55 UTC
+**Last Updated:** 2026-05-20 22:01 UTC
 
 **Total Contributors:** 0
 
-**Total Submissions (Challenge 1):** 68
+**Total Submissions (Challenge 1):** 69
 
 **Total Submissions (Challenge 2):** 1
 
-**Similarity flags:** 1
+**Similarity flags:** 3
 
 
 🤖 Otomatik üretildi — kaynak: `scoring/scores.json` + `gh pr list --state merged`. Manuel "Çılgınlık +10" bonusu eklenmedi.

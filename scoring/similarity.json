@@ -2,14 +2,34 @@
   "threshold": 0.8,
   "flags": [
     {
+      "original": "2026-05-05-hoop",
+      "copycat": "231118012-mustafa-karakoyun",
+      "similarity": 0.825,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
       "original": "231118098-tohum",
       "copycat": "2026-05-05-hoop",
-      "similarity": 0.8323,
-      "penalty_percent": 35.0
+      "similarity": 0.8036,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118098-tohum",
+      "copycat": "231118012-mustafa-karakoyun",
+      "similarity": 0.8233,
+      "penalty_percent": 35.0,
+      "note": "different students"
     }
   ],
   "scores": {
     "2026-05-05-hoop": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118012-mustafa-karakoyun": {
       "similarity_points": 20,
       "penalty_applied": true,
       "penalty_percent": 35
