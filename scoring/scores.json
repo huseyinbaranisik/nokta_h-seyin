@@ -1,5 +1,5 @@
 {
-  "count": 89,
+  "count": 100,
   "results": [
     {
       "submission": "20260416-dot-capture",
@@ -1508,6 +1508,206 @@
       "penalties": []
     },
     {
+      "submission": "231118054-idea-spec-ai",
+      "challenge_version": 2,
+      "base_score": 85,
+      "apk_adjustment": 3,
+      "final_auto": 88,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 35,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": true,
+          "apk": true,
+          "app_json": true,
+          "audit_reports_count": 3
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "A",
+          "decision_log": true,
+          "readme_length": 2714
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": []
+    },
+    {
+      "submission": "231118057-nokta-cleaner",
+      "challenge_version": 2,
+      "base_score": 85,
+      "apk_adjustment": 3,
+      "final_auto": 88,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 35,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": true,
+          "apk": true,
+          "app_json": true,
+          "audit_reports_count": 3
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "B",
+          "decision_log": true,
+          "readme_length": 5439
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": []
+    },
+    {
+      "submission": "231118058-volkan-okbil",
+      "challenge_version": 2,
+      "base_score": 85,
+      "apk_adjustment": 3,
+      "final_auto": 88,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 35,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": true,
+          "apk": true,
+          "app_json": true,
+          "audit_reports_count": 3
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "B",
+          "decision_log": true,
+          "readme_length": 2407
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": []
+    },
+    {
+      "submission": "231118060-audit-forge",
+      "challenge_version": 2,
+      "base_score": 85,
+      "apk_adjustment": 3,
+      "final_auto": 88,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 35,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": true,
+          "apk": true,
+          "app_json": true,
+          "audit_reports_count": 3
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "A",
+          "decision_log": true,
+          "readme_length": 3272
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": []
+    },
+    {
+      "submission": "231118062-audit-forge",
+      "challenge_version": 2,
+      "base_score": 85,
+      "apk_adjustment": 3,
+      "final_auto": 88,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 35,
+          "max": 35,
+          "readme": true,
+          "expo_link": true,
+          "demo_video": true,
+          "apk": true,
+          "app_json": true,
+          "audit_reports_count": 3
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "A",
+          "decision_log": true,
+          "readme_length": 3032
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": []
+    },
+    {
       "submission": "9221118084-minimal-audit",
       "challenge_version": 2,
       "base_score": 85,
@@ -2870,6 +3070,49 @@
       "challenge_version": 1
     },
     {
+      "submission": "231118010-esmse",
+      "challenge_version": 1,
+      "base_score": 70,
+      "apk_adjustment": -5,
+      "final_auto": 65,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 20,
+          "max": 35,
+          "readme": true,
+          "expo_link": false,
+          "demo_video": true,
+          "apk": false,
+          "app_json": true
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "A",
+          "decision_log": true,
+          "readme_length": 1194
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1
+        }
+      },
+      "penalties": [
+        {
+          "reason": "APK eksik",
+          "applied": "-5"
+        }
+      ]
+    },
+    {
       "submission": "2026-04-29_Challenge01",
       "base_score": 68,
       "apk_adjustment": -5,
@@ -3263,6 +3506,51 @@
       "challenge_version": 1
     },
     {
+      "submission": "231118007-emre",
+      "challenge_version": 2,
+      "base_score": 60,
+      "apk_adjustment": -5,
+      "final_auto": 55,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 10,
+          "max": 35,
+          "readme": true,
+          "expo_link": false,
+          "demo_video": false,
+          "apk": false,
+          "app_json": true,
+          "audit_reports_count": 4
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "B",
+          "decision_log": true,
+          "readme_length": 1773
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": [
+        {
+          "reason": "APK eksik",
+          "applied": "-5"
+        }
+      ]
+    },
+    {
       "submission": "231118027-audit-forge",
       "challenge_version": 2,
       "base_score": 60,
@@ -3486,6 +3774,95 @@
       "challenge_version": 1
     },
     {
+      "submission": "231118025-nokta-audit-forge",
+      "challenge_version": 2,
+      "base_score": 50,
+      "apk_adjustment": -5,
+      "final_auto": 45,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 0,
+          "max": 35,
+          "readme": true,
+          "expo_link": false,
+          "demo_video": false,
+          "apk": false,
+          "app_json": false,
+          "audit_reports_count": 0
+        },
+        "scope": {
+          "points": 25,
+          "max": 25,
+          "track": "A",
+          "decision_log": true,
+          "readme_length": 1916
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 5,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": [
+        {
+          "reason": "Yetersiz audit raporu (0/3)",
+          "applied": "-10 on Çalışır Teslim"
+        },
+        {
+          "reason": "APK eksik",
+          "applied": "-5"
+        }
+      ]
+    },
+    {
+      "submission": "231118028-eslen-gul-akbulut",
+      "challenge_version": 2,
+      "base_score": 42,
+      "apk_adjustment": 3,
+      "final_auto": 45,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 15,
+          "max": 35,
+          "readme": true,
+          "expo_link": false,
+          "demo_video": false,
+          "apk": true,
+          "app_json": true,
+          "audit_reports_count": 3
+        },
+        "scope": {
+          "points": 7,
+          "max": 25,
+          "track": null,
+          "decision_log": false,
+          "readme_length": 3464
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 0,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": []
+    },
+    {
       "submission": "9221118087-audit-forge",
       "challenge_version": 2,
       "base_score": 37,
@@ -3614,6 +3991,98 @@
         }
       },
       "penalties": [
+        {
+          "reason": "APK eksik",
+          "applied": "-5"
+        }
+      ]
+    },
+    {
+      "submission": "231118062-spec-agent",
+      "challenge_version": 1,
+      "base_score": 23,
+      "apk_adjustment": -5,
+      "final_auto": 18,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 3,
+          "max": 35,
+          "readme": false,
+          "expo_link": false,
+          "demo_video": false,
+          "apk": false,
+          "app_json": true
+        },
+        "scope": {
+          "points": 0,
+          "max": 25,
+          "track": null,
+          "decision_log": false,
+          "readme_length": 0
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 0,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1
+        }
+      },
+      "penalties": [
+        {
+          "reason": "APK eksik",
+          "applied": "-5"
+        }
+      ]
+    },
+    {
+      "submission": "251478021-audit-forge",
+      "challenge_version": 2,
+      "base_score": 20,
+      "apk_adjustment": -5,
+      "final_auto": 15,
+      "manual_craziness_bonus_pending": "demo day +0..+10",
+      "breakdown": {
+        "delivery": {
+          "points": 0,
+          "max": 35,
+          "readme": false,
+          "expo_link": false,
+          "demo_video": false,
+          "apk": false,
+          "app_json": true,
+          "audit_reports_count": 0
+        },
+        "scope": {
+          "points": 0,
+          "max": 25,
+          "track": null,
+          "decision_log": false,
+          "readme_length": 0
+        },
+        "antislop": {
+          "points": 20,
+          "max": 20,
+          "flagged": false
+        },
+        "trace": {
+          "points": 0,
+          "max": 20,
+          "total_commits": 1,
+          "meaningful_commits": 1,
+          "has_forge": true
+        }
+      },
+      "penalties": [
+        {
+          "reason": "Yetersiz audit raporu (0/3)",
+          "applied": "-10 on Çalışır Teslim"
+        },
         {
           "reason": "APK eksik",
           "applied": "-5"
