@@ -121,16 +121,17 @@ Otomatik puanlama: `.github/scripts/score.py` rubric ile her submission'a 0–11
 | 17 | `231118023-busenur` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
 | 18 | `231118040-audit-forge` | **81** | 35/35 | 25/25 | 13/20 | 5/20 | +3 ✅ | — | — | ⚠️ similarity |
 | 19 | `211118032-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 20 | `231118014-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 21 | `231118053-noktav3-sengk` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
-| 22 | `231118070-audit-forge` | **59** | 27/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
-| 23 | `231118007-emre` | **55** | 10/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
-| 24 | `231118027-audit-forge` | **55** | 10/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
-| 25 | `241478088-Abdulkahhar-main` | **55** | 15/35 | 17/25 | 20/20 | 0/20 | +3 ✅ | — | — |  |
-| 26 | `231118025-nokta-audit-forge` | **45** | 0/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
-| 27 | `231118028-eslen-gul-akbulut` | **45** | 15/35 | 7/25 | 20/20 | 0/20 | +3 ✅ | — | — |  |
-| 28 | `9221118087-audit-forge` | **32** | 0/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
-| 29 | `251478021-audit-forge` | **15** | 0/35 | 0/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
+| 20 | `221118054-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 21 | `231118014-audit-forge` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 22 | `231118053-noktav3-sengk` | **78** | 25/35 | 25/25 | 20/20 | 5/20 | +3 ✅ | — | — |  |
+| 23 | `231118070-audit-forge` | **59** | 27/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
+| 24 | `231118007-emre` | **55** | 10/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
+| 25 | `231118027-audit-forge` | **55** | 10/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
+| 26 | `241478088-Abdulkahhar-main` | **55** | 15/35 | 17/25 | 20/20 | 0/20 | +3 ✅ | — | — |  |
+| 27 | `231118025-nokta-audit-forge` | **45** | 0/35 | 25/25 | 20/20 | 5/20 | −5 ❌ | — | — |  |
+| 28 | `231118028-eslen-gul-akbulut` | **45** | 15/35 | 7/25 | 20/20 | 0/20 | +3 ✅ | — | — |  |
+| 29 | `9221118087-audit-forge` | **32** | 0/35 | 17/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
+| 30 | `251478021-audit-forge` | **15** | 0/35 | 0/25 | 20/20 | 0/20 | −5 ❌ | — | — |  |
 
 ---
 
@@ -140,33 +141,33 @@ TF-IDF cosine similarity; `.github/scripts/similarity_check.py` detayını üret
 
 | Original | Copycat | Similarity |
 |---|---|---|
-| `231118072-idea-tracker` | `9211118091-mohammed-almashhor` | **0.898** |
-| `9211118091-mohammed-almashhor` | `9221118097-note-migrator` | **0.865** |
-| `231118072-idea-tracker` | `9221118097-note-migrator` | **0.855** |
-| `231118072-idea-tracker` | `231118023-busenur` | **0.853** |
-| `231118072-idea-tracker` | `231118036-ali-nursin-karacan` | **0.852** |
-| `9211118091-mohammed-almashhor` | `231118023-busenur` | **0.848** |
-| `231118072-idea-tracker` | `191118022-audit-forge` | **0.835** |
-| `9211118091-mohammed-almashhor` | `231118036-ali-nursin-karacan` | **0.834** |
-| `231118036-ali-nursin-karacan` | `231118023-busenur` | **0.829** |
-| `231118023-busenur` | `191118022-audit-forge` | **0.822** |
-| `231118011-faruk-emre-ok` | `231118040-audit-forge` | **0.821** |
-| `231118036-ali-nursin-karacan` | `9221118097-note-migrator` | **0.817** |
-| `9211118091-mohammed-almashhor` | `191118022-audit-forge` | **0.815** |
-| `9221118097-note-migrator` | `231118023-busenur` | **0.814** |
-| `231118036-ali-nursin-karacan` | `191118022-audit-forge` | **0.806** |
-| `231118036-ali-nursin-karacan` | `231118009-audit-track-a-` | **0.805** |
-| `9221118097-note-migrator` | `191118022-audit-forge` | **0.802** |
+| `231118072-idea-tracker` | `9211118091-mohammed-almashhor` | **0.896** |
+| `9211118091-mohammed-almashhor` | `9221118097-note-migrator` | **0.864** |
+| `231118072-idea-tracker` | `9221118097-note-migrator` | **0.853** |
+| `231118072-idea-tracker` | `231118023-busenur` | **0.852** |
+| `231118072-idea-tracker` | `231118036-ali-nursin-karacan` | **0.850** |
+| `9211118091-mohammed-almashhor` | `231118023-busenur` | **0.847** |
+| `9211118091-mohammed-almashhor` | `231118036-ali-nursin-karacan` | **0.833** |
+| `231118072-idea-tracker` | `191118022-audit-forge` | **0.833** |
+| `231118036-ali-nursin-karacan` | `231118023-busenur` | **0.827** |
+| `231118023-busenur` | `191118022-audit-forge` | **0.820** |
+| `231118011-faruk-emre-ok` | `231118040-audit-forge` | **0.819** |
+| `231118036-ali-nursin-karacan` | `9221118097-note-migrator` | **0.816** |
+| `9211118091-mohammed-almashhor` | `191118022-audit-forge` | **0.814** |
+| `9221118097-note-migrator` | `231118023-busenur` | **0.813** |
+| `231118036-ali-nursin-karacan` | `191118022-audit-forge` | **0.805** |
+| `231118036-ali-nursin-karacan` | `231118009-audit-track-a-` | **0.803** |
+| `9221118097-note-migrator` | `191118022-audit-forge` | **0.800** |
 
 ---
 
-**Last Updated:** 2026-05-21 20:17 UTC
+**Last Updated:** 2026-05-22 12:25 UTC
 
 **Total Contributors:** 0
 
 **Total Submissions (Challenge 1):** 71
 
-**Total Submissions (Challenge 2):** 29
+**Total Submissions (Challenge 2):** 30
 
 **Similarity flags:** 17
 
