@@ -20,12 +20,16 @@ import { useAnalysisHistory } from '../hooks/useAnalysisHistory';
 import { Button } from '../components/common/Button';
 import { InputField } from '../components/common/InputField';
 import { ResultModal } from '../components/features/ResultModal';
+import { VoiceVisualizer } from '../components/features/VoiceVisualizer';
+import { AvatarScene } from '../components/features/AvatarScene';
+import { ExpertCall } from '../components/features/ExpertCall';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../types';
 import { transcribeAudio } from '../api/analyzer';
 import { Card } from '../components/common/Card';
 import * as Haptics from 'expo-haptics';
+import { saveToForgeMD } from '../utils/fileManager';
 
 const EXAMPLES = [
   'Uygulamamız yapay zeka ile 2 yılda 10 milyon kullanıcıya ulaşacak ve 500 milyon dolarlık piyasayı domine edecek. Rakip yok, pazar hazır, sadece fon lazım.',
@@ -47,12 +51,14 @@ export default function HomeScreen() {
     result,
     showResult,
     setShowResult,
-    showSpecificResult
+    showSpecificResult,
+    isStuck,
+    resetStuck
   } = usePitchAnalysis();
 
   const inputRef = useRef<TextInput>(null);
 
-  const { isRecording, startRecording, stopRecording } = useMicrophone();
+  const { isRecording, startRecording, stopRecording, audioLevel } = useMicrophone();
   const { history, refreshHistory, clearHistory } = useAnalysisHistory();
   const [transcribing, setTranscribing] = useState(false);
 
@@ -72,6 +78,7 @@ export default function HomeScreen() {
           setTranscribing(true);
           const text = await transcribeAudio(uri);
           setPitch(prev => prev ? prev + " " + text : text);
+          await saveToForgeMD(text); // FORGE.md'ye dikteyi kaydet
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           
           // Kayıt bitince cursor'ı geri getir
@@ -96,6 +103,15 @@ export default function HomeScreen() {
     await handleAnalyze();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   }, [handleAnalyze]);
+
+  if (isStuck) {
+    return (
+      <ExpertCall 
+        roomName="NoktaExpertAssistance" 
+        onClose={resetStuck} 
+      />
+    );
+  }
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bg }]}>
@@ -127,6 +143,9 @@ export default function HomeScreen() {
             <Text style={[styles.tagline, { color: colors.textMuted }]}>Girişim Analiz Motoru</Text>
           </View>
 
+          {/* Avatar Scene */}
+          <AvatarScene isSpeaking={isRecording} audioLevel={audioLevel} />
+
           {/* Başlık Bloğu */}
           <View style={styles.titleBlock}>
             <Text style={[styles.title, { color: colors.textPrimary }]}>Slop Dedektörü</Text>
@@ -149,6 +168,12 @@ export default function HomeScreen() {
               textAlignVertical="top"
             />
             
+            {isRecording && (
+               <View style={{ position: 'absolute', bottom: 60, left: 0, right: 0, alignItems: 'center' }}>
+                  <VoiceVisualizer isRecording={isRecording} audioLevel={audioLevel} />
+               </View>
+            )}
+
             <View style={styles.inputFooter}>
               <View style={styles.footerLeft}>
                 <TouchableOpacity

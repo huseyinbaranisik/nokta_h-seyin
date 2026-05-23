@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { analyzePitch, analyzeFile } from '../api/analyzer';
 import { AnalysisResult } from '../types';
 import * as DocumentPicker from 'expo-document-picker';
@@ -10,6 +10,11 @@ export function usePitchAnalysis() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [showResult, setShowResult] = useState(false);
+  
+  // Forge Loop STUCK States
+  const [failCount, setFailCount] = useState(0);
+  const [isStuck, setIsStuck] = useState(false);
+  
   const { saveToHistory } = useAnalysisHistory();
 
   const handleAnalyze = async () => {
@@ -24,6 +29,20 @@ export function usePitchAnalysis() {
       setResult(res);
       setShowResult(true);
       await saveToHistory(pitch.trim(), res);
+      
+      // Forge Loop Failure Check
+      if (res.slopScore > 60) {
+        setFailCount(prev => {
+          const newCount = prev + 1;
+          if (newCount >= 2) {
+            setIsStuck(true);
+          }
+          return newCount;
+        });
+      } else {
+        setFailCount(0); // Reset on success
+      }
+      
     } catch (e) {
       console.error('Analiz hatası:', e);
       alert(`Analiz sırasında bir sorun oluştu: ${(e as Error).message}`);
@@ -60,6 +79,19 @@ export function usePitchAnalysis() {
       setResult(res);
       setShowResult(true);
       await saveToHistory(`Dosya: ${file.name}`, res);
+      
+      if (res.slopScore > 60) {
+        setFailCount(prev => {
+          const newCount = prev + 1;
+          if (newCount >= 2) {
+            setIsStuck(true);
+          }
+          return newCount;
+        });
+      } else {
+        setFailCount(0);
+      }
+      
     } catch (e) {
       console.error('Dosya analiz hatası:', e);
       alert(`Dosya analizi sırasında bir sorun oluştu: ${(e as Error).message}`);
@@ -73,6 +105,11 @@ export function usePitchAnalysis() {
     setResult(analysisResult);
     setShowResult(true);
   };
+  
+  const resetStuck = useCallback(() => {
+    setIsStuck(false);
+    setFailCount(0);
+  }, []);
 
   return {
     pitch,
@@ -84,5 +121,8 @@ export function usePitchAnalysis() {
     handleAnalyze,
     handleFileUpload,
     showSpecificResult,
+    isStuck,
+    failCount,
+    resetStuck
   };
 }
