@@ -1,0 +1,361 @@
+{
+  "threshold": 0.8,
+  "flags": [
+    {
+      "original": "231118023-busenur",
+      "copycat": "191118022-audit-forge",
+      "similarity": 0.82,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118036-ali-nursin-karacan",
+      "copycat": "191118022-audit-forge",
+      "similarity": 0.8046,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118072-idea-tracker",
+      "copycat": "191118022-audit-forge",
+      "similarity": 0.8333,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "9211118091-mohammed-almashhor",
+      "copycat": "191118022-audit-forge",
+      "similarity": 0.8139,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "9221118097-note-migrator",
+      "copycat": "191118022-audit-forge",
+      "similarity": 0.8005,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118036-ali-nursin-karacan",
+      "copycat": "231118009-audit-track-a-",
+      "similarity": 0.8033,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118011-faruk-emre-ok",
+      "copycat": "231118040-audit-forge",
+      "similarity": 0.8188,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118036-ali-nursin-karacan",
+      "copycat": "231118023-busenur",
+      "similarity": 0.8272,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118072-idea-tracker",
+      "copycat": "231118023-busenur",
+      "similarity": 0.8518,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "9211118091-mohammed-almashhor",
+      "copycat": "231118023-busenur",
+      "similarity": 0.8467,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "9221118097-note-migrator",
+      "copycat": "231118023-busenur",
+      "similarity": 0.8129,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118072-idea-tracker",
+      "copycat": "231118036-ali-nursin-karacan",
+      "similarity": 0.85,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "9211118091-mohammed-almashhor",
+      "copycat": "231118036-ali-nursin-karacan",
+      "similarity": 0.8334,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118036-ali-nursin-karacan",
+      "copycat": "9221118097-note-migrator",
+      "similarity": 0.8162,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118072-idea-tracker",
+      "copycat": "9211118091-mohammed-almashhor",
+      "similarity": 0.8963,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "231118072-idea-tracker",
+      "copycat": "9221118097-note-migrator",
+      "similarity": 0.8533,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    },
+    {
+      "original": "9211118091-mohammed-almashhor",
+      "copycat": "9221118097-note-migrator",
+      "similarity": 0.8642,
+      "penalty_percent": 35.0,
+      "note": "different students"
+    }
+  ],
+  "scores": {
+    "191118022-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "2026-05-05-hoop": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "211118018-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "211118032-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "211118068-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "211118085-nokta-audit": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "221118054-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118003-nokta-capture": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118004-human-dot": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118007-emre": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118009-audit-track-a-": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118010-esmse": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118011-faruk-emre-ok": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118012-mustafa-karakoyun": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118014-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118016-mert": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118018-fitloop-audit": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118023-busenur": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118024-spec-builder": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118025-nokta-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118027-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118028-eslen-gul-akbulut": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118031-zeynep-bakirman": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118036-ali-nursin-karacan": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118040-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "231118044-slopdetec-audit": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118046-nokta-spec-builder": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118052-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118053-noktav3-sengk": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118054-idea-spec-ai": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118057-nokta-cleaner": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118058-volkan-okbil": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118059-nokta-radar": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118060-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118062-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118062-spec-agent": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118070-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118072-idea-tracker": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118081-idea-distillery": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "231118098-tohum": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "241478088-Abdulkahhar-main": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "251478021-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9211118091-mohammed-almashhor": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    },
+    "9221118084-minimal-audit": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9221118087-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9221118096-audit-forge": {
+      "similarity_points": 20,
+      "penalty_applied": false,
+      "penalty_percent": 0
+    },
+    "9221118097-note-migrator": {
+      "similarity_points": 20,
+      "penalty_applied": true,
+      "penalty_percent": 35
+    }
+  }
+}

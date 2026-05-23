@@ -1,0 +1,12 @@
+Bu dosya bir placeholder'dır.
+
+Gerçek burn-in'li ekran görüntüsü, uygulama Expo Go'da çalışırken
+nokta-audit widget'ı ile üretilecek:
+  1. İlgili ekrana git
+  2. 🐛 FAB'a dokun → ekran yakalanır
+  3. Sorunlu alanı parmakla sarı kutuyla işaretle
+  4. Not yaz, kaydet
+  5. Çift dokunuş → liste → Markdown export
+  6. Export edilen .md içindeki görüntüyü buraya audit-3-create.png olarak kaydet
+
+Veya: telefonun ekran görüntüsü + manuel sarı kutu işareti.

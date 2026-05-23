@@ -17,3 +17,5 @@ submissions/**/app/android/.gradle/
 submissions/**/app/android/app/build/
 *.apk
 !submissions/**/app-release.apk
+.aider*
+tmp/

@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Nokta Audit-Forge",
+    "slug": "nokta-audit-forge",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "com.nokta.auditforge"
+    },
+    "ios": {
+      "bundleIdentifier": "com.nokta.auditforge"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "noktaauditforge",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9ecac19a-9dd5-4a15-a147-7f459ab885f7"
+      }
+    }
+  }
+}
