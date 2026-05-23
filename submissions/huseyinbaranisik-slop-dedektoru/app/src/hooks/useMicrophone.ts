@@ -63,6 +63,8 @@ export function useMicrophone() {
         RECORDING_OPTIONS
       );
       
+      await newRecording.setProgressUpdateIntervalAsync(50);
+      
       newRecording.setOnRecordingStatusUpdate((status) => {
         if (status.isRecording && status.metering !== undefined) {
           // Normalize metering value from dB (typically -160 to 0) to a 0-1 scale.
