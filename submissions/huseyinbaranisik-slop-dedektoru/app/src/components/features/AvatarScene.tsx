@@ -1,70 +1,193 @@
-import React, { Suspense, useEffect, useRef } from 'react';
+import React, { Component, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { Canvas } from '@react-three/fiber/native';
-import { useGLTF, Environment, ContactShadows } from '@react-three/drei/native';
-import * as THREE from 'three';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  withSequence,
+  withSpring,
+} from 'react-native-reanimated';
+import { useTheme } from '../../context/ThemeContext';
+import { getColors } from '../../theme/colors';
+import { ThreeAvatarComponent } from './ThreeAvatar';
 
 interface AvatarSceneProps {
   isSpeaking: boolean;
   audioLevel?: number;
 }
 
-// Avatar Model Component
-function Avatar({ isSpeaking, audioLevel = 0 }: { isSpeaking: boolean; audioLevel?: number }) {
-  // Yüzünüzle oluşturduğunuz avatar.glb modelini yüklüyoruz.
-  // Not: require ile yüklenen objeler Expo'da metro.config.js ayarı gerektirebilir (assetExts: ['glb', 'gltf'])
-  const { scene } = useGLTF(require('../../../assets/avatar.glb')) as any;
-  const avatarRef = useRef<THREE.Group>(null);
-
-  useEffect(() => {
-    // Lipsync Logic (Viseme pipeline basitleştirilmiş)
-    // Eğer modelde morphTargets (blend shapes) varsa, sese veya isSpeaking'e göre ağız hareket ettirilir.
-    // 'mouthOpen' veya benzeri bir morph hedefinin adını avatarına göre güncellemen gerekebilir.
-    scene.traverse((child: any) => {
-      if (child.isMesh && child.morphTargetDictionary && child.morphTargetInfluences) {
-        const mouthOpenIndex = child.morphTargetDictionary['mouthOpen'] || child.morphTargetDictionary['viseme_O'];
-        if (mouthOpenIndex !== undefined) {
-          // Ses seviyesine göre ağzı aç
-          const targetValue = isSpeaking ? Math.min(1, audioLevel * 2 + 0.1) : 0;
-          
-          // Yumuşak geçiş için basit bir animasyon döngüsü (gerçekte frame-by-frame veya useFrame ile yapılmalı)
-          child.morphTargetInfluences[mouthOpenIndex] = targetValue;
-        }
-      }
-    });
-  }, [scene, isSpeaking, audioLevel]);
-
-  return (
-    <group ref={avatarRef} position={[0, -1.5, 0]} scale={[2, 2, 2]}>
-      <primitive object={scene} />
-    </group>
-  );
+// ─── Error Boundary ───
+// 3D sahneler Expo Go'da crash olabilir. Bu boundary crash'i yakalar ve 2D fallback gösterir.
+class AvatarErrorBoundary extends Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any) {
+    console.warn('AvatarScene 3D yüklenemedi, 2D fallback gösteriliyor:', error?.message);
+  }
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
 }
 
-export const AvatarScene: React.FC<AvatarSceneProps> = ({ isSpeaking, audioLevel = 0 }) => {
+// ─── 2D Animated Avatar Fallback ───
+// 3D sahne yüklenemezse veya Expo Go'da çalışıyorsa bu kullanılır.
+const Avatar2D: React.FC<AvatarSceneProps> = ({ isSpeaking, audioLevel = 0 }) => {
+  const { themeMode, accentColor } = useTheme();
+  const colors = getColors(themeMode, accentColor);
+  
+  const scale = useSharedValue(1);
+  const mouthHeight = useSharedValue(4);
+  const glowOpacity = useSharedValue(0.3);
+
+  useEffect(() => {
+    if (isSpeaking) {
+      scale.value = withRepeat(
+        withSequence(
+          withTiming(1.04, { duration: 600 }),
+          withTiming(1.0, { duration: 600 })
+        ),
+        -1,
+        true
+      );
+      const mouthTarget = Math.max(4, audioLevel * 30);
+      mouthHeight.value = withSpring(mouthTarget, { damping: 8, stiffness: 200 });
+      glowOpacity.value = withSpring(0.6 + audioLevel * 0.4);
+    } else {
+      scale.value = withSpring(1);
+      mouthHeight.value = withSpring(4);
+      glowOpacity.value = withSpring(0.3);
+    }
+  }, [isSpeaking, audioLevel]);
+
+  const avatarStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const mouthStyle = useAnimatedStyle(() => ({
+    height: mouthHeight.value,
+    borderRadius: mouthHeight.value / 2,
+  }));
+  
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
+  }));
+
   return (
-    <View style={styles.container}>
-      <Canvas camera={{ position: [0, 0, 3], fov: 45 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 10]} intensity={1} />
-        <directionalLight position={[-10, 10, -10]} intensity={0.5} />
-        <Suspense fallback={null}>
-          <Avatar isSpeaking={isSpeaking} audioLevel={audioLevel} />
-          <Environment preset="city" />
-          <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={5} blur={2} far={4} />
-        </Suspense>
-      </Canvas>
+    <View style={styles.container2D}>
+      <Animated.View style={[styles.glow, { backgroundColor: colors.primary }, glowStyle]} />
+      
+      <Animated.View style={[styles.avatarCircle, { backgroundColor: colors.bgCard, borderColor: colors.primary }, avatarStyle]}>
+        <View style={styles.face}>
+          <View style={styles.eyes}>
+            <View style={[styles.eye, { backgroundColor: colors.textPrimary }]}>
+              <View style={[styles.eyeHighlight, { backgroundColor: colors.primary }]} />
+            </View>
+            <View style={[styles.eye, { backgroundColor: colors.textPrimary }]}>
+              <View style={[styles.eyeHighlight, { backgroundColor: colors.primary }]} />
+            </View>
+          </View>
+          <Animated.View
+            style={[
+              styles.mouth,
+              { backgroundColor: colors.primary },
+              mouthStyle,
+            ]}
+          />
+        </View>
+      </Animated.View>
+      
+      <Text style={[styles.label, { color: colors.textMuted }]}>
+        {isSpeaking ? '🎙️ Dinleniyor...' : 'AI Avatar'}
+      </Text>
     </View>
   );
 };
 
+// ─── Main Export ───
+export const AvatarScene: React.FC<AvatarSceneProps> = ({ isSpeaking, audioLevel = 0 }) => {
+  const fallback = <Avatar2D isSpeaking={isSpeaking} audioLevel={audioLevel} />;
+
+  if (ThreeAvatarComponent) {
+    return (
+      <AvatarErrorBoundary fallback={fallback}>
+        <ThreeAvatarComponent isSpeaking={isSpeaking} audioLevel={audioLevel} />
+      </AvatarErrorBoundary>
+    );
+  }
+
+  return fallback;
+};
+
 const styles = StyleSheet.create({
-  container: {
-    height: 300,
+  container2D: {
+    height: 240,
     width: '100%',
-    backgroundColor: 'transparent',
-    overflow: 'hidden',
-    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginVertical: 10,
+  },
+  glow: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    transform: [{ scale: 1.3 }],
+  },
+  avatarCircle: {
+    width: 160,
+    height: 160,
+    borderRadius: 80,
+    borderWidth: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+  },
+  face: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eyes: {
+    flexDirection: 'row',
+    gap: 28,
+    marginBottom: 18,
+  },
+  eye: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 3,
+  },
+  eyeHighlight: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  mouth: {
+    width: 28,
+    minHeight: 4,
+  },
+  label: {
+    marginTop: 12,
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
 });
