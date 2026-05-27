@@ -27,6 +27,7 @@
     "expo-linear-gradient": "~15.0.8",
     "expo-print": "~15.0.8",
     "expo-sharing": "~14.0.8",
+    "expo-speech": "^56.0.3",
     "expo-status-bar": "~3.0.9",
     "groq-sdk": "^1.1.2",
     "react": "19.1.0",

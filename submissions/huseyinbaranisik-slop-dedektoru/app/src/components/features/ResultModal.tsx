@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -20,6 +20,7 @@ import { AnalysisResult } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
 import { generatePdfReport } from '../../utils/reportGenerator';
 import { ChatModal } from './ChatModal';
+import * as Speech from 'expo-speech';
 
 interface Props {
   visible: boolean;
@@ -34,6 +35,29 @@ export function ResultModal({ visible, result, pitch, onClose }: Props) {
   const { themeMode, accentColor } = useTheme();
   const colors = getColors(themeMode, accentColor);
   const [chatVisible, setChatVisible] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  useEffect(() => {
+    if (!visible) {
+      Speech.stop();
+      setIsSpeaking(false);
+    }
+  }, [visible]);
+
+  const toggleSpeech = async () => {
+    if (isSpeaking) {
+      Speech.stop();
+      setIsSpeaking(false);
+    } else if (result?.summary) {
+      setIsSpeaking(true);
+      Speech.speak(result.summary, {
+        language: 'tr-TR',
+        onDone: () => setIsSpeaking(false),
+        onStopped: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false),
+      });
+    }
+  };
 
   if (!result) return null;
 
@@ -107,7 +131,15 @@ export function ResultModal({ visible, result, pitch, onClose }: Props) {
 
                 {/* AI Summary */}
                 <View style={styles.section}>
-                  <Text style={[styles.sectionLabel, { color: colors.primary }]}>AI ÖZETİ</Text>
+                  <View style={styles.sectionHeaderRow}>
+                    <Text style={[styles.sectionLabel, { color: colors.primary, marginBottom: 0 }]}>AI ÖZETİ</Text>
+                    <TouchableOpacity onPress={toggleSpeech} style={styles.speakBtn}>
+                      <Ionicons name={isSpeaking ? "stop-circle" : "volume-medium"} size={20} color={colors.primary} />
+                      <Text style={[styles.speakBtnText, { color: colors.primary }]}>
+                        {isSpeaking ? "Durdur" : "Dinle"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                   <Card>
                     <Text style={[styles.summaryText, { color: colors.textPrimary }]}>{result.summary}</Text>
                   </Card>
@@ -241,6 +273,25 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 25,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  speakBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    borderRadius: 12,
+  },
+  speakBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   sectionLabel: {
     fontSize: 10,

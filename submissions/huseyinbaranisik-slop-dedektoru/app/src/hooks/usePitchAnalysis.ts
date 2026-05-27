@@ -123,6 +123,7 @@ export function usePitchAnalysis() {
     showSpecificResult,
     isStuck,
     failCount,
-    resetStuck
+    resetStuck,
+    setResult
   };
 }

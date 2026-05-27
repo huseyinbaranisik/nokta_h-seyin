@@ -16,12 +16,12 @@ Analiz sırasında şunlara odaklan:
 3. 0–100 arası bir "Slop Skoru" (gereksiz laf kalabalığı ve abartı oranı) hesapla. (100 = tamamen içi boş/abartı).
 4. Yatırımcı gözüyle bir özet ve net bir öneri yaz.
 
-SADECE aşağıdaki JSON formatında yanıt ver:
+SADECE aşağıdaki JSON formatında yanıt ver. Başka hiçbir açıklama, markdown bloğu ekleme! Sadece ham JSON nesnesi döndür.
 {
-  "slopScore": <sayı>,
-  "summary": "<Türkçe özet>",
-  "claims": [{"text": "<iddia metni>", "verdict": "GÜÇLÜ" | "ABARTILI" | "DOĞRULANAMAZ", "reasoning": "<neden bu sonuç verildi?>"}],
-  "recommendation": "<yatırımcıya net öneri>"
+  "slopScore": 0,
+  "summary": "Türkçe özet",
+  "claims": [{"text": "iddia metni", "verdict": "GÜÇLÜ", "reasoning": "neden bu sonuç verildi?"}],
+  "recommendation": "yatırımcıya net öneri"
 }
 `;
 
@@ -33,18 +33,29 @@ export async function analyzePitch(pitch: string): Promise<AnalysisResult> {
   // Gemini daha iyi sonuç verdiği için varsa önce onu dene (özellikle PDF desteği için)
   if (genAI) {
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        generationConfig: { responseMimeType: "application/json" }
+      });
       const result = await model.generateContent([SYSTEM_PROMPT, pitch]);
       const response = await result.response;
       const text = response.text();
       const cleanedJson = text.replace(/```json|```/g, '').trim();
       return JSON.parse(cleanedJson) as AnalysisResult;
     } catch (error) {
-      console.error("Gemini hatası, Groq deneniyor:", error);
+      console.error("Gemini hatası, Groq deneniyor veya fallback kullanılıyor:", error);
     }
   }
   
-  return analyzeWithGroq(pitch);
+  if (GROQ_API_KEY) {
+    try {
+      return await analyzeWithGroq(pitch);
+    } catch (error) {
+      console.error("Groq hatası:", error);
+    }
+  }
+  
+  return getMockResult(pitch);
 }
 
 async function analyzeWithGroq(pitch: string): Promise<AnalysisResult> {
@@ -68,7 +79,12 @@ async function analyzeWithGroq(pitch: string): Promise<AnalysisResult> {
 
   if (!response.ok) throw new Error(`API Hatası: ${response.status}`);
   const data = await response.json();
-  return JSON.parse(data.choices[0]?.message?.content || '{}');
+  const content = data.choices[0]?.message?.content || '{}';
+  try {
+    return JSON.parse(content);
+  } catch (e) {
+    return getMockResult(pitch); // Hata durumunda güvenli dönüş
+  }
 }
 
 export async function analyzeFile(base64: string, mimeType: string): Promise<AnalysisResult> {
@@ -177,20 +193,99 @@ export async function transcribeAudio(uri: string): Promise<string> {
 }
 
 function getMockResult(pitch: string): AnalysisResult {
-  const wordCount = pitch.split(' ').length;
-  const buzzwords = ['yıkıcı', 'devrim', 'yapay zeka', 'blockchain', 'trilyon', 'milyar', 'roket', 'benzersiz'];
-  const buzzCount = buzzwords.filter(w => pitch.toLowerCase().includes(w)).length;
-  const slopScore = Math.min(95, 20 + buzzCount * 15 + (wordCount < 40 ? 25 : 0));
+  const lower = pitch.toLowerCase();
+  const words = pitch.trim().split(/\s+/);
+  const wordCount = words.length;
+
+  // Slop kelimeleri — kırmızı bayrak
+  const slopPatterns: { word: string; label: string }[] = [
+    { word: 'yapay zeka', label: 'Yapay zeka iddiası' },
+    { word: 'ai', label: 'AI iddiası' },
+    { word: 'blockchain', label: 'Blockchain iddiası' },
+    { word: 'devrim', label: 'Devrimsel değişim iddiası' },
+    { word: 'yıkıcı', label: 'Disruptive/yıkıcı model' },
+    { word: 'benzersiz', label: 'Benzersiz ürün iddiası' },
+    { word: 'rakip yok', label: 'Rakipsiz pazar iddiası' },
+    { word: 'trilyon', label: 'Trilyon dolarlık pazar' },
+    { word: 'milyar', label: 'Milyar dolarlık büyüme hedefi' },
+    { word: 'roket', label: 'Hızlı büyüme benzetmesi' },
+    { word: '%100', label: 'Garanti büyüme vaadi' },
+    { word: 'garantili', label: 'Garanti vaadi' },
+    { word: 'dünyayı değiştir', label: 'Dünyayı değiştirme iddiası' },
+    { word: 'dünya geneli', label: 'Küresel kapsam iddiası' },
+    { word: 'viral', label: 'Viral büyüme iddiası' },
+  ];
+
+  // Güçlü sinyaller
+  const strongPatterns: { word: string; label: string }[] = [
+    { word: 'müşteri', label: 'Mevcut müşteri tabanı' },
+    { word: 'gelir', label: 'Gelir kanıtı' },
+    { word: 'mrr', label: 'Aylık tekrarlayan gelir (MRR)' },
+    { word: 'arr', label: 'Yıllık tekrarlayan gelir (ARR)' },
+    { word: 'patent', label: 'Patent / fikri mülkiyet' },
+    { word: 'pilot', label: 'Pilot uygulama deneyimi' },
+    { word: 'anlaşma', label: 'İş anlaşması' },
+    { word: 'büyüdük', label: 'Kanıtlanmış büyüme' },
+    { word: 'kullanıcı', label: 'Kullanıcı tabanı' },
+    { word: 'ekip', label: 'Ekip deneyimi' },
+  ];
+
+  const foundSlop = slopPatterns.filter(p => lower.includes(p.word));
+  const foundStrong = strongPatterns.filter(p => lower.includes(p.word));
+
+  const claims: AnalysisResult['claims'] = [];
+
+  foundSlop.forEach(p => {
+    claims.push({
+      text: p.label,
+      verdict: 'ABARTILI',
+      reasoning: `"${p.word}" ifadesi somut kanıt olmadan kullanılmış. Yatırımcılar bu tür iddialara şüpheyle bakar.`,
+    });
+  });
+
+  foundStrong.forEach(p => {
+    claims.push({
+      text: p.label,
+      verdict: 'GÜÇLÜ',
+      reasoning: `"${p.word}" ifadesi somut bir değer veya kanıt içerdiğini düşündürüyor; desteklenmesi durumunda güçlü bir sinyal.`,
+    });
+  });
+
+  if (wordCount < 30) {
+    claims.push({
+      text: 'Çok kısa ve yetersiz pitch',
+      verdict: 'DOĞRULANAMAZ',
+      reasoning: `Pitch yalnızca ${wordCount} kelimeden oluşuyor. Bir yatırımcıyı ikna etmek için çok az bilgi mevcut.`,
+    });
+  }
+
+  if (claims.length === 0) {
+    claims.push({
+      text: 'Genel iş modeli açıklaması',
+      verdict: 'DOĞRULANAMAZ',
+      reasoning: 'Ne güçlü bir kanıt ne de açık bir abartı tespit edildi. Pitch daha spesifik veriler içermeli.',
+    });
+  }
+
+  const slopRatio = foundSlop.length / Math.max(1, foundSlop.length + foundStrong.length);
+  const baseScore = Math.round(slopRatio * 60 + (wordCount < 30 ? 25 : 0) + foundSlop.length * 5);
+  const slopScore = Math.min(95, Math.max(5, baseScore));
+
+  const summary = slopScore > 65
+    ? `Bu pitch yüksek oranda kanıtsız ve spekülatif ifadeler içeriyor (${foundSlop.length} slop sinyali tespit edildi). Somut veri ve büyüme kanıtı olmadan ilerlenmemeli.`
+    : slopScore > 35
+    ? `Pitch genel hatlarıyla makul ancak ${foundSlop.length} adet desteklenmemiş iddia içeriyor. Güçlendirmeye ihtiyaç var.`
+    : `Pitch görece dengeli; ${foundStrong.length} somut sinyal mevcut. Detaylandırılırsa yatırımcı ilgisi çekebilir.`;
 
   return {
     slopScore,
-    summary: `Bu pitch ${wordCount} kelimeden oluşuyor ve ${buzzCount} adet yüksek riskli kelime içeriyor. Çevrimdışı modda analiz edilmiştir.`,
-    claims: [
-      { text: "Pazar liderliği iddiası", verdict: "ABARTILI", reasoning: "Kanıt ve pazar verisi sunulmamış." },
-      { text: "Teknik altyapı", verdict: "GÜÇLÜ", reasoning: "Takım deneyimi bu iddiayı destekliyor olabilir." }
-    ],
-    recommendation: slopScore > 60 
-      ? "Yüksek slop riski. Somut veriler istenmeden ilerlenmemeli." 
-      : "Makul bir pitch. İkinci bir görüşme önerilir."
+    summary,
+    claims,
+    recommendation: slopScore > 65
+      ? 'Reddedilmeli. Kanıt talep edilmeden ilerlenmemeli.'
+      : slopScore > 35
+      ? 'İkinci görüşme önerilir. Somut veriler istenmelidir.'
+      : 'Değerlendirilebilir. Ayrıntılı due diligence başlatılabilir.',
   };
 }
+
