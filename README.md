@@ -2,6 +2,8 @@
 
 ![NOKTA](assets/nokta.jpeg)
 
+**Video:** https://youtube.com/shorts/88AA4B06uoA
+
 > 1 file, 0 human review. CI decides.
 
 ## What?
