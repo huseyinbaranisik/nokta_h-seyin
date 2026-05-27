@@ -202,6 +202,33 @@ export default function HomeScreen() {
                 </View>
               </View>
 
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: 8, paddingHorizontal: 4, marginTop: 8 }}
+              >
+                {[
+                  'Uygulamamız yapay zeka ile 2 yılda 10 milyon kullanıcıya...',
+                  'Platform aylık %40 büyüyor. 3 ayda MVP hazır...',
+                  'B2B SaaS modeli. İlk 6 müşterimiz var, MRR 8.500$...'
+                ].map((ex, i) => {
+                  const fullTexts = [
+                    'Uygulamamız yapay zeka ile 2 yılda 10 milyon kullanıcıya ulaşacak ve 500 milyon dolarlık piyasayı domine edecek. Rakip yok, pazar hazır, sadece fon lazım.',
+                    'Platform aylık %40 büyüyor. 3 ayda MVP hazır. Sektördeki tek blockchain destekli çözümüz. Pre-seed için 2M$ arıyoruz.',
+                    'B2B SaaS modeliyle kurumsal müşterilere odaklanıyoruz. İlk 6 müşterimiz var, MRR 8.500$. Yol haritamız net, ekip 4 kişi.'
+                  ];
+                  return (
+                    <TouchableOpacity
+                      key={i}
+                      style={[styles.examplePill, { backgroundColor: colors.bgCard, borderColor: colors.bgCardBorder }]}
+                      onPress={() => setPitch(fullTexts[i])}
+                    >
+                      <Text style={[styles.examplePillText, { color: colors.textMuted }]}>{ex}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+
               <Button
                 text={loading ? 'Analiz Ediliyor...' : '⚡  Analiz Et'}
                 onPress={onAnalyzePress}
@@ -350,4 +377,7 @@ const styles = StyleSheet.create({
 
   recommendationBox: { borderRadius: 14, borderWidth: 1, padding: 16 },
   recommendationText: { fontSize: 15, fontWeight: '700', lineHeight: 22 },
+
+  examplePill: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1 },
+  examplePillText: { fontSize: 12, fontWeight: '600' },
 });
