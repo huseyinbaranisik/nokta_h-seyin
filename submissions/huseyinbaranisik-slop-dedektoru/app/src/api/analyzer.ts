@@ -231,16 +231,35 @@ function getMockResult(pitch: string): AnalysisResult {
     { word: 'ekip', label: 'Ekip deneyimi' },
   ];
 
+  // Yasa dışı / Kumar / Scam kelimeleri (Doğrudan 95 Skor)
+  const scamPatterns: { word: string; label: string }[] = [
+    { word: 'kumar', label: 'Kumar/Bahis riski' },
+    { word: 'bahis', label: 'Kumar/Bahis riski' },
+    { word: 'iddaa', label: 'Kumar/Bahis riski' },
+    { word: 'şans', label: 'Şansa dayalı model' },
+    { word: 'garanti para', label: 'Gerçekçi olmayan finansal vaat' },
+    { word: 'zengin ol', label: 'Kolay yoldan zengin olma vaadi' },
+  ];
+
   const foundSlop = slopPatterns.filter(p => lower.includes(p.word));
   const foundStrong = strongPatterns.filter(p => lower.includes(p.word));
+  const foundScam = scamPatterns.filter(p => lower.includes(p.word));
 
   const claims: AnalysisResult['claims'] = [];
+
+  foundScam.forEach(p => {
+    claims.push({
+      text: p.label,
+      verdict: 'DOĞRULANAMAZ',
+      reasoning: `"${p.word}" ifadesi içeriyor. Bu tür modeller yatırımcılar için kırmızı çizgidir.`,
+    });
+  });
 
   foundSlop.forEach(p => {
     claims.push({
       text: p.label,
       verdict: 'ABARTILI',
-      reasoning: `"${p.word}" ifadesi somut kanıt olmadan kullanılmış. Yatırımcılar bu tür iddialara şüpheyle bakar.`,
+      reasoning: `"${p.word}" ifadesi somut kanıt olmadan kullanılmış.`,
     });
   });
 
@@ -248,38 +267,49 @@ function getMockResult(pitch: string): AnalysisResult {
     claims.push({
       text: p.label,
       verdict: 'GÜÇLÜ',
-      reasoning: `"${p.word}" ifadesi somut bir değer veya kanıt içerdiğini düşündürüyor; desteklenmesi durumunda güçlü bir sinyal.`,
+      reasoning: `"${p.word}" ifadesi somut bir değer sinyali veriyor.`,
     });
   });
 
-  if (wordCount < 30) {
+  if (wordCount < 15) {
     claims.push({
-      text: 'Çok kısa ve yetersiz pitch',
+      text: 'Aşırı kısa metin',
       verdict: 'DOĞRULANAMAZ',
-      reasoning: `Pitch yalnızca ${wordCount} kelimeden oluşuyor. Bir yatırımcıyı ikna etmek için çok az bilgi mevcut.`,
+      reasoning: `Metin çok kısa. Ciddi bir analiz yapılamıyor.`,
     });
   }
 
   if (claims.length === 0) {
     claims.push({
-      text: 'Genel iş modeli açıklaması',
+      text: 'Genel açıklama',
       verdict: 'DOĞRULANAMAZ',
-      reasoning: 'Ne güçlü bir kanıt ne de açık bir abartı tespit edildi. Pitch daha spesifik veriler içermeli.',
+      reasoning: 'Belirgin bir kanıt veya risk tespit edilemedi.',
     });
   }
 
   const slopRatio = foundSlop.length / Math.max(1, foundSlop.length + foundStrong.length);
-  const baseScore = Math.round(slopRatio * 60 + (wordCount < 30 ? 25 : 0) + foundSlop.length * 5);
+  let baseScore = Math.round(slopRatio * 60 + (wordCount < 15 ? 40 : 0) + foundSlop.length * 5);
+  
+  if (foundScam.length > 0) {
+    baseScore = 95; // Kumar veya scam kelimesi varsa direkt patlat
+  } else if (wordCount < 10 && foundStrong.length === 0) {
+    baseScore = 80; // Çok kısaysa ve güçlü kelime yoksa yine yüksek risk
+  }
+
   const slopScore = Math.min(95, Math.max(5, baseScore));
 
   let summary = "";
-  if (slopScore > 65) {
-    summary = `Bu girişim fikri aşırı iddialı ancak altı boş görünüyor. Özellikle ${foundSlop.length > 0 ? foundSlop.map(s => "'" + s.word + "'").join(', ') + " gibi kelimelerle" : "kullanılan abartılı dille"} gerçeği yansıtmayan bir büyüme veya pazar potansiyeli çizilmiş. Fikrin pazar tarafı belki potansiyelli olabilir ama sunum şekli yatırımcıda güvensizlik yaratır.`;
+  if (foundScam.length > 0) {
+    summary = `🚨 KIRMIZI ALARM: Bu metinde (${foundScam.map(s => s.word).join(', ')}) gibi yüksek riskli veya etik dışı iş modeli sinyalleri tespit edildi. Bu tarz projeler doğrudan reddedilir.`;
+  } else if (slopScore > 65) {
+    summary = `Bu girişim fikri aşırı iddialı ancak altı boş görünüyor. Kullanılan abartılı dille gerçeği yansıtmayan bir tablo çizilmiş.`;
   } else if (slopScore > 35) {
-    summary = `Bu fikir potansiyel taşıyor ancak bazı noktalarda netleşmesi gereken detaylar var. ${foundStrong.length > 0 ? foundStrong.map(s => "'" + s.word + "'").join(', ') + " gibi somut verilere değinilmiş olması güçlü bir yön," : "Fikir genel olarak fena olmasa da,"} ${foundSlop.length > 0 ? "fakat " + foundSlop[0].word + " gibi iddialar biraz havada kalmış." : "ancak büyüme planı ve hedef kitle çok daha net tanımlanmalı."} İyi bir pazar araştırmasıyla çok daha güçlü hale gelebilir.`;
+    summary = `Bu fikir potansiyel taşıyor ancak bazı noktalarda netleşmesi gereken detaylar var. Gerçek verilerle desteklenmeli.`;
   } else {
-    summary = `Bu oldukça güçlü ve ayakları yere basan bir fikir. ${foundStrong.length > 0 ? foundStrong.map(s => "'" + s.word + "'").join(', ') + " gibi kritik metriklerden/verilerden bahsedilmiş olması fikrin olgunluğunu gösteriyor." : "Gerçekçi ve net bir şekilde ifade edilmiş."} Abartılı jargonlardan uzak durulması, işin kendisine odaklanıldığını gösteriyor. Sadece rekabet analizini biraz daha derinleştirmek gerekebilir.`;
+    summary = `Bu oldukça güçlü ve ayakları yere basan bir fikir. Somut ifadelere yer verilmiş olması fikrin olgunluğunu gösteriyor.`;
   }
+
+  summary = "[DEMO MODU] " + summary;
 
   return {
     slopScore,
