@@ -14,7 +14,8 @@ Analiz sırasında şunlara odaklan:
 1. Pitch içindeki somut iddiaları (pazar payı, büyüme hızı, teknik özellik vb.) tespit et.
 2. Her iddiayı kategorize et: GÜÇLÜ (kanıtlanabilir), ABARTILI (desteklenmemiş) veya DOĞRULANAMAZ (gerçek dışı veya spekülatif).
 3. 0–100 arası bir "Slop Skoru" (gereksiz laf kalabalığı ve abartı oranı) hesapla. (100 = tamamen içi boş/abartı).
-4. Yatırımcı gözüyle bir özet ve net bir öneri yaz.
+4. "summary" (Özet) kısmını düz bir sayısal rapor gibi değil, daha yorumsal ve eleştirel yaz. Örneğin: "Bu fikir şu bakımdan güçlü, pazar potansiyeli iyi anlatılmış ancak şurada böyle bir hatanız/abartınız var..." tarzında, doğrudan girişimciye veya yatırımcıya net, yapıcı bir geri bildirim ver.
+5. "recommendation" (Öneri) kısmında yatırımcı gözüyle ne yapılması gerektiğini çok net söyle.
 
 SADECE aşağıdaki JSON formatında yanıt ver. Başka hiçbir açıklama, markdown bloğu ekleme! Sadece ham JSON nesnesi döndür.
 {
@@ -271,21 +272,24 @@ function getMockResult(pitch: string): AnalysisResult {
   const baseScore = Math.round(slopRatio * 60 + (wordCount < 30 ? 25 : 0) + foundSlop.length * 5);
   const slopScore = Math.min(95, Math.max(5, baseScore));
 
-  const summary = slopScore > 65
-    ? `Bu pitch yüksek oranda kanıtsız ve spekülatif ifadeler içeriyor (${foundSlop.length} slop sinyali tespit edildi). Somut veri ve büyüme kanıtı olmadan ilerlenmemeli.`
-    : slopScore > 35
-    ? `Pitch genel hatlarıyla makul ancak ${foundSlop.length} adet desteklenmemiş iddia içeriyor. Güçlendirmeye ihtiyaç var.`
-    : `Pitch görece dengeli; ${foundStrong.length} somut sinyal mevcut. Detaylandırılırsa yatırımcı ilgisi çekebilir.`;
+  let summary = "";
+  if (slopScore > 65) {
+    summary = `Bu girişim fikri aşırı iddialı ancak altı boş görünüyor. Özellikle ${foundSlop.length > 0 ? foundSlop.map(s => "'" + s.word + "'").join(', ') + " gibi kelimelerle" : "kullanılan abartılı dille"} gerçeği yansıtmayan bir büyüme veya pazar potansiyeli çizilmiş. Fikrin pazar tarafı belki potansiyelli olabilir ama sunum şekli yatırımcıda güvensizlik yaratır.`;
+  } else if (slopScore > 35) {
+    summary = `Bu fikir potansiyel taşıyor ancak bazı noktalarda netleşmesi gereken detaylar var. ${foundStrong.length > 0 ? foundStrong.map(s => "'" + s.word + "'").join(', ') + " gibi somut verilere değinilmiş olması güçlü bir yön," : "Fikir genel olarak fena olmasa da,"} ${foundSlop.length > 0 ? "fakat " + foundSlop[0].word + " gibi iddialar biraz havada kalmış." : "ancak büyüme planı ve hedef kitle çok daha net tanımlanmalı."} İyi bir pazar araştırmasıyla çok daha güçlü hale gelebilir.`;
+  } else {
+    summary = `Bu oldukça güçlü ve ayakları yere basan bir fikir. ${foundStrong.length > 0 ? foundStrong.map(s => "'" + s.word + "'").join(', ') + " gibi kritik metriklerden/verilerden bahsedilmiş olması fikrin olgunluğunu gösteriyor." : "Gerçekçi ve net bir şekilde ifade edilmiş."} Abartılı jargonlardan uzak durulması, işin kendisine odaklanıldığını gösteriyor. Sadece rekabet analizini biraz daha derinleştirmek gerekebilir.`;
+  }
 
   return {
     slopScore,
     summary,
     claims,
     recommendation: slopScore > 65
-      ? 'Reddedilmeli. Kanıt talep edilmeden ilerlenmemeli.'
+      ? 'Fikir tamamen baştan, somut gerçeklere dayandırılarak yeniden yazılmalı. Mevcut haliyle ciddiye alınması zor.'
       : slopScore > 35
-      ? 'İkinci görüşme önerilir. Somut veriler istenmelidir.'
-      : 'Değerlendirilebilir. Ayrıntılı due diligence başlatılabilir.',
+      ? 'İyi bir başlangıç. Sunumdaki iddialı varsayımları verilerle destekleyerek tekrar gözden geçirilmeli.'
+      : 'Harika bir temel. İcraat adımları ve takımın yetkinlikleri öne çıkarılarak yatırımcı görüşmelerine hazır hale getirilebilir.',
   };
 }
 
