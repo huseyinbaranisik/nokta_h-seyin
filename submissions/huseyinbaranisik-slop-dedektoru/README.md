@@ -158,3 +158,5 @@ Build bittikten sonra inen APK'yı `submissions/huseyinbaranisik-slop-dedektoru/
 | Scope Disiplini | 25 | ✅ Track C tam akışı eksiksiz |
 | Anti-Slop Orijinallik | 20 | ✅ Orijinal prompt + UX tasarımı |
 | Engineering Trace | 20 | ✅ Decision log + commit'ler |
+
+**Video:** https://youtube.com/shorts/88AA4B06uoA
